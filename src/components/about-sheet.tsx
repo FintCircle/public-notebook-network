@@ -46,7 +46,7 @@ export function AboutSheet({ notepage }: { notepage: Notepage }) {
               variant="ghost"
               size="icon"
               aria-label="Close About"
-              className="absolute right-4 top-4 text-current hover:bg-current/10 hover:text-current"
+              className="absolute right-4 top-4 z-20 text-current hover:bg-current/10 hover:text-current"
             >
               <X aria-hidden />
             </Button>
@@ -77,6 +77,7 @@ export function AboutSheet({ notepage }: { notepage: Notepage }) {
             <p id="about-biography" className="mt-7 text-[1.02rem] leading-relaxed">
               {notepage.ownerBio}
             </p>
+          </div>
 
           <section className="relative z-10 mt-9" aria-labelledby="interests-heading">
             <h2 id="interests-heading" className="text-sm opacity-55">
