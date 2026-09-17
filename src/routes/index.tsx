@@ -59,7 +59,7 @@ function Home() {
 
           <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
             <Link
-              to="/write"
+              to="/notepages/new"
               className="rounded-md bg-primary px-5 py-3 text-sm text-primary-foreground transition-opacity hover:opacity-90"
             >
               Start a Notepage — $10/year
@@ -120,6 +120,12 @@ function Home() {
             ))}
           </div>
         </section>
+
+        <div className="mx-auto flex max-w-3xl flex-wrap gap-x-5 gap-y-2 border-t border-border/70 px-5 pt-8 text-xs text-muted-foreground">
+          <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
+          <Link to="/terms" className="hover:text-foreground">Terms</Link>
+          <Link to="/guidelines" className="hover:text-foreground">Guidelines</Link>
+        </div>
       </main>
 
       <SiteFooter />
