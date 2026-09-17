@@ -1,4 +1,5 @@
 import { createFileRoute, notFound, Outlet } from "@tanstack/react-router";
+import { NotepageNetworkMenu } from "@/components/notepage-network-menu";
 import { getNotepage, themeStyle } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage")({
@@ -17,6 +18,7 @@ function NotepageShell() {
     <div className="notepage-theme min-h-screen" style={themeStyle(np)}>
       {/* Required: the Notepage home, notes and local Notetag pages render here. */}
       <Outlet />
+      <NotepageNetworkMenu notepage={np} />
     </div>
   );
 }

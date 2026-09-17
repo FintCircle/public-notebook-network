@@ -47,9 +47,9 @@ function NotepageHome() {
         ))}
       </div>
 
-      <p className="mt-14 text-xs opacity-40">
+      <p className="mt-14 pb-10 text-xs opacity-45">
         <Link to="/" className="hover:underline">
-          a notebook on Inktella
+          part of inktella ↗
         </Link>
       </p>
     </main>

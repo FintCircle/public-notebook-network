@@ -4,7 +4,7 @@ const items = [
   { to: "/notella", label: "Notella" },
   { to: "/explore", label: "Explore" },
   { to: "/write", label: "Note down" },
-  { to: "/profile", label: "Profile" },
+  { to: "/notepages", label: "My Notepages" },
 ] as const;
 
 export function SiteNav() {
@@ -36,10 +36,14 @@ export function SiteNav() {
 
 export function SiteFooter() {
   return (
-    <footer className="mx-auto max-w-5xl px-5 py-16 text-sm text-muted-foreground">
+    <footer className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-3 gap-y-2 px-5 py-16 text-sm text-muted-foreground">
       <span className="hand text-base">the public notebook network</span>
-      <span className="px-2 opacity-40">·</span>
-      $10 / year / Notepage
+      <span aria-hidden className="opacity-40">·</span>
+      <span>$10 / year / Notepage</span>
+      <span aria-hidden className="opacity-40">·</span>
+      <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
+      <Link to="/terms" className="hover:text-foreground">Terms</Link>
+      <Link to="/guidelines" className="hover:text-foreground">Guidelines</Link>
     </footer>
   );
 }
