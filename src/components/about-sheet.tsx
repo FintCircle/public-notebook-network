@@ -7,16 +7,15 @@ import { Button } from "@/components/ui/button";
 function UgandaStamp() {
   return (
     <svg
-      aria-label="Silhouette of Uganda"
-      className="h-28 w-auto"
-      viewBox="0 0 138 178"
-      role="img"
+      aria-hidden="true"
+      className="pointer-events-none absolute -right-5 top-12 h-64 w-auto opacity-[0.065] sm:-right-3 sm:top-9 sm:h-72"
+      viewBox="0 0 180 220"
     >
+      <title>Uganda boundary silhouette sourced from GeoJSON geographic data</title>
       <path
-        d="M42 5 69 13l12-6 10 8 13-2 9 13 17 8-5 20 8 10-8 18 6 15-16 11-4 19-13 8-5 22-17 26-14-8-5-19-17-13-4-25-12-14 7-16-7-18 11-13-2-18 18-8 8-18Z"
+        d="M76.08 170.35 41.52 169.94 30.47 173.73 11.63 183.46 4 180.25 4.26 156.48 11.57 144.44 13.34 119.13 19.97 104.48 32.02 88.04 44.13 79.67 54.27 68.48 41.63 64.21 43.54 27.35 56.52 18.75 76.56 25.8 101.94 18.42 124.12 18.5 143.5 4 158.45 25.89 162.13 41.7 176 77.89 164.53 100.87 149.02 121.73 139.99 134.5 140.31 167.91 76.08 170.35Z"
         fill="currentColor"
       />
-      <path d="m89 28 9 4-5 11-7-6Z" fill="var(--np-bg, var(--paper))" opacity=".9" />
     </svg>
   );
 }
@@ -40,7 +39,8 @@ export function AboutSheet({ notepage }: { notepage: Notepage }) {
           className="notepage-theme fixed inset-x-0 bottom-0 z-50 max-h-[92dvh] overflow-y-auto rounded-t-[8px] border-x border-t border-current/15 bg-[var(--np-bg)] px-6 pb-[max(2rem,env(safe-area-inset-bottom))] pt-5 text-[var(--np-ink)] shadow-2xl outline-none data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom motion-reduce:animate-none sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-h-[88vh] sm:w-[min(32rem,calc(100vw-2rem))] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-[8px] sm:border"
           style={themeStyle(notepage)}
         >
-          <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-current/20 sm:hidden" />
+          <UgandaStamp />
+          <div className="relative z-10 mx-auto mb-5 h-1 w-10 rounded-full bg-current/20 sm:hidden" />
           <Dialog.Close asChild>
             <Button
               variant="ghost"
@@ -52,44 +52,40 @@ export function AboutSheet({ notepage }: { notepage: Notepage }) {
             </Button>
           </Dialog.Close>
 
-          <Dialog.Title className="hand text-2xl font-normal">about</Dialog.Title>
-          <div aria-hidden className="hand -mt-1 text-xl opacity-45">
-            ~~~~~
-          </div>
-
-          <div className="mt-8 flex items-center gap-4">
-            <img
-              src={notepage.portrait}
-              alt={`${notepage.owner} portrait`}
-              width={816}
-              height={816}
-              className="size-20 shrink-0 rounded-[4px] object-cover grayscale-[18%]"
-            />
-            <p className="text-lg font-medium">{notepage.owner}</p>
-          </div>
-
-          <p id="about-biography" className="mt-7 text-[1.02rem] leading-relaxed">
-            {notepage.ownerBio}
-          </p>
-
-          <section className="mt-9" aria-labelledby="country-heading">
-            <h2 id="country-heading" className="text-sm opacity-55">
-              noting down from
-            </h2>
-            <div className="mt-4 flex flex-col items-center text-center">
-              <UgandaStamp />
-              <p className="mt-2 text-sm">{notepage.country}</p>
+          <div className="relative z-10">
+            <Dialog.Title className="hand text-2xl font-normal">about</Dialog.Title>
+            <div aria-hidden className="hand -mt-1 text-xl opacity-45">
+              ~~~~~
             </div>
-          </section>
 
-          <section className="mt-9" aria-labelledby="interests-heading">
+            <div className="mt-8 flex items-center gap-4">
+              <img
+                src={notepage.portrait}
+                alt={`${notepage.owner} portrait`}
+                width={816}
+                height={816}
+                className="size-20 shrink-0 rounded-[4px] object-cover grayscale-[18%]"
+              />
+              <div>
+                <p className="text-lg font-medium">{notepage.owner}</p>
+                <p className="mt-1 text-sm opacity-55">
+                  noting down from {notepage.countryCode}
+                </p>
+              </div>
+            </div>
+
+            <p id="about-biography" className="mt-7 text-[1.02rem] leading-relaxed">
+              {notepage.ownerBio}
+            </p>
+
+          <section className="relative z-10 mt-9" aria-labelledby="interests-heading">
             <h2 id="interests-heading" className="text-sm opacity-55">
               interests
             </h2>
             <p className="mt-2 leading-relaxed">{notepage.interests.join(" · ")}</p>
           </section>
 
-          <section className="mt-8" aria-labelledby="elsewhere-heading">
+          <section className="relative z-10 mt-8" aria-labelledby="elsewhere-heading">
             <h2 id="elsewhere-heading" className="text-sm opacity-55">
               elsewhere
             </h2>
@@ -109,7 +105,7 @@ export function AboutSheet({ notepage }: { notepage: Notepage }) {
             </div>
           </section>
 
-          <p aria-hidden className="hand mt-10 text-center text-xl opacity-45">
+          <p aria-hidden className="hand relative z-10 mt-10 text-center text-xl opacity-45">
             ~ ✎ ~
           </p>
         </Dialog.Content>
