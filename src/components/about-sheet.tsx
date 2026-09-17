@@ -5,6 +5,7 @@ import { themeStyle } from "@/data/inktella";
 import { Button } from "@/components/ui/button";
 
 function UgandaStamp() {
+  // Simplified from the Uganda GeoJSON boundary in johan/world.geo.json.
   return (
     <svg
       aria-hidden="true"
