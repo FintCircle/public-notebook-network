@@ -11,6 +11,7 @@ export type Notepage = {
   avatarInitial: string;
   portrait: string;
   country: string;
+  countryCode: string;
   interests: string[];
   links: Array<{ label: string; href: string }>;
   theme: {
@@ -45,6 +46,7 @@ export const notepages: Notepage[] = [
     avatarInitial: "D",
     portrait: derrickPortrait,
     country: "Uganda",
+    countryCode: "UG",
     interests: ["building", "web", "writing", "domains"],
     links: [
       { label: "Website", href: "https://example.com" },
@@ -67,6 +69,7 @@ export const notepages: Notepage[] = [
     avatarInitial: "A",
     portrait: amaraPortrait,
     country: "Uganda",
+    countryCode: "UG",
     interests: ["walking", "mornings", "games", "small observations"],
     links: [{ label: "Website", href: "https://example.com" }],
     theme: {
@@ -86,6 +89,7 @@ export const notepages: Notepage[] = [
     avatarInitial: "J",
     portrait: joelPortrait,
     country: "Uganda",
+    countryCode: "UG",
     interests: ["software", "systems", "building", "second attempts"],
     links: [{ label: "GitHub", href: "https://github.com" }],
     theme: {
