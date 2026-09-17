@@ -17,6 +17,8 @@ export const Route = createFileRoute("/profile")({
         property: "og:description",
         content: "One account, as many public notebooks as you like.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Profile,

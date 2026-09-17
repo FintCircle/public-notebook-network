@@ -18,6 +18,7 @@ export const Route = createFileRoute("/$notepage/notepage/$noteId")({
         { property: "og:title", content: `${note.title} — ${np.name}` },
         { property: "og:description", content: note.preview },
         { property: "og:type", content: "article" },
+        { name: "twitter:card", content: "summary_large_image" },
       ],
     };
   },

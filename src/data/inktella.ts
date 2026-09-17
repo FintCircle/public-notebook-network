@@ -1,3 +1,7 @@
+import amaraPortrait from "@/assets/amara-portrait.jpg";
+import derrickPortrait from "@/assets/derrick-portrait.jpg";
+import joelPortrait from "@/assets/joel-portrait.jpg";
+
 export type Notepage = {
   slug: string;
   name: string;
@@ -5,6 +9,10 @@ export type Notepage = {
   owner: string;
   ownerBio: string;
   avatarInitial: string;
+  portrait: string;
+  country: string;
+  interests: string[];
+  links: Array<{ label: string; href: string }>;
   theme: {
     bg: string;
     ink: string;
@@ -31,9 +39,17 @@ export const notepages: Notepage[] = [
     slug: "derrick",
     name: "Derrick's Notes",
     description: "Thoughts, things I'm building, and whatever else ends up here.",
-    owner: "Derrick",
-    ownerBio: "Building Pangisa in Kampala. Writes things down before they disappear.",
+    owner: "Derrick Mbabazi",
+    ownerBio:
+      "I like building small things on the web and writing down what I discover along the way. Sometimes it’s something I learned. Other times it’s simply something I don’t want to forget.",
     avatarInitial: "D",
+    portrait: derrickPortrait,
+    country: "Uganda",
+    interests: ["building", "web", "writing", "domains"],
+    links: [
+      { label: "Website", href: "https://example.com" },
+      { label: "GitHub", href: "https://github.com" },
+    ],
     theme: {
       bg: "oklch(0.975 0.012 90)",
       ink: "oklch(0.21 0.015 60)",
@@ -49,6 +65,10 @@ export const notepages: Notepage[] = [
     owner: "Amara",
     ownerBio: "Walks a lot. Notices more than she needs to.",
     avatarInitial: "A",
+    portrait: amaraPortrait,
+    country: "Uganda",
+    interests: ["walking", "mornings", "games", "small observations"],
+    links: [{ label: "Website", href: "https://example.com" }],
     theme: {
       bg: "oklch(0.96 0.018 220)",
       ink: "oklch(0.2 0.02 250)",
@@ -64,6 +84,10 @@ export const notepages: Notepage[] = [
     owner: "Joel",
     ownerBio: "Rewrites authentication for fun. Not proud of it.",
     avatarInitial: "J",
+    portrait: joelPortrait,
+    country: "Uganda",
+    interests: ["software", "systems", "building", "second attempts"],
+    links: [{ label: "GitHub", href: "https://github.com" }],
     theme: {
       bg: "oklch(0.94 0.008 120)",
       ink: "oklch(0.19 0.02 150)",
