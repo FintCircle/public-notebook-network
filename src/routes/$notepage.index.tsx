@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { NoteEntry } from "@/components/note-entry";
+import { AboutSheet } from "@/components/about-sheet";
 import { getNotepage, notesOf } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage/")({
@@ -12,6 +13,8 @@ export const Route = createFileRoute("/$notepage/")({
         { name: "description", content: np.description },
         { property: "og:title", content: `${np.name} — a notebook on Inktella` },
         { property: "og:description", content: np.description },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
       ],
     };
   },
@@ -33,7 +36,7 @@ function NotepageHome() {
             {np.description}
           </p>
         </div>
-        <span className="hand text-xl opacity-70">About</span>
+        <AboutSheet notepage={np} />
       </header>
 
       <hr className="rule-irregular mt-10" />

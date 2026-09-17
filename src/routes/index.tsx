@@ -18,6 +18,8 @@ export const Route = createFileRoute("/")({
         content:
           "Not everything needs to be an article. Start a public notebook for $10 a year.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Home,

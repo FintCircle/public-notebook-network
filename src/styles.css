@@ -93,7 +93,7 @@
   h3,
   h4 {
     font-family: var(--font-heading-family);
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
   }
 
   ::selection {

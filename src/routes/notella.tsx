@@ -18,6 +18,8 @@ export const Route = createFileRoute("/notella")({
         property: "og:description",
         content: "A minimal feed of personal notes from public notebooks.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Notella,
