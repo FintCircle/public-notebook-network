@@ -16,6 +16,8 @@ export const Route = createFileRoute("/notetags/$tag")({
         property: "og:description",
         content: `Notes tagged #${params.tag} from across the network.`,
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: GlobalTag,

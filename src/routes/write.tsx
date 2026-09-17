@@ -16,6 +16,8 @@ export const Route = createFileRoute("/write")({
         property: "og:description",
         content: "An empty sheet of paper, not a content management system.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Write,
