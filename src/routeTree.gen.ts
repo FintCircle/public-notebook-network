@@ -10,33 +10,73 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as NotellaRouteImport } from './routes/notella'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as NotetagsTagRouteImport } from './routes/notetags.$tag'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExploreRoute = ExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotellaRoute = NotellaRouteImport.update({
+  id: '/notella',
+  path: '/notella',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotetagsTagRoute = NotetagsTagRouteImport.update({
+  id: '/notetags/$tag',
+  path: '/notetags/$tag',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/explore': typeof ExploreRoute
+  '/notella': typeof NotellaRoute
+  '/profile': typeof ProfileRoute
+  '/notetags/$tag': typeof NotetagsTagRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/explore': typeof ExploreRoute
+  '/notella': typeof NotellaRoute
+  '/profile': typeof ProfileRoute
+  '/notetags/$tag': typeof NotetagsTagRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/explore': typeof ExploreRoute
+  '/notella': typeof NotellaRoute
+  '/profile': typeof ProfileRoute
+  '/notetags/$tag': typeof NotetagsTagRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/explore' | '/notella' | '/profile' | '/notetags/$tag'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/explore' | '/notella' | '/profile' | '/notetags/$tag'
+  id: '__root__' | '/' | '/explore' | '/notella' | '/profile' | '/notetags/$tag'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ExploreRoute: typeof ExploreRoute
+  NotellaRoute: typeof NotellaRoute
+  ProfileRoute: typeof ProfileRoute
+  NotetagsTagRoute: typeof NotetagsTagRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +88,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notella': {
+      id: '/notella'
+      path: '/notella'
+      fullPath: '/notella'
+      preLoaderRoute: typeof NotellaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notetags/$tag': {
+      id: '/notetags/$tag'
+      path: '/notetags/$tag'
+      fullPath: '/notetags/$tag'
+      preLoaderRoute: typeof NotetagsTagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ExploreRoute: ExploreRoute,
+  NotellaRoute: NotellaRoute,
+  ProfileRoute: ProfileRoute,
+  NotetagsTagRoute: NotetagsTagRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
