@@ -153,7 +153,7 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
           >
             {name}
           </Link>
-          <Link to="/write" search={{}} className="text-xs opacity-45 hover:opacity-100">
+          <Link to="/write" search={{ notepage: undefined }} className="text-xs opacity-45 hover:opacity-100">
             change
           </Link>
         </div>

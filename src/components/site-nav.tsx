@@ -19,15 +19,15 @@ export function SiteNav() {
         </span>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-muted-foreground">
           {items.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              search={item.to === "/write" ? {} : undefined}
-              activeProps={{ className: "text-foreground" }}
-              className="hover:text-foreground"
-            >
-              {item.label}
-            </Link>
+            item.to === "/write" ? (
+              <Link key={item.to} to="/write" search={{ notepage: undefined }} activeProps={{ className: "text-foreground" }} className="hover:text-foreground">
+                {item.label}
+              </Link>
+            ) : (
+              <Link key={item.to} to={item.to} activeProps={{ className: "text-foreground" }} className="hover:text-foreground">
+                {item.label}
+              </Link>
+            )
           ))}
         </div>
       </nav>
