@@ -1,5 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Compass, Newspaper, PenLine } from "lucide-react";
+import {
+  Bell,
+  BookOpen,
+  Compass,
+  Menu,
+  MessageCircle,
+  Newspaper,
+  PenLine,
+  Search,
+  Users,
+} from "lucide-react";
 
 const items = [
   { to: "/notella", label: "Notella", icon: Newspaper },
@@ -9,58 +19,56 @@ const items = [
 ];
 
 const iconLinkClass =
-  "inline-flex size-6 items-center justify-center text-muted-foreground hover:text-foreground";
+  "inline-flex size-10 items-center justify-center text-muted-foreground transition-colors hover:text-foreground";
+
+const utilityLinkClass =
+  "inline-flex size-10 items-center justify-center rounded-full bg-muted text-foreground transition-colors hover:bg-accent";
 
 export function SiteNav() {
   return (
-    <header className="border-b border-border/70">
-      <nav className="mx-auto flex max-w-5xl items-center gap-3 px-5 py-4 text-sm">
-        <Link to="/" className="font-heading text-base tracking-tight">
-          Inktella
-        </Link>
-        <span aria-hidden className="opacity-30">
-          ·
-        </span>
-        <div
-          className="flex shrink-0 items-center gap-2 text-muted-foreground"
+    <header className="border-b border-border/70 bg-background">
+      <div className="mx-auto max-w-5xl">
+        <div className="flex items-center justify-between px-5 py-3">
+          <Link to="/" className="font-heading text-2xl font-semibold tracking-tight text-primary">
+            Inktella
+          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/explore" className={utilityLinkClass} aria-label="Search" title="Search">
+              <Search aria-hidden />
+            </Link>
+            <button type="button" className={utilityLinkClass} aria-label="Menu" title="Menu">
+              <Menu aria-hidden />
+            </button>
+          </div>
+        </div>
+        <nav
+          className="grid grid-cols-6 border-t border-border/60 px-2"
           aria-label="Primary navigation"
         >
-          {items.map((item) => {
+          {[
+            ...items,
+            { to: "/explore", label: "Messages", icon: MessageCircle },
+            { to: "/notepages", label: "People", icon: Users },
+          ].map((item, index) => {
             const Icon = item.icon;
-            const content = (
-              <>
+            const href = item.to === "/write" ? "/write" : item.to;
+            return (
+              <Link
+                key={`${item.label}-${index}`}
+                to={href}
+                {...(item.to === "/write" ? { search: { notepage: undefined } } : {})}
+                activeProps={{ className: "text-primary" }}
+                className={iconLinkClass}
+                aria-label={item.label}
+                title={item.label}
+              >
                 <Icon aria-hidden />
                 <span className="sr-only">{item.label}</span>
-              </>
-            );
-
-            return item.to === "/write" ? (
-              <Link
-                key={item.to}
-                to="/write"
-                search={{ notepage: undefined }}
-                activeProps={{ className: "text-foreground" }}
-                className={iconLinkClass}
-                aria-label={item.label}
-                title={item.label}
-              >
-                {content}
-              </Link>
-            ) : (
-              <Link
-                key={item.to}
-                to={item.to}
-                activeProps={{ className: "text-foreground" }}
-                className={iconLinkClass}
-                aria-label={item.label}
-                title={item.label}
-              >
-                {content}
               </Link>
             );
           })}
-        </div>
-      </nav>
+        </nav>
+      </div>
     </header>
   );
 }
