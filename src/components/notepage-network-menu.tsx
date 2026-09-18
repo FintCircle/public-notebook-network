@@ -49,7 +49,6 @@ export function NotepageNetworkMenu({ notepage }: { notepage: Notepage }) {
                     <Icon aria-hidden className="size-4 shrink-0 opacity-60" />
                     <span>
                       <span className="block text-sm">{item.label}</span>
-                      {item.note && <span className="block text-xs opacity-50">{item.note}</span>}
                     </span>
                   </Link> : <Link to={item.to} className="flex min-h-12 items-center gap-3 border-t border-current/10 py-3 first:border-0">
                     <Icon aria-hidden className="size-4 shrink-0 opacity-60" />
