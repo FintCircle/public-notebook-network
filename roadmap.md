@@ -1,8 +1,8 @@
 # Roadmap
 
-- [ ] Add Privacy, Terms, and Guidelines pages and homepage/footer links
-- [ ] Add Notepage creation and customization flow
-- [ ] Add My Notepages owner area with per-notebook note actions
-- [ ] Add notebook chooser before writing
-- [ ] Add public Notepage network escape menu and attribution
-- [ ] Verify mobile and desktop flows
+- [x] Add Privacy, Terms, and Guidelines pages and homepage/footer links
+- [x] Add Notepage creation and customization flow
+- [x] Add My Notepages owner area with per-notebook note actions
+- [x] Add notebook chooser before writing
+- [x] Add public Notepage network escape menu and attribution
+- [x] Verify mobile and desktop flows
