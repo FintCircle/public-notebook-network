@@ -1,11 +1,15 @@
 import { Link } from "@tanstack/react-router";
+import { BookOpen, Compass, Newspaper, PenLine } from "lucide-react";
 
 const items = [
-  { to: "/notella", label: "Notella" },
-  { to: "/explore", label: "Explore" },
-  { to: "/write", label: "Note down" },
-  { to: "/notepages", label: "My Notepages" },
-] as const;
+  { to: "/notella", label: "Notella", icon: Newspaper },
+  { to: "/explore", label: "Explore", icon: Compass },
+  { to: "/write", label: "Note down", icon: PenLine },
+  { to: "/notepages", label: "My Notepages", icon: BookOpen },
+];
+
+const iconLinkClass =
+  "inline-flex size-9 items-center justify-center rounded-md hover:bg-accent hover:text-foreground";
 
 export function SiteNav() {
   return (
@@ -17,18 +21,44 @@ export function SiteNav() {
         <span aria-hidden className="opacity-30">
           ·
         </span>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-muted-foreground">
-          {items.map((item) => (
-            item.to === "/write" ? (
-              <Link key={item.to} to="/write" search={{ notepage: undefined }} activeProps={{ className: "text-foreground" }} className="hover:text-foreground">
-                {item.label}
+        <div
+          className="flex flex-wrap items-center gap-1 text-muted-foreground"
+          aria-label="Primary navigation"
+        >
+          {items.map((item) => {
+            const Icon = item.icon;
+            const content = (
+              <>
+                <Icon aria-hidden />
+                <span className="sr-only">{item.label}</span>
+              </>
+            );
+
+            return item.to === "/write" ? (
+              <Link
+                key={item.to}
+                to="/write"
+                search={{ notepage: undefined }}
+                activeProps={{ className: "text-foreground" }}
+                className={iconLinkClass}
+                aria-label={item.label}
+                title={item.label}
+              >
+                {content}
               </Link>
             ) : (
-              <Link key={item.to} to={item.to} activeProps={{ className: "text-foreground" }} className="hover:text-foreground">
-                {item.label}
+              <Link
+                key={item.to}
+                to={item.to}
+                activeProps={{ className: "text-foreground" }}
+                className={iconLinkClass}
+                aria-label={item.label}
+                title={item.label}
+              >
+                {content}
               </Link>
-            )
-          ))}
+            );
+          })}
         </div>
       </nav>
     </header>
@@ -47,11 +77,21 @@ export function SiteFooter() {
         </div>
 
         <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-3 sm:justify-end">
-          <Link to="/about" className="hover:text-foreground">About</Link>
-          <Link to="/pricing" className="hover:text-foreground">Pricing</Link>
-          <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
-          <Link to="/terms" className="hover:text-foreground">Terms</Link>
-          <Link to="/guidelines" className="hover:text-foreground">Guidelines</Link>
+          <Link to="/about" className="hover:text-foreground">
+            About
+          </Link>
+          <Link to="/pricing" className="hover:text-foreground">
+            Pricing
+          </Link>
+          <Link to="/privacy" className="hover:text-foreground">
+            Privacy
+          </Link>
+          <Link to="/terms" className="hover:text-foreground">
+            Terms
+          </Link>
+          <Link to="/guidelines" className="hover:text-foreground">
+            Guidelines
+          </Link>
         </nav>
       </div>
     </footer>
