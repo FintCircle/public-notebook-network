@@ -23,6 +23,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WriteRouteImport } from './routes/write'
 import { Route as NotepageIndexRouteImport } from './routes/$notepage.index'
+import { Route as NotepageAboutRouteImport } from './routes/$notepage.about'
 import { Route as NotepagesIndexRouteImport } from './routes/notepages.index'
 import { Route as NotepagesNewRouteImport } from './routes/notepages.new'
 import { Route as NotetagsIndexRouteImport } from './routes/notetags.index'
@@ -100,6 +101,11 @@ const NotepageIndexRoute = NotepageIndexRouteImport.update({
   path: '/',
   getParentRoute: () => NotepageRoute,
 } as any)
+const NotepageAboutRoute = NotepageAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => NotepageRoute,
+} as any)
 const NotepagesIndexRoute = NotepagesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
+  '/$notepage/about': typeof NotepageAboutRoute
   '/notepages/new': typeof NotepagesNewRoute
   '/notetags/$tag': typeof NotetagsTagRoute
   '/$notepage/': typeof NotepageIndexRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
+  '/$notepage/about': typeof NotepageAboutRoute
   '/notepages/new': typeof NotepagesNewRoute
   '/notetags/$tag': typeof NotetagsTagRoute
   '/$notepage': typeof NotepageIndexRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
+  '/$notepage/about': typeof NotepageAboutRoute
   '/notepages/new': typeof NotepagesNewRoute
   '/notetags/$tag': typeof NotetagsTagRoute
   '/$notepage/': typeof NotepageIndexRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/terms'
     | '/write'
+    | '/$notepage/about'
     | '/notepages/new'
     | '/notetags/$tag'
     | '/$notepage/'
@@ -230,6 +240,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/terms'
     | '/write'
+    | '/$notepage/about'
     | '/notepages/new'
     | '/notetags/$tag'
     | '/$notepage'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/terms'
     | '/write'
+    | '/$notepage/about'
     | '/notepages/new'
     | '/notetags/$tag'
     | '/$notepage/'
@@ -377,6 +389,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotepageIndexRouteImport
       parentRoute: typeof NotepageRoute
     }
+    '/$notepage/about': {
+      id: '/$notepage/about'
+      path: '/about'
+      fullPath: '/$notepage/about'
+      preLoaderRoute: typeof NotepageAboutRouteImport
+      parentRoute: typeof NotepageRoute
+    }
     '/notepages/': {
       id: '/notepages/'
       path: '/'
@@ -423,12 +442,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface NotepageRouteChildren {
+  NotepageAboutRoute: typeof NotepageAboutRoute
   NotepageIndexRoute: typeof NotepageIndexRoute
   NotepageNotepageNoteIdRoute: typeof NotepageNotepageNoteIdRoute
   NotepageNotetagsTagRoute: typeof NotepageNotetagsTagRoute
 }
 
 const NotepageRouteChildren: NotepageRouteChildren = {
+  NotepageAboutRoute: NotepageAboutRoute,
   NotepageIndexRoute: NotepageIndexRoute,
   NotepageNotepageNoteIdRoute: NotepageNotepageNoteIdRoute,
   NotepageNotetagsTagRoute: NotepageNotetagsTagRoute,
