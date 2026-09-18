@@ -1,8 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SiteNav } from "@/components/site-nav";
+import { Button } from "@/components/ui/button";
+import { getNotepage, notepages } from "@/data/inktella";
 
 export const Route = createFileRoute("/write")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    notepage: typeof search.notepage === "string" ? search.notepage : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Write a Note | Inktella" },
@@ -26,6 +31,48 @@ export const Route = createFileRoute("/write")({
 type ToolbarState = { top: number; left: number } | null;
 
 export default function Write() {
+  const { notepage } = Route.useSearch();
+  const selectedNotepage = notepage ? getNotepage(notepage) : undefined;
+
+  if (!selectedNotepage) return <NotepageChooser />;
+
+  return <NoteEditor notepage={selectedNotepage.slug} name={selectedNotepage.name} />;
+}
+
+function NotepageChooser() {
+  const mine = notepages.slice(0, 2);
+
+  return (
+    <div className="min-h-screen">
+      <SiteNav />
+      <main className="mx-auto max-w-2xl px-5 py-14">
+        <h1 className="text-3xl leading-tight">Where are you noting this down?</h1>
+        <p className="hand mt-3 text-xl opacity-60">choose one of your notebooks</p>
+        <div className="mt-10 divide-y divide-border/70 border-y border-border/70">
+          {mine.map((np) => (
+            <Link
+              key={np.slug}
+              to="/write"
+              search={{ notepage: np.slug }}
+              className="group flex items-center justify-between gap-5 py-5"
+            >
+              <span>
+                <span className="block text-lg group-hover:underline">{np.name}</span>
+                <span className="mt-1 block text-sm opacity-55">{np.description}</span>
+              </span>
+              <span aria-hidden className="shrink-0 opacity-45">→</span>
+            </Link>
+          ))}
+        </div>
+        <Button variant="link" asChild className="mt-6 h-auto px-0">
+          <Link to="/notepages/new">Start another Notepage</Link>
+        </Button>
+      </main>
+    </div>
+  );
+}
+
+function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
   const bodyRef = useRef<HTMLDivElement>(null);
   const [toolbar, setToolbar] = useState<ToolbarState>(null);
   const [tags, setTags] = useState("");
@@ -97,6 +144,19 @@ export default function Write() {
       <SiteNav />
 
       <main className="mx-auto max-w-2xl px-5 pt-12 pb-24">
+        <div className="mb-8 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+          <span className="opacity-50">Noting down in</span>
+          <Link
+            to="/$notepage"
+            params={{ notepage }}
+            className="underline decoration-current/30 underline-offset-4 hover:decoration-current"
+          >
+            {name}
+          </Link>
+          <Link to="/write" className="text-xs opacity-45 hover:opacity-100">
+            change
+          </Link>
+        </div>
         <h1
           contentEditable
           suppressContentEditableWarning

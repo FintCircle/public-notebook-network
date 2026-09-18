@@ -47,11 +47,6 @@ function NotepageHome() {
         ))}
       </div>
 
-      <p className="mt-14 pb-10 text-xs opacity-45">
-        <Link to="/" className="hover:underline">
-          part of inktella ↗
-        </Link>
-      </p>
     </main>
   );
 }

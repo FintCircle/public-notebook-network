@@ -1,4 +1,4 @@
-import { createFileRoute, notFound, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, Outlet } from "@tanstack/react-router";
 import { NotepageNetworkMenu } from "@/components/notepage-network-menu";
 import { getNotepage, themeStyle } from "@/data/inktella";
 
@@ -18,6 +18,11 @@ function NotepageShell() {
     <div className="notepage-theme min-h-screen" style={themeStyle(np)}>
       {/* Required: the Notepage home, notes and local Notetag pages render here. */}
       <Outlet />
+      <p className="mx-auto max-w-2xl px-5 pb-20 pt-6 text-xs opacity-45">
+        <Link to="/" className="hover:underline">
+          part of inktella ↗
+        </Link>
+      </p>
       <NotepageNetworkMenu notepage={np} />
     </div>
   );
