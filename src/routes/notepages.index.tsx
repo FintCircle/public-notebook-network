@@ -4,7 +4,7 @@ import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
 import { notepages, notesOf } from "@/data/inktella";
 
-export const Route = createFileRoute("/notepages")({
+export const Route = createFileRoute("/notepages/")({
   head: () => ({ meta: [
     { title: "My Notepages | Inktella" },
     { name: "description", content: "Open your notebooks, add notes, and manage your Notepages." },
