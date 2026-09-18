@@ -9,12 +9,12 @@ const items = [
 ];
 
 const iconLinkClass =
-  "inline-flex size-9 items-center justify-center rounded-md hover:bg-accent hover:text-foreground";
+  "inline-flex size-6 items-center justify-center text-muted-foreground hover:text-foreground";
 
 export function SiteNav() {
   return (
     <header className="border-b border-border/70">
-      <nav className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-5 gap-y-2 px-5 py-4 text-sm">
+      <nav className="mx-auto flex max-w-5xl items-center gap-3 px-5 py-4 text-sm">
         <Link to="/" className="font-heading text-base tracking-tight">
           Inktella
         </Link>
@@ -22,7 +22,7 @@ export function SiteNav() {
           ·
         </span>
         <div
-          className="flex flex-wrap items-center gap-1 text-muted-foreground"
+          className="flex shrink-0 items-center gap-2 text-muted-foreground"
           aria-label="Primary navigation"
         >
           {items.map((item) => {
