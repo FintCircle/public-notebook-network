@@ -45,7 +45,7 @@ export function NotepageNetworkMenu({ notepage }: { notepage: Notepage }) {
               const Icon = item.icon;
               return (
                 <Dialog.Close asChild key={item.to}>
-                  <Link to={item.to} className="flex min-h-12 items-center gap-3 border-t border-current/10 py-3 first:border-0">
+                  <Link to={item.to} search={item.to === "/write" ? {} : undefined} className="flex min-h-12 items-center gap-3 border-t border-current/10 py-3 first:border-0">
                     <Icon aria-hidden className="size-4 shrink-0 opacity-60" />
                     <span>
                       <span className="block text-sm">{item.label}</span>

@@ -22,6 +22,7 @@ export function SiteNav() {
             <Link
               key={item.to}
               to={item.to}
+              search={item.to === "/write" ? {} : undefined}
               activeProps={{ className: "text-foreground" }}
               className="hover:text-foreground"
             >

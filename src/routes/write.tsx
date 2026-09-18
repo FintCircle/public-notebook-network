@@ -6,7 +6,7 @@ import { getNotepage, notepages } from "@/data/inktella";
 
 export const Route = createFileRoute("/write")({
   validateSearch: (search: Record<string, unknown>) => ({
-    notepage: typeof search.notepage === "string" ? search.notepage : undefined,
+    notepage: typeof search["notepage"] === "string" ? search["notepage"] : undefined,
   }),
   head: () => ({
     meta: [
@@ -153,7 +153,7 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
           >
             {name}
           </Link>
-          <Link to="/write" className="text-xs opacity-45 hover:opacity-100">
+          <Link to="/write" search={{}} className="text-xs opacity-45 hover:opacity-100">
             change
           </Link>
         </div>
