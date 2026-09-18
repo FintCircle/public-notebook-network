@@ -37,14 +37,23 @@ export function SiteNav() {
 
 export function SiteFooter() {
   return (
-    <footer className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-3 gap-y-2 px-5 py-16 text-sm text-muted-foreground">
-      <span className="hand text-base">the public notebook network</span>
-      <span aria-hidden className="opacity-40">·</span>
-      <span>$10 / year / Notepage</span>
-      <span aria-hidden className="opacity-40">·</span>
-      <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
-      <Link to="/terms" className="hover:text-foreground">Terms</Link>
-      <Link to="/guidelines" className="hover:text-foreground">Guidelines</Link>
+    <footer className="border-t border-border/70">
+      <div className="mx-auto flex max-w-5xl flex-col gap-8 px-5 py-12 text-sm text-muted-foreground sm:flex-row sm:items-end sm:justify-between sm:gap-10 sm:py-14">
+        <div className="flex flex-col gap-2">
+          <Link to="/" className="hand text-lg text-foreground hover:opacity-70">
+            the public notebook network
+          </Link>
+          <span>$10 / year / Notepage</span>
+        </div>
+
+        <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-3 sm:justify-end">
+          <Link to="/about" className="hover:text-foreground">About</Link>
+          <Link to="/pricing" className="hover:text-foreground">Pricing</Link>
+          <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
+          <Link to="/terms" className="hover:text-foreground">Terms</Link>
+          <Link to="/guidelines" className="hover:text-foreground">Guidelines</Link>
+        </nav>
+      </div>
     </footer>
   );
 }
