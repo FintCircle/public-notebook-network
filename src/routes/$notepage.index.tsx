@@ -1,6 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { NoteEntry } from "@/components/note-entry";
-import { AboutSheet } from "@/components/about-sheet";
 import { getNotepage, notesOf } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage/")({
@@ -41,7 +40,13 @@ function NotepageHome() {
             <h1 className="mt-2 font-heading text-4xl leading-none tracking-tight sm:text-5xl">{np.name}</h1>
             <p className="mt-5 max-w-[38ch] text-lg leading-snug opacity-75">{np.description}</p>
           </div>
-          <AboutSheet notepage={np} />
+          <Link
+            to="/$notepage/about"
+            params={{ notepage: np.slug }}
+            className="hand text-xl opacity-70 hover:opacity-100"
+          >
+            About
+          </Link>
         </div>
       </header>
 
