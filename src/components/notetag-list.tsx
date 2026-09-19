@@ -1,12 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-export function NotetagList({
-  tags,
-  notepage,
-}: {
-  tags: string[];
-  notepage?: string;
-}) {
+export function NotetagList({ tags, notepage }: { tags: string[]; notepage?: string }) {
   return (
     <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm opacity-70">
       {tags.map((tag) =>
@@ -22,7 +16,7 @@ export function NotetagList({
         ) : (
           <Link
             key={tag}
-            to="/notetags/$tag"
+            to="/topics/$tag"
             params={{ tag }}
             className="hover:opacity-100 hover:underline"
           >

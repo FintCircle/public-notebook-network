@@ -3,7 +3,7 @@ import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { LikeButton } from "@/components/like-button";
 import { getNotepage, notesByTag } from "@/data/inktella";
 
-export const Route = createFileRoute("/notetags/$tag")({
+export const Route = createFileRoute("/topics/$tag")({
   head: ({ params }) => ({
     meta: [
       { title: `#${params.tag} across Inktella` },

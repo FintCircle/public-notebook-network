@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { notes } from "@/data/inktella";
 
-export const Route = createFileRoute("/notetags/")({
+export const Route = createFileRoute("/topics/")({
   head: () => ({
     meta: [
       { title: "Topics | Inktella" },
@@ -107,7 +107,7 @@ function Notetags() {
             return (
               <div key={topic} className="flex items-center justify-between gap-4 py-4">
                 <Link
-                  to="/notetags/$tag"
+                  to="/topics/$tag"
                   params={{ tag: topic }}
                   className="min-w-0 flex-1 hover:underline"
                 >
