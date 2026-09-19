@@ -4,8 +4,8 @@ import {
   BookOpen,
   Compass,
   Menu,
-  MessageCircle,
   Newspaper,
+  Tags,
   PenLine,
   Search,
   Users,
@@ -47,7 +47,7 @@ export function SiteNav() {
         >
           {[
             ...items,
-            { to: "/explore", label: "Messages", icon: MessageCircle },
+            { to: "/notetags", label: "Topics", icon: Tags },
             { to: "/notepages", label: "People", icon: Users },
           ].map((item, index) => {
             const Icon = item.icon;
