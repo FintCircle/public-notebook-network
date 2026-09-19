@@ -47,7 +47,7 @@ export function SiteNav() {
         >
           {[
             ...items,
-            { to: "/notetags", label: "Topics", icon: Tags },
+            { to: "/topics", label: "Topics", icon: Tags },
             { to: "/notepages", label: "People", icon: Users },
           ].map((item, index) => {
             const Icon = item.icon;

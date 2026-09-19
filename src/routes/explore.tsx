@@ -8,8 +8,7 @@ export const Route = createFileRoute("/explore")({
       { title: "Explore notebooks and Notetags | Inktella" },
       {
         name: "description",
-        content:
-          "Wander through public notebooks and follow Notetags across the Tellaverse.",
+        content: "Wander through public notebooks and follow Notetags across the Tellaverse.",
       },
       { property: "og:title", content: "Explore notebooks and Notetags on Inktella" },
       {
@@ -72,7 +71,7 @@ function Explore() {
             {tags.map(([tag, count]) => (
               <Link
                 key={tag}
-                to="/notetags/$tag"
+                to="/topics/$tag"
                 params={{ tag }}
                 className="opacity-75 hover:underline hover:opacity-100"
               >
