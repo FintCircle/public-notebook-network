@@ -23,15 +23,33 @@ export const Route = createFileRoute("/topics/$tag")({
   component: GlobalTag,
 });
 
+const topicDescriptions: Record<string, string> = {
+  life: "The everyday moments, questions, and experiences that make up a life.",
+  writing: "Ideas, practices, and reflections from people who write things down.",
+  technology: "How technology shapes the way we work, live, and understand the world.",
+  programming: "Code, tools, and lessons from building software.",
+  "artificial intelligence":
+    "Explorations of intelligent systems and the changing relationship between people and machines.",
+  business: "Thinking about companies, markets, and the work of making something useful.",
+  startups: "Stories and lessons from starting, growing, and learning in public.",
+  "self-improvement": "Practical ideas for becoming more thoughtful, capable, and intentional.",
+  productivity: "Ways to focus attention, make progress, and spend time with purpose.",
+  creativity: "The habits, sparks, and experiments behind creative work.",
+};
+
 function GlobalTag() {
   const { tag } = Route.useParams();
   const results = notesByTag(tag);
+  const description =
+    topicDescriptions[tag.toLowerCase()] ?? `Notes and perspectives collected under ${tag}.`;
 
   return (
     <div className="min-h-screen">
       <SiteNav />
       <main className="mx-auto max-w-2xl px-5 py-14">
-        <h1 className="text-3xl">#{tag}</h1>
+        <p className="text-sm font-medium uppercase tracking-[0.18em] text-primary">Topic</p>
+        <h1 className="mt-3 text-3xl">{tag}</h1>
+        <p className="mt-3 max-w-xl text-base leading-7 text-muted-foreground">{description}</p>
         <p className="hand mt-2 text-xl opacity-70">across the Tellaverse</p>
 
         <ul className="mt-10 divide-y divide-border/70">
