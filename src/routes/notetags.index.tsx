@@ -74,11 +74,15 @@ function Notetags() {
     );
     for (const note of notes) {
       for (const tag of note.notetags) {
-        const key = starterTopics.find((topic) => topic.toLowerCase() === tag.toLowerCase()) ?? tag;
-        const current = stats.get(key) ?? { notes: 0, people: new Set<string>() };
+        const topic = starterTopics.find(
+          (candidate) => candidate.toLowerCase() === tag.toLowerCase(),
+        );
+        if (!topic) continue;
+
+        const current = stats.get(topic);
+        if (!current) continue;
         current.notes += 1;
         current.people.add(note.notepage);
-        stats.set(key, current);
       }
     }
     return [...stats.entries()].sort((a, b) => b[1].notes - a[1].notes || a[0].localeCompare(b[0]));
