@@ -36,7 +36,7 @@ function NotepageHome() {
           alt={`${np.owner}, owner of ${np.name}`}
           width={816}
           height={816}
-          className="absolute inset-0 size-full object-cover object-center"
+          className="absolute inset-0 size-full object-cover object-center opacity-55"
         />
         <div aria-hidden className="notepage-cover-shade absolute inset-0" />
 

@@ -117,8 +117,8 @@
   background: linear-gradient(
     to top,
     var(--notepage-cover-shade) 0%,
-    color-mix(in oklab, var(--notepage-cover-shade) 72%, transparent) 42%,
-    transparent 76%
+    color-mix(in oklab, var(--notepage-cover-shade) 84%, transparent) 42%,
+    color-mix(in oklab, var(--notepage-cover-shade) 18%, transparent) 76%
   );
 }
 
