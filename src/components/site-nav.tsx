@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import {
+  BadgeDollarSign,
   Bell,
   BookOpen,
   Compass,
@@ -8,7 +9,6 @@ import {
   Tags,
   PenLine,
   Search,
-  Users,
 } from "lucide-react";
 
 const items = [
@@ -48,7 +48,7 @@ export function SiteNav() {
           {[
             ...items,
             { to: "/topics", label: "Topics", icon: Tags },
-            { to: "/notepages", label: "People", icon: Users },
+            { to: "/ink-program", label: "Ink Program", icon: BadgeDollarSign },
           ].map((item, index) => {
             const Icon = item.icon;
             const href = item.to === "/write" ? "/write" : item.to;
