@@ -53,6 +53,8 @@
   --ink: oklch(0.19 0.012 265);
   --ink-soft: oklch(0.52 0.014 265);
   --mark: oklch(0.62 0.14 30);
+  --notepage-cover-ink: oklch(0.975 0.006 95);
+  --notepage-cover-shade: oklch(0.12 0.012 265 / 0.8);
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -108,6 +110,16 @@
   --font-heading-family: var(--np-heading, "Space Grotesk", sans-serif);
   --font-body-family: var(--np-body, "DM Sans", sans-serif);
   --font-hand-family: var(--np-hand, "Caveat", cursive);
+  --np-cover-ink: var(--notepage-cover-ink);
+}
+
+@utility notepage-cover-shade {
+  background: linear-gradient(
+    to top,
+    var(--notepage-cover-shade) 0%,
+    color-mix(in oklab, var(--notepage-cover-shade) 72%, transparent) 42%,
+    transparent 76%
+  );
 }
 
 @utility hand {
