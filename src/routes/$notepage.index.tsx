@@ -48,25 +48,25 @@ function NotepageHome() {
             </button>
           </div>
 
-          <div className="mt-auto grid gap-10 sm:grid-cols-[1fr_auto] sm:items-end sm:gap-16">
-            <div>
-              <div className="mb-5 flex items-center gap-3 text-sm uppercase tracking-[0.2em] opacity-85">
+          <div className="mt-auto grid gap-7 sm:grid-cols-[1fr_auto] sm:items-end sm:gap-16">
+            <div className="-mx-2 rounded-2xl bg-black/20 p-2 backdrop-blur-[2px] sm:mx-0 sm:rounded-none sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+              <div className="mb-3 flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.16em] opacity-85 sm:mb-5 sm:gap-3 sm:text-sm sm:tracking-[0.2em]">
                 <span>{np.owner}</span>
                 <span className="h-px w-7 bg-current/70" />
                 <span className="normal-case tracking-normal">{np.country}</span>
               </div>
-              <h1 className="max-w-[13ch] font-heading text-4xl leading-[0.94] tracking-[-0.04em] sm:text-6xl">{np.name}</h1>
-              <p className="mt-4 max-w-[35ch] text-sm leading-relaxed opacity-85 sm:text-lg">{np.description}</p>
+              <h1 className="max-w-[13ch] font-heading text-3xl leading-[0.98] tracking-[-0.035em] sm:text-6xl">{np.name}</h1>
+              <p className="mt-3 max-w-[35ch] text-xs leading-relaxed opacity-85 sm:mt-4 sm:text-lg">{np.description}</p>
                 <Link
                   to="/$notepage/notes"
                   params={{ notepage: np.slug }}
-                  className="mt-6 inline-flex items-center gap-6 rounded-full bg-[var(--np-cover-ink)] px-6 py-3.5 text-sm font-medium text-black transition-transform hover:scale-[1.02]"
+                  className="mt-5 inline-flex items-center gap-5 rounded-full bg-[var(--np-cover-ink)] px-5 py-3 text-xs font-medium text-black transition-transform hover:scale-[1.02] sm:mt-6 sm:gap-6 sm:px-6 sm:py-3.5 sm:text-sm"
                 >
                   Start reading <ArrowRight aria-hidden />
                 </Link>
             </div>
 
-            <nav className="flex items-center gap-7 border-t border-white/25 pt-4 text-sm sm:border-t-0 sm:border-l sm:pl-8" aria-label="Notepage">
+            <nav className="flex items-center gap-6 border-t border-white/25 pt-3 text-xs sm:gap-7 sm:border-t-0 sm:border-l sm:pl-8 sm:pt-4 sm:text-sm" aria-label="Notepage">
               <Link to="/$notepage/about" params={{ notepage: np.slug }} className="flex items-center gap-2 opacity-90 hover:opacity-100"><UserRound aria-hidden className="size-5" /> About</Link>
             </nav>
           </div>
