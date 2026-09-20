@@ -45,13 +45,29 @@ function NotepageHome() {
             </h1>
             <p className="mt-5 max-w-[38ch] text-lg leading-snug opacity-75">{np.description}</p>
           </div>
-          <Link
-            to="/$notepage/about"
-            params={{ notepage: np.slug }}
-            className="hand text-xl opacity-70 hover:opacity-100"
+          <nav
+            className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 text-sm"
+            aria-label="Notepage links"
           >
-            About
-          </Link>
+            <Link
+              to="/$notepage/about"
+              params={{ notepage: np.slug }}
+              className="hand text-xl opacity-70 hover:opacity-100"
+            >
+              About
+            </Link>
+            <a href="#guestbook" className="hand text-xl opacity-70 hover:opacity-100">
+              Guestbook
+            </a>
+            <a
+              href="https://www.buymeacoffee.com/"
+              target="_blank"
+              rel="noreferrer"
+              className="hand text-xl opacity-70 hover:opacity-100"
+            >
+              Buy me a coffee ↗
+            </a>
+          </nav>
         </div>
       </header>
 
