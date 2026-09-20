@@ -58,13 +58,13 @@ function NotepageHome() {
                 <span className="h-px w-7 bg-current/70" />
                 <span className="normal-case tracking-normal">{np.country}</span>
               </div>
-              <h1 className="max-w-[11ch] font-heading text-5xl leading-[0.9] tracking-[-0.04em] sm:text-8xl">{np.name}</h1>
-              <p className="mt-6 max-w-[35ch] text-base leading-relaxed opacity-85 sm:text-xl">{np.description}</p>
+              <h1 className="max-w-[13ch] font-heading text-4xl leading-[0.94] tracking-[-0.04em] sm:text-6xl">{np.name}</h1>
+              <p className="mt-4 max-w-[35ch] text-sm leading-relaxed opacity-85 sm:text-lg">{np.description}</p>
               {firstNote && (
                 <Link
                   to="/$notepage/notepage/$noteId"
                   params={{ notepage: np.slug, noteId: firstNote.id }}
-                  className="mt-8 inline-flex items-center gap-8 rounded-full bg-[var(--np-cover-ink)] px-7 py-4 text-base font-medium text-black transition-transform hover:scale-[1.02]"
+                  className="mt-6 inline-flex items-center gap-6 rounded-full bg-[var(--np-cover-ink)] px-6 py-3.5 text-sm font-medium text-black transition-transform hover:scale-[1.02]"
                 >
                   Start reading <ArrowRight aria-hidden />
                 </Link>
