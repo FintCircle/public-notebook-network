@@ -32,11 +32,13 @@ function NotepageHome() {
       <header className="border-b border-current/15 pb-9">
         <div className="flex items-start justify-between gap-6">
           <div className="min-w-0">
-            <img
-              src={np.portrait}
-              alt={`${np.owner}, owner of ${np.name}`}
-              className="size-24 rounded-full object-cover sm:size-28"
-            />
+            <div className="size-48 overflow-hidden [mask-image:linear-gradient(to_right,black_0%,black_72%,transparent_100%)] sm:size-56">
+              <img
+                src={np.portrait}
+                alt={`${np.owner}, owner of ${np.name}`}
+                className="size-full object-cover object-[35%_center]"
+              />
+            </div>
             <p className="mt-5 text-sm opacity-60">
               {np.owner} · {np.country}
             </p>
