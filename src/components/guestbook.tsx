@@ -43,7 +43,11 @@ export function Guestbook({ notepage }: { notepage: Notepage }) {
   }
 
   return (
-    <section className="mt-16 border-t border-current/15 pt-10" aria-labelledby="guestbook-heading">
+    <section
+      id="guestbook"
+      className="mt-16 border-t border-current/15 pt-10"
+      aria-labelledby="guestbook-heading"
+    >
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm uppercase tracking-[0.18em] opacity-55">A note for the owner</p>
