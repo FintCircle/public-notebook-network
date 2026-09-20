@@ -1,6 +1,6 @@
 import { ArrowRight, Share2, UserRound } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getNotepage, notesOf } from "@/data/inktella";
+import { getNotepage } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage/")({
   head: ({ params }) => {
@@ -23,10 +23,7 @@ export const Route = createFileRoute("/$notepage/")({
 function NotepageHome() {
   const { notepage } = Route.useParams();
   const np = getNotepage(notepage);
-  const entries = notesOf(notepage);
   if (!np) return null;
-
-  const firstNote = entries[0];
 
   return (
     <main className="h-[100svh] overflow-hidden bg-black">
@@ -60,15 +57,13 @@ function NotepageHome() {
               </div>
               <h1 className="max-w-[13ch] font-heading text-4xl leading-[0.94] tracking-[-0.04em] sm:text-6xl">{np.name}</h1>
               <p className="mt-4 max-w-[35ch] text-sm leading-relaxed opacity-85 sm:text-lg">{np.description}</p>
-              {firstNote && (
                 <Link
-                  to="/$notepage/notepage/$noteId"
-                  params={{ notepage: np.slug, noteId: firstNote.id }}
+                  to="/$notepage/notes"
+                  params={{ notepage: np.slug }}
                   className="mt-6 inline-flex items-center gap-6 rounded-full bg-[var(--np-cover-ink)] px-6 py-3.5 text-sm font-medium text-black transition-transform hover:scale-[1.02]"
                 >
                   Start reading <ArrowRight aria-hidden />
                 </Link>
-              )}
             </div>
 
             <nav className="flex items-center gap-7 border-t border-white/25 pt-4 text-sm sm:border-t-0 sm:border-l sm:pl-8" aria-label="Notepage">
