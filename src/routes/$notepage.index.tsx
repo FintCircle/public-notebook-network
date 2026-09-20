@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Guestbook } from "@/components/guestbook";
 import { NoteEntry } from "@/components/note-entry";
 import { getNotepage, notesOf } from "@/data/inktella";
 
@@ -36,8 +37,12 @@ function NotepageHome() {
               alt={`${np.owner}, owner of ${np.name}`}
               className="size-24 rounded-full object-cover sm:size-28"
             />
-            <p className="mt-5 text-sm opacity-60">{np.owner} · {np.country}</p>
-            <h1 className="mt-2 font-heading text-4xl leading-none tracking-tight sm:text-5xl">{np.name}</h1>
+            <p className="mt-5 text-sm opacity-60">
+              {np.owner} · {np.country}
+            </p>
+            <h1 className="mt-2 font-heading text-4xl leading-none tracking-tight sm:text-5xl">
+              {np.name}
+            </h1>
             <p className="mt-5 max-w-[38ch] text-lg leading-snug opacity-75">{np.description}</p>
           </div>
           <Link
@@ -58,6 +63,7 @@ function NotepageHome() {
         ))}
       </div>
 
+      <Guestbook notepage={np} />
     </main>
   );
 }
