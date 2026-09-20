@@ -1,6 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Guestbook } from "@/components/guestbook";
-import { NoteEntry } from "@/components/note-entry";
+import { ArrowRight, Share2, UserRound } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { getNotepage, notesOf } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage/")({
@@ -27,36 +26,62 @@ function NotepageHome() {
   const entries = notesOf(notepage);
   if (!np) return null;
 
+  const firstNote = entries[0];
+
   return (
-    <main>
-      <header className="notepage-cover relative flex min-h-[82svh] items-end overflow-hidden px-5 pb-12 pt-24 text-[var(--np-cover-ink)] sm:min-h-[88svh] sm:px-10 sm:pb-16">
+    <main className="h-[100svh] overflow-hidden bg-black">
+      <section className="notepage-cover relative flex h-full min-h-[100svh] overflow-hidden px-7 pb-9 pt-8 text-[var(--np-cover-ink)] sm:px-16 sm:pb-14 sm:pt-12">
         <img
           src={np.portrait}
-          alt=""
+          alt={`${np.owner}, owner of ${np.name}`}
           width={816}
           height={816}
           className="absolute inset-0 size-full object-cover object-center"
         />
         <div aria-hidden className="notepage-cover-shade absolute inset-0" />
-        <div className="relative z-10 mx-auto w-full max-w-2xl">
-          <h1 className="max-w-[10ch] font-heading text-5xl leading-[0.94] sm:text-7xl">
-            {np.name}
-          </h1>
-          <p className="mt-5 max-w-[34ch] text-lg leading-snug opacity-85 sm:text-xl">
-            {np.description}
-          </p>
-        </div>
-      </header>
 
-      <div className="mx-auto max-w-2xl px-5 py-10 sm:py-14">
-        <div className="divide-y divide-current/10">
-          {entries.map((note) => (
-            <NoteEntry key={note.id} note={note} />
-          ))}
-        </div>
+        <div className="relative z-10 flex w-full flex-col">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="font-heading text-3xl tracking-[-0.04em] sm:text-5xl">Inktella</p>
+              <p className="mt-1 text-[0.6rem] uppercase tracking-[0.42em] opacity-75 sm:text-xs">Notepages</p>
+            </div>
+            <button type="button" aria-label="Share this Notepage" className="grid size-14 place-items-center rounded-full bg-white/15 backdrop-blur-sm transition-colors hover:bg-white/25">
+              <Share2 aria-hidden className="size-6" />
+            </button>
+          </div>
 
-        <Guestbook notepage={np} />
-      </div>
+          <div className="mt-auto grid gap-10 sm:grid-cols-[1fr_auto] sm:items-end sm:gap-16">
+            <div>
+              <div className="mb-5 flex items-center gap-3 text-sm uppercase tracking-[0.2em] opacity-85">
+                <span>{np.owner}</span>
+                <span className="h-px w-7 bg-current/70" />
+                <span className="normal-case tracking-normal">{np.country}</span>
+              </div>
+              <h1 className="max-w-[11ch] font-heading text-5xl leading-[0.9] tracking-[-0.04em] sm:text-8xl">{np.name}</h1>
+              <p className="mt-6 max-w-[35ch] text-base leading-relaxed opacity-85 sm:text-xl">{np.description}</p>
+              {firstNote && (
+                <Link
+                  to="/$notepage/notepage/$noteId"
+                  params={{ notepage: np.slug, noteId: firstNote.id }}
+                  className="mt-8 inline-flex items-center gap-8 rounded-full bg-[var(--np-cover-ink)] px-7 py-4 text-base font-medium text-black transition-transform hover:scale-[1.02]"
+                >
+                  Start reading <ArrowRight aria-hidden />
+                </Link>
+              )}
+            </div>
+
+            <nav className="flex items-center gap-7 border-t border-white/25 pt-4 text-sm sm:border-t-0 sm:border-l sm:pl-8" aria-label="Notepage">
+              <Link to="/$notepage/about" params={{ notepage: np.slug }} className="flex items-center gap-2 opacity-90 hover:opacity-100"><UserRound aria-hidden className="size-5" /> About</Link>
+            </nav>
+          </div>
+
+          <div className="mt-10 flex items-center justify-between text-[0.6rem] uppercase tracking-[0.32em] opacity-70 sm:mt-12 sm:text-xs">
+            <span>a more human internet</span>
+            <span>01 <span className="ml-3 inline-block w-10 align-middle border-t border-current/70" /></span>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
