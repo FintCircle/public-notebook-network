@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ArrowRight, Share2, UserRound } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getNotepage } from "@/data/inktella";
@@ -23,7 +24,34 @@ export const Route = createFileRoute("/$notepage/")({
 function NotepageHome() {
   const { notepage } = Route.useParams();
   const np = getNotepage(notepage);
+  const [shareStatus, setShareStatus] = useState<string | null>(null);
   if (!np) return null;
+
+  const shareNotepage = async () => {
+    const shareData = {
+      title: `${np.name} — a notebook on Inktella`,
+      text: np.description,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        setShareStatus("Shared");
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setShareStatus("Unable to share");
+      }
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setShareStatus("Link copied");
+    } catch {
+      setShareStatus("Copy unavailable");
+    }
+  };
 
   return (
     <main className="h-[100svh] overflow-hidden bg-black">
@@ -33,7 +61,7 @@ function NotepageHome() {
           alt={`${np.owner}, owner of ${np.name}`}
           width={816}
           height={816}
-          className="absolute inset-0 size-full object-cover object-center opacity-55"
+          className="absolute inset-0 size-full object-cover object-center opacity-75"
         />
         <div aria-hidden className="notepage-cover-shade absolute inset-0" />
 
@@ -43,9 +71,12 @@ function NotepageHome() {
               <p className="font-heading text-3xl tracking-[-0.04em] sm:text-5xl">Inktella</p>
               <p className="mt-1 text-[0.6rem] uppercase tracking-[0.42em] opacity-75 sm:text-xs">Notepages</p>
             </div>
-            <button type="button" aria-label="Share this Notepage" className="grid size-14 place-items-center rounded-full bg-white/15 backdrop-blur-sm transition-colors hover:bg-white/25">
-              <Share2 aria-hidden className="size-6" />
-            </button>
+            <div className="flex flex-col items-end gap-2">
+              <button type="button" aria-label="Share this Notepage" onClick={shareNotepage} className="grid size-14 place-items-center rounded-full bg-white/15 backdrop-blur-sm transition-colors hover:bg-white/25">
+                <Share2 aria-hidden className="size-6" />
+              </button>
+              {shareStatus && <span role="status" className="text-[0.65rem] opacity-80">{shareStatus}</span>}
+            </div>
           </div>
 
           <div className="mt-auto grid gap-7 sm:grid-cols-[1fr_auto] sm:items-end sm:gap-16">
