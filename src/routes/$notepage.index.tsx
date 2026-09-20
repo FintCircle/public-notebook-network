@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Guestbook } from "@/components/guestbook";
 import { NoteEntry } from "@/components/note-entry";
 import { getNotepage, notesOf } from "@/data/inktella";
@@ -28,60 +28,35 @@ function NotepageHome() {
   if (!np) return null;
 
   return (
-    <main className="mx-auto max-w-2xl px-5 py-10 sm:py-14">
-      <header className="border-b border-current/15 pb-9">
-        <div className="flex items-start justify-between gap-6">
-          <div className="min-w-0">
-            <div className="size-48 overflow-hidden [mask-image:linear-gradient(to_right,black_0%,black_72%,transparent_100%)] sm:size-56">
-              <img
-                src={np.portrait}
-                alt={`${np.owner}, owner of ${np.name}`}
-                className="size-full object-cover object-[35%_center]"
-              />
-            </div>
-            <p className="mt-5 text-sm opacity-60">
-              {np.owner} · {np.country}
-            </p>
-            <h1 className="mt-2 font-heading text-4xl leading-none tracking-tight sm:text-5xl">
-              {np.name}
-            </h1>
-            <p className="mt-5 max-w-[38ch] text-lg leading-snug opacity-75">{np.description}</p>
-          </div>
-          <nav
-            className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 text-sm"
-            aria-label="Notepage links"
-          >
-            <Link
-              to="/$notepage/about"
-              params={{ notepage: np.slug }}
-              className="hand text-xl opacity-70 hover:opacity-100"
-            >
-              About
-            </Link>
-            <a href="#guestbook" className="hand text-xl opacity-70 hover:opacity-100">
-              Guestbook
-            </a>
-            <a
-              href="https://www.buymeacoffee.com/"
-              target="_blank"
-              rel="noreferrer"
-              className="hand text-xl opacity-70 hover:opacity-100"
-            >
-              Buy me a coffee ↗
-            </a>
-          </nav>
+    <main>
+      <header className="notepage-cover relative flex min-h-[82svh] items-end overflow-hidden px-5 pb-12 pt-24 text-[var(--np-cover-ink)] sm:min-h-[88svh] sm:px-10 sm:pb-16">
+        <img
+          src={np.portrait}
+          alt=""
+          width={816}
+          height={816}
+          className="absolute inset-0 size-full object-cover object-center"
+        />
+        <div aria-hidden className="notepage-cover-shade absolute inset-0" />
+        <div className="relative z-10 mx-auto w-full max-w-2xl">
+          <h1 className="max-w-[10ch] font-heading text-5xl leading-[0.94] sm:text-7xl">
+            {np.name}
+          </h1>
+          <p className="mt-5 max-w-[34ch] text-lg leading-snug opacity-85 sm:text-xl">
+            {np.description}
+          </p>
         </div>
       </header>
 
-      <hr className="rule-irregular mt-10" />
+      <div className="mx-auto max-w-2xl px-5 py-10 sm:py-14">
+        <div className="divide-y divide-current/10">
+          {entries.map((note) => (
+            <NoteEntry key={note.id} note={note} />
+          ))}
+        </div>
 
-      <div className="divide-y divide-current/10">
-        {entries.map((note) => (
-          <NoteEntry key={note.id} note={note} />
-        ))}
+        <Guestbook notepage={np} />
       </div>
-
-      <Guestbook notepage={np} />
     </main>
   );
 }

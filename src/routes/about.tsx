@@ -33,7 +33,7 @@ const words = [
 const notFor = [
   "Follower counts and growth charts",
   "Newsletters and audience funnels",
-  "Cover images and SEO checklists",
+  "SEO checklists and publishing chores",
   "Writing done for you by a machine",
 ];
 

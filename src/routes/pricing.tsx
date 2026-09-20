@@ -25,6 +25,7 @@ export const Route = createFileRoute("/pricing")({
 const features = [
   { title: "Unlimited notes", detail: "No monthly quota, no minimum length, no maximum." },
   { title: "Your own look", detail: "Pick your background and your type. The page should feel like you." },
+  { title: "A Notepage cover", detail: "Set an image, name, description and type for the entrance to your notebook." },
   { title: "A WYSIWYG editor", detail: "Write and format as you go. No Markdown to remember." },
   { title: "Your own address", detail: "Your notebook lives at its own place and can be shared anywhere." },
   { title: "Notetags & Tellaverse", detail: "Tag a note and it joins everything else written on that subject." },
