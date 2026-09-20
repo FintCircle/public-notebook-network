@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
 import { SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
 import { getNotepage, notepages } from "@/data/inktella";
@@ -74,9 +74,11 @@ function NotepageChooser() {
 
 function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
   const bodyRef = useRef<HTMLDivElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [toolbar, setToolbar] = useState<ToolbarState>(null);
   const [tags, setTags] = useState("");
   const [status, setStatus] = useState<string | null>(null);
+  const [isAddingImage, setIsAddingImage] = useState(false);
 
   const updateToolbar = useCallback(() => {
     const selection = window.getSelection();
@@ -111,6 +113,28 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
   const insertBlock = (html: string) => {
     bodyRef.current?.focus();
     document.execCommand("insertHTML", false, html);
+  };
+
+  const openImagePicker = () => imageInputRef.current?.click();
+
+  const handleImageSelected = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !file.type.startsWith("image/")) return;
+
+    setIsAddingImage(true);
+    const imageUrl = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      insertBlock(`<figure><img src="${imageUrl}" alt="${file.name.replace(/"/g, "&quot;")}" /><figcaption>${file.name}</figcaption></figure>`);
+      setIsAddingImage(false);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(imageUrl);
+      setIsAddingImage(false);
+      setStatus("That image could not be added.");
+    };
+    image.src = imageUrl;
   };
 
   const controls: { label: string; title: string; onClick: () => void }[] = [
@@ -199,16 +223,20 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
         </div>
 
         <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm opacity-60">
+          <input
+            ref={imageInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageSelected}
+            className="sr-only"
+          />
           <button
             type="button"
-            className="hover:opacity-100"
-            onClick={() =>
-              insertBlock(
-                '<img src="https://images.unsplash.com/photo-1512314889357-e157c22f938d?w=1200&q=70" alt="" />',
-              )
-            }
+            className="hover:opacity-100 disabled:cursor-wait disabled:opacity-50"
+            onClick={openImagePicker}
+            disabled={isAddingImage}
           >
-            + image
+            {isAddingImage ? "adding image…" : "+ add image"}
           </button>
           <button
             type="button"
