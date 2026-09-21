@@ -20,7 +20,7 @@ const initialEntries: GuestbookEntry[] = [
   },
 ];
 
-export function Guestbook({ notepage }: { notepage: Notepage }) {
+export function Guestnote({ notepage }: { notepage: Notepage }) {
   const [message, setMessage] = useState("");
   const [entries, setEntries] = useState(initialEntries);
 
@@ -44,18 +44,18 @@ export function Guestbook({ notepage }: { notepage: Notepage }) {
 
   return (
     <section
-      id="guestbook"
+      id="guestnote"
       className="mt-16 border-t border-current/15 pt-10"
-      aria-labelledby="guestbook-heading"
+      aria-labelledby="guestnote-heading"
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm uppercase tracking-[0.18em] opacity-55">A note for the owner</p>
-          <h2 id="guestbook-heading" className="mt-2 font-heading text-3xl tracking-tight">
-            Guestbook
+          <p className="text-sm uppercase tracking-[0.18em] opacity-55">Leave a trace</p>
+          <h2 id="guestnote-heading" className="mt-2 font-heading text-3xl tracking-tight">
+            Guestnote
           </h2>
           <p className="mt-2 max-w-[38ch] text-sm leading-6 opacity-65">
-            Leave {notepage.owner} a short message about what you found here.
+            Leave {notepage.owner} a small note from your side of the internet.
           </p>
         </div>
         <MessageSquare aria-hidden className="mt-1 shrink-0 opacity-45" />
@@ -83,11 +83,11 @@ export function Guestbook({ notepage }: { notepage: Notepage }) {
 
       <form onSubmit={submitMessage} className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
         <label className="flex-1">
-          <span className="sr-only">Guestbook message</span>
+          <span className="sr-only">Guestnote message</span>
           <textarea
             value={message}
             onChange={(event) => setMessage(event.target.value)}
-            placeholder="Write a message..."
+            placeholder="Leave something worth carrying..."
             maxLength={500}
             rows={3}
             className="w-full resize-none rounded-xl border border-current/15 bg-transparent px-4 py-3 text-sm outline-none placeholder:opacity-45 focus:border-current/35"
@@ -99,11 +99,11 @@ export function Guestbook({ notepage }: { notepage: Notepage }) {
           className="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-current/20 px-4 text-sm transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-35"
         >
           <Send aria-hidden />
-          Sign guestbook
+          Leave guestnote
         </button>
       </form>
       <p className="mt-2 text-xs opacity-45">
-        Signed-in readers can leave one message for this Notepage.
+        Signed-in readers can leave one Guestnote for this Notepage.
       </p>
     </section>
   );

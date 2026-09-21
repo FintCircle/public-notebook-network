@@ -24,7 +24,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WriteRouteImport } from './routes/write'
 import { Route as NotepageIndexRouteImport } from './routes/$notepage.index'
 import { Route as NotepageAboutRouteImport } from './routes/$notepage.about'
-import { Route as NotepageGuestbookRouteImport } from './routes/$notepage.guestbook'
+import { Route as NotepageGuestnoteRouteImport } from './routes/$notepage.guestnote'
 import { Route as NotepageNotesRouteImport } from './routes/$notepage.notes'
 import { Route as NotepagesIndexRouteImport } from './routes/notepages.index'
 import { Route as NotepagesNewRouteImport } from './routes/notepages.new'
@@ -108,9 +108,9 @@ const NotepageAboutRoute = NotepageAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => NotepageRoute,
 } as any)
-const NotepageGuestbookRoute = NotepageGuestbookRouteImport.update({
-  id: '/guestbook',
-  path: '/guestbook',
+const NotepageGuestnoteRoute = NotepageGuestnoteRouteImport.update({
+  id: '/guestnote',
+  path: '/guestnote',
   getParentRoute: () => NotepageRoute,
 } as any)
 const NotepageNotesRoute = NotepageNotesRouteImport.update({
@@ -164,7 +164,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
   '/$notepage/about': typeof NotepageAboutRoute
-  '/$notepage/guestbook': typeof NotepageGuestbookRoute
+  '/$notepage/guestnote': typeof NotepageGuestnoteRoute
   '/$notepage/notes': typeof NotepageNotesRoute
   '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
@@ -187,7 +187,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
   '/$notepage/about': typeof NotepageAboutRoute
-  '/$notepage/guestbook': typeof NotepageGuestbookRoute
+  '/$notepage/guestnote': typeof NotepageGuestnoteRoute
   '/$notepage/notes': typeof NotepageNotesRoute
   '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
@@ -213,7 +213,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
   '/$notepage/about': typeof NotepageAboutRoute
-  '/$notepage/guestbook': typeof NotepageGuestbookRoute
+  '/$notepage/guestnote': typeof NotepageGuestnoteRoute
   '/$notepage/notes': typeof NotepageNotesRoute
   '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
@@ -240,7 +240,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/write'
     | '/$notepage/about'
-    | '/$notepage/guestbook'
+    | '/$notepage/guestnote'
     | '/$notepage/notes'
     | '/notepages/new'
     | '/topics/$tag'
@@ -263,7 +263,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/write'
     | '/$notepage/about'
-    | '/$notepage/guestbook'
+    | '/$notepage/guestnote'
     | '/$notepage/notes'
     | '/notepages/new'
     | '/topics/$tag'
@@ -288,7 +288,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/write'
     | '/$notepage/about'
-    | '/$notepage/guestbook'
+    | '/$notepage/guestnote'
     | '/$notepage/notes'
     | '/notepages/new'
     | '/topics/$tag'
@@ -424,11 +424,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotepageAboutRouteImport
       parentRoute: typeof NotepageRoute
     }
-    '/$notepage/guestbook': {
-      id: '/$notepage/guestbook'
-      path: '/guestbook'
-      fullPath: '/$notepage/guestbook'
-      preLoaderRoute: typeof NotepageGuestbookRouteImport
+    '/$notepage/guestnote': {
+      id: '/$notepage/guestnote'
+      path: '/guestnote'
+      fullPath: '/$notepage/guestnote'
+      preLoaderRoute: typeof NotepageGuestnoteRouteImport
       parentRoute: typeof NotepageRoute
     }
     '/$notepage/notes': {
@@ -485,7 +485,7 @@ declare module '@tanstack/react-router' {
 
 interface NotepageRouteChildren {
   NotepageAboutRoute: typeof NotepageAboutRoute
-  NotepageGuestbookRoute: typeof NotepageGuestbookRoute
+  NotepageGuestnoteRoute: typeof NotepageGuestnoteRoute
   NotepageNotesRoute: typeof NotepageNotesRoute
   NotepageIndexRoute: typeof NotepageIndexRoute
   NotepageNotepageNoteIdRoute: typeof NotepageNotepageNoteIdRoute
@@ -494,7 +494,7 @@ interface NotepageRouteChildren {
 
 const NotepageRouteChildren: NotepageRouteChildren = {
   NotepageAboutRoute: NotepageAboutRoute,
-  NotepageGuestbookRoute: NotepageGuestbookRoute,
+  NotepageGuestnoteRoute: NotepageGuestnoteRoute,
   NotepageNotesRoute: NotepageNotesRoute,
   NotepageIndexRoute: NotepageIndexRoute,
   NotepageNotepageNoteIdRoute: NotepageNotepageNoteIdRoute,
