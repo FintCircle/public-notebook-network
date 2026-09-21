@@ -62,7 +62,7 @@ function NoteView() {
 
         <footer className="mt-16 text-right">
           <p className="hand text-2xl">— {np.owner}</p>
-          <p className="mt-1 ml-auto max-w-[38ch] text-sm opacity-60">{np.ownerBio}</p>
+          <div className="prose-note mt-1 ml-auto max-w-[38ch] text-sm opacity-60" dangerouslySetInnerHTML={{ __html: np.ownerBio }} />
         </footer>
       </article>
     </main>

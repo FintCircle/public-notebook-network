@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import { getNotepage } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage/about")({
@@ -18,8 +18,15 @@ function NotepageAbout() {
   const [isEditing, setIsEditing] = useState(false);
   const [pageTitle, setPageTitle] = useState("About");
   const [intro, setIntro] = useState("A little more about the person behind this notebook.");
+  const editorRef = useRef<HTMLDivElement>(null);
   const [bio, setBio] = useState(notepage?.ownerBio ?? "");
   const [interests, setInterests] = useState(notepage?.interests.join(", ") ?? "");
+
+  const formatBio = (command: string, value?: string) => {
+    editorRef.current?.focus();
+    document.execCommand(command, false, value);
+    setBio(editorRef.current?.innerHTML ?? "");
+  };
   const [links, setLinks] = useState(notepage?.links ?? []);
 
   if (!notepage) return null;
@@ -68,14 +75,30 @@ function NotepageAbout() {
         </header>
 
         <section className="grid gap-10 py-10 sm:grid-cols-[1fr_0.7fr]" aria-label="About details">
-          <div>
-            <label htmlFor="about-bio" className="text-sm opacity-55">Bio</label>
-            {isEditing ? (
-              <textarea id="about-bio" value={bio} onChange={(event) => setBio(event.target.value)} rows={7} className="mt-3 w-full resize-y border border-current/20 bg-transparent p-3 leading-relaxed outline-none focus:border-current/50" />
-            ) : (
-              <p className="mt-3 whitespace-pre-line leading-relaxed">{bio}</p>
-            )}
-          </div>
+          {isEditing && (
+            <div>
+              <label htmlFor="about-bio-editor" className="text-sm opacity-55">About content</label>
+              <div className="mt-3 flex flex-wrap gap-1 border border-current/20 p-1" role="toolbar" aria-label="About formatting">
+                <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatBio("bold")} className="px-2 py-1 text-xs font-semibold hover:bg-current/10">B</button>
+                <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatBio("italic")} className="px-2 py-1 text-xs italic hover:bg-current/10">I</button>
+                <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatBio("formatBlock", "h2")} className="px-2 py-1 text-xs hover:bg-current/10">H2</button>
+                <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => formatBio("insertUnorderedList")} className="px-2 py-1 text-xs hover:bg-current/10">List</button>
+                <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => { const url = window.prompt("Link to"); if (url) formatBio("createLink", url); }} className="px-2 py-1 text-xs hover:bg-current/10">Link</button>
+              </div>
+              <div
+                id="about-bio-editor"
+                ref={editorRef}
+                contentEditable
+                suppressContentEditableWarning
+                role="textbox"
+                aria-multiline="true"
+                onInput={(event) => setBio(event.currentTarget.innerHTML)}
+                dangerouslySetInnerHTML={{ __html: bio }}
+                className="prose-note mt-3 min-h-48 border border-current/20 bg-transparent p-3 outline-none focus:border-current/50"
+              />
+              <p className="mt-2 text-xs opacity-50">This content appears below your About title on each note.</p>
+            </div>
+          )}
 
           <div>
             <h2 className="text-sm opacity-55">Interests</h2>
@@ -107,7 +130,7 @@ function NotepageAbout() {
 
         {isEditing && (
           <p className="border-t border-current/15 pt-5 text-sm opacity-55">
-            This editor is ready for your about details. Save and account permissions can be connected when editing is wired to your backend.
+            Changes preview immediately. Your About content is shown below each note.
           </p>
         )}
       </div>
