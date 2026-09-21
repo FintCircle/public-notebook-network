@@ -171,7 +171,7 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
           Post <Send aria-hidden className="size-4" />
         </button>
       </form>
-      <div className="fixed inset-x-4 bottom-4 z-20 sm:hidden">
+      <div className="fixed inset-x-4 top-4 z-20 sm:hidden">
         <form
           onSubmit={submitMessage}
           className="flex items-center gap-2 rounded-full bg-[var(--np-ink)] p-2 pl-5 text-[var(--np-bg)] shadow-xl shadow-black/15"

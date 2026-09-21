@@ -13,7 +13,7 @@ function GuestnotePage() {
   if (!np) return null;
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[var(--np-bg)] px-5 pb-28 pt-7 sm:px-10 sm:pb-16 sm:pt-12">
+    <main className="min-h-screen overflow-x-hidden bg-transparent px-5 pb-28 pt-7 sm:px-10 sm:pb-16 sm:pt-12">
       <div className="mx-auto max-w-5xl">
         <Link
           to="/$notepage"
