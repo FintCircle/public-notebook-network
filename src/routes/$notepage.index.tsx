@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, Share2, UserRound } from "lucide-react";
+import { ArrowRight, MessageCircle, Share2, UserRound } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getNotepage } from "@/data/inktella";
 
@@ -99,6 +99,7 @@ function NotepageHome() {
 
             <nav className="flex items-center gap-6 border-t border-white/25 pt-3 text-xs sm:gap-7 sm:border-t-0 sm:border-l sm:pl-8 sm:pt-4 sm:text-sm" aria-label="Notepage">
               <Link to="/$notepage/about" params={{ notepage: np.slug }} className="flex items-center gap-2 opacity-90 hover:opacity-100"><UserRound aria-hidden className="size-5" /> About</Link>
+              <Link to="/$notepage/guestbook" params={{ notepage: np.slug }} className="flex items-center gap-2 opacity-90 hover:opacity-100"><MessageCircle aria-hidden className="size-5" /> Guestnotes</Link>
             </nav>
           </div>
 

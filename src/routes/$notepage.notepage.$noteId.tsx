@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { Guestbook } from "@/components/guestbook";
 import { LikeButton } from "@/components/like-button";
 import { NotetagList } from "@/components/notetag-list";
 import { getNote, getNotepage } from "@/data/inktella";
@@ -64,6 +65,7 @@ function NoteView() {
           <p className="hand text-2xl">— {np.owner}</p>
           <div className="prose-note mt-1 ml-auto max-w-[38ch] text-sm opacity-60" dangerouslySetInnerHTML={{ __html: np.ownerBio }} />
         </footer>
+        <Guestbook notepage={np} />
       </article>
     </main>
   );
