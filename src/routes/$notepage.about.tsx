@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useRef, useState, type CSSProperties } from "react";
+import { useRef, useState, type ChangeEvent, type CSSProperties } from "react";
 import { getNotepage } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage/about")({
@@ -19,12 +19,23 @@ function NotepageAbout() {
   const [pageTitle, setPageTitle] = useState("About");
   const [intro, setIntro] = useState("A little more about the person behind this notebook.");
   const editorRef = useRef<HTMLDivElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [bio, setBio] = useState(notepage?.ownerBio ?? "");
   const [interests, setInterests] = useState(notepage?.interests.join(", ") ?? "");
 
   const formatBio = (command: string, value?: string) => {
     editorRef.current?.focus();
     document.execCommand(command, false, value);
+    setBio(editorRef.current?.innerHTML ?? "");
+  };
+
+  const addBioImage = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file?.type.startsWith("image/")) return;
+    const url = URL.createObjectURL(file);
+    editorRef.current?.focus();
+    document.execCommand("insertHTML", false, `<figure><img src="${url}" alt="${file.name.replace(/"/g, "&quot;")}" /><figcaption>${file.name}</figcaption></figure>`);
     setBio(editorRef.current?.innerHTML ?? "");
   };
   const [links, setLinks] = useState(notepage?.links ?? []);
