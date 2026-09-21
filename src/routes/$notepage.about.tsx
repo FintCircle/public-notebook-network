@@ -81,6 +81,10 @@ function NotepageAbout() {
             <>
               <h1 className="mt-2 font-heading text-4xl tracking-tight sm:text-5xl">{pageTitle}</h1>
               <p className="mt-4 max-w-[42ch] text-lg leading-relaxed opacity-75">{intro}</p>
+              <div
+                className="prose-note mt-7 max-w-[60ch] leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: bio }}
+              />
             </>
           )}
         </header>
@@ -109,7 +113,7 @@ function NotepageAbout() {
                 dangerouslySetInnerHTML={{ __html: bio }}
                 className="prose-note mt-3 min-h-48 min-w-0 max-w-full overflow-x-auto border border-current/20 bg-transparent p-3 outline-none focus:border-current/50"
               />
-              <p className="mt-2 text-xs opacity-50">This content appears below your About title on each note.</p>
+              <p className="mt-2 text-xs opacity-50">This content appears directly below your About title.</p>
             </div>
           )}
 
