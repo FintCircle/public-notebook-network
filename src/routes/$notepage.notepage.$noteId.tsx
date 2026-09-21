@@ -1,5 +1,4 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Guestnote } from "@/components/guestnote";
 import { LikeButton } from "@/components/like-button";
 import { NotetagList } from "@/components/notetag-list";
 import { getNote, getNotepage } from "@/data/inktella";
@@ -43,15 +42,10 @@ function NoteView() {
       </Link>
 
       <article className="measure mt-12">
-        <h1 className="text-3xl leading-tight tracking-tight sm:text-[2.1rem]">
-          {note.title}
-        </h1>
+        <h1 className="text-3xl leading-tight tracking-tight sm:text-[2.1rem]">{note.title}</h1>
         <p className="mt-3 text-sm opacity-55">{note.date}</p>
 
-        <div
-          className="prose-note mt-10"
-          dangerouslySetInnerHTML={{ __html: note.html }}
-        />
+        <div className="prose-note mt-10" dangerouslySetInnerHTML={{ __html: note.html }} />
 
         <div className="mt-12">
           <NotetagList tags={note.notetags} notepage={notepage} />
@@ -63,9 +57,11 @@ function NoteView() {
 
         <footer className="mt-16 text-right">
           <p className="hand text-2xl">— {np.owner}</p>
-          <div className="prose-note mt-1 ml-auto max-w-[38ch] text-sm opacity-60" dangerouslySetInnerHTML={{ __html: np.ownerBio }} />
+          <div
+            className="prose-note mt-1 ml-auto max-w-[38ch] text-sm opacity-60"
+            dangerouslySetInnerHTML={{ __html: np.ownerBio }}
+          />
         </footer>
-        <Guestnote notepage={np} />
       </article>
     </main>
   );
