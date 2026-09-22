@@ -48,6 +48,12 @@ function CustomizeNotepage() {
   const [coverUrl, setCoverUrl] = useState("");
   const [overlayOpacity, setOverlayOpacity] = useState(np?.appearance.overlayOpacity ?? 0.2);
   const [cover, setCover] = useState(np?.portrait ?? "");
+  const [header, setHeader] = useState(np?.header ?? {
+    navLabel: np?.name ?? "Notepage",
+    eyebrow: "the notebook entries",
+    title: `Notes from ${np?.owner ?? "you"}`,
+    description: np?.description ?? "",
+  });
   useEffect(() => () => {
     if (backgroundImage.startsWith("blob:")) URL.revokeObjectURL(backgroundImage);
     if (cover.startsWith("blob:")) URL.revokeObjectURL(cover);
@@ -102,6 +108,25 @@ function CustomizeNotepage() {
         </div>
         <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_0.8fr]">
           <section className="flex flex-col gap-6">
+            <div className="rounded-2xl border border-border/70 bg-card p-5 sm:p-7">
+              <div className="flex items-center gap-2">
+                <Type aria-hidden className="size-5" />
+                <h2 className="text-lg font-semibold">Upper section</h2>
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">Write the welcome text readers see before your notes.</p>
+              <div className="mt-5 grid gap-4">
+                {([['navLabel', 'Back-link label'], ['eyebrow', 'Small handwritten line'], ['title', 'Heading'], ['description', 'Description']] as const).map(([field, label]) => (
+                  <label key={field} className="grid gap-2 text-sm font-medium">
+                    {label}
+                    {field === "description" ? (
+                      <textarea value={header[field]} onChange={(event) => setHeader({ ...header, [field]: event.target.value })} rows={3} className="rounded-xl border border-border/70 bg-background px-3 py-2 font-normal" />
+                    ) : (
+                      <input value={header[field]} onChange={(event) => setHeader({ ...header, [field]: event.target.value })} className="rounded-xl border border-border/70 bg-background px-3 py-2 font-normal" />
+                    )}
+                  </label>
+                ))}
+              </div>
+            </div>
             <div className="rounded-2xl border border-border/70 bg-card p-5 sm:p-7">
               <div className="flex items-center gap-2">
                 <Image aria-hidden className="size-5" />
@@ -254,12 +279,13 @@ function CustomizeNotepage() {
                 <div className="absolute inset-0" style={{ background: `rgba(255,255,255,${overlayOpacity})` }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                 <div className="relative flex h-full flex-col justify-end p-6 text-white">
-                  <p className="text-xs uppercase tracking-[0.16em]">{np.owner}</p>
+                  <p className="text-xs uppercase tracking-[0.16em]">{header.navLabel}</p>
+                  <p className="hand mt-4 text-xl">{header.eyebrow}</p>
                   <h2 className="mt-2 text-3xl" style={{ fontFamily: fontPack.heading }}>
-                    {np.name}
+                    {header.title}
                   </h2>
                   <p className="mt-2 text-sm opacity-85" style={{ fontFamily: fontPack.body }}>
-                    {np.description}
+                    {header.description}
                   </p>
                 </div>
               </div>
