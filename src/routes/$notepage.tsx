@@ -1,7 +1,7 @@
 import { createFileRoute, notFound, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useRef } from "react";
 import { NotepageNetworkMenu } from "@/components/notepage-network-menu";
-import { getNotepage, notepageAppearance, notepages, themeStyle } from "@/data/inktella";
+import { getNotepage, notepages, themeStyle } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage")({
   beforeLoad: ({ params }) => {
@@ -34,15 +34,8 @@ function NotepageShell() {
     }
   }
 
-  const appearance = notepageAppearance(np);
-  const backgroundStyle = !isCover && appearance.backgroundType === "image" && appearance.backgroundImage
-    ? { backgroundImage: `url(${appearance.backgroundImage})` }
-    : undefined;
-
   return (
     <div className={`notepage-theme relative min-h-screen ${isCover ? "notepage-cover-page" : "notepage-content-page"}`} style={themeStyle(np)} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-      <div className="notepage-background" aria-hidden="true" style={backgroundStyle} />
-      <div className="notepage-background-overlay" aria-hidden="true" />
       {/* Required: the Notepage home, notes and local Notetag pages render here. */}
       <div className="relative z-10"><Outlet /></div>
       {!isCover && <NotepageNetworkMenu notepage={np} />}
