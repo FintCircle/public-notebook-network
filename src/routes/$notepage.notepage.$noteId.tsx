@@ -32,20 +32,20 @@ function NoteView() {
   if (!note || !np) return null;
 
   return (
-    <main className="mx-auto max-w-2xl px-5 py-12">
+    <main className="note-detail-page mx-auto max-w-2xl bg-white px-5 py-12 text-black sm:px-8 sm:py-16">
       <Link
         to="/$notepage"
         params={{ notepage }}
-        className="hand text-xl opacity-70 hover:opacity-100"
+        className="text-sm font-medium tracking-wide text-black/60 transition-colors hover:text-black"
       >
         ← entry from {np.name}
       </Link>
 
-      <article className="notepage-reading-surface measure mt-12 px-5 py-6 sm:px-8 sm:py-8">
-        <h1 className="text-3xl leading-tight tracking-tight sm:text-[2.1rem]">{note.title}</h1>
-        <p className="mt-3 text-sm opacity-55">{note.date}</p>
+      <article className="measure mt-16">
+        <h1 className="font-body text-[2.25rem] font-medium leading-[1.08] tracking-[-0.03em] sm:text-5xl">{note.title}</h1>
+        <p className="mt-5 text-sm tracking-[0.12em] text-black/55 uppercase">{note.date}</p>
 
-        <div className="prose-note mt-10" dangerouslySetInnerHTML={{ __html: note.html }} />
+        <div className="note-detail-copy prose-note mt-12" dangerouslySetInnerHTML={{ __html: note.html }} />
 
         <div className="mt-12">
           <NotetagList tags={note.notetags} notepage={notepage} />
