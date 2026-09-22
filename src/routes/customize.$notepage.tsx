@@ -29,7 +29,7 @@ const fontPacks = [
   },
 ] as const;
 
-export const Route = createFileRoute("/notepages/$notepage/customize")({
+export const Route = createFileRoute("/customize/$notepage")({
   beforeLoad: ({ params }) => {
     if (!getNotepage(params.notepage)) throw notFound();
   },
