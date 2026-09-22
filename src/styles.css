@@ -125,13 +125,20 @@
   background-repeat: no-repeat;
 }
 
+.notepage-reading-surface {
+  border-radius: 1.25rem;
+  background: color-mix(in oklab, var(--np-bg, var(--paper)) 78%, transparent);
+  box-shadow: 0 1rem 3rem color-mix(in oklab, var(--np-ink, var(--ink)) 8%, transparent);
+  backdrop-filter: blur(3px);
+}
+
 .notepage-background-overlay {
   position: fixed;
   inset: 0;
   z-index: 1;
   width: 100vw;
   height: 100dvh;
-  background: color-mix(in oklab, var(--np-bg, var(--paper)) calc(var(--np-overlay-opacity, 0.2) * 100%), transparent);
+  background: color-mix(in oklab, var(--np-bg, var(--paper)) calc(max(var(--np-overlay-opacity, 0.2), 0.28) * 100%), transparent);
   pointer-events: none;
 }
 
