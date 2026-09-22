@@ -133,6 +133,11 @@
   mask-image: radial-gradient(ellipse at center 38%, #000 25%, rgba(0, 0, 0, 0.94) 43%, rgba(0, 0, 0, 0.58) 62%, rgba(0, 0, 0, 0.18) 82%, transparent 100%);
 }
 
+.notepage-cover-page .notepage-background,
+.notepage-cover-page .notepage-background-overlay {
+  display: none;
+}
+
 .notepage-cover {
   background-color: #fff;
   background-image: repeating-linear-gradient(
