@@ -21,6 +21,13 @@ export type Notepage = {
     body: string;
     hand: string;
   };
+  appearance: {
+    backgroundType: "image" | "color";
+    backgroundImage?: string;
+    backgroundColor: string;
+    backgroundPosition: string;
+    overlayOpacity: number;
+  };
 };
 
 export type Note = {
@@ -59,6 +66,13 @@ export const notepages: Notepage[] = [
       body: '"DM Sans", sans-serif',
       hand: '"Caveat", cursive',
     },
+    appearance: {
+      backgroundType: "image",
+      backgroundImage: derrickPortrait,
+      backgroundColor: "#d8c9b6",
+      backgroundPosition: "center",
+      overlayOpacity: 0.2,
+    },
   },
   {
     slug: "amara",
@@ -79,6 +93,13 @@ export const notepages: Notepage[] = [
       body: '"DM Sans", sans-serif',
       hand: '"Gloria Hallelujah", cursive',
     },
+    appearance: {
+      backgroundType: "image",
+      backgroundImage: amaraPortrait,
+      backgroundColor: "#b7c7cb",
+      backgroundPosition: "center",
+      overlayOpacity: 0.3,
+    },
   },
   {
     slug: "joel",
@@ -98,6 +119,13 @@ export const notepages: Notepage[] = [
       heading: '"Space Grotesk", sans-serif',
       body: '"Lora", serif',
       hand: '"Caveat", cursive',
+    },
+    appearance: {
+      backgroundType: "image",
+      backgroundImage: joelPortrait,
+      backgroundColor: "#b8c1af",
+      backgroundPosition: "center",
+      overlayOpacity: 0.24,
     },
   },
 ];
@@ -247,5 +275,8 @@ export function themeStyle(np: Notepage): React.CSSProperties {
     ["--np-heading" as string]: np.theme.heading,
     ["--np-body" as string]: np.theme.body,
     ["--np-hand" as string]: np.theme.hand,
+    ["--np-background-color" as string]: np.appearance.backgroundColor,
+    ["--np-background-position" as string]: np.appearance.backgroundPosition,
+    ["--np-overlay-opacity" as string]: np.appearance.overlayOpacity,
   };
 }

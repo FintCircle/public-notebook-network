@@ -40,7 +40,7 @@ function CustomizeNotepage() {
   const { notepage: slug } = Route.useParams();
   const np = getNotepage(slug);
   const [fontPack, setFontPack] = useState(fontPacks[0]);
-  const [background, setBackground] = useState(np?.theme.bg ?? "#f5f1e8");
+  const [background, setBackground] = useState(np?.appearance.backgroundColor ?? "#f5f1e8");
   const [cover, setCover] = useState(np?.portrait ?? "");
   if (!np) return null;
 
@@ -152,7 +152,7 @@ function CustomizeNotepage() {
                 <h2 className="text-lg font-semibold">Notes background</h2>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">
-                Set the paper color readers see on your notes and pages.
+                Set the fallback color that fills the viewport behind your notes and pages.
               </p>
               <div className="mt-5 flex items-center gap-4">
                 <input
