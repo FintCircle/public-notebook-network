@@ -86,10 +86,10 @@ function MyNotepages() {
                         </Link>
                       </Button>
                       <Button variant="outline" asChild>
-                        <Link to="/notepages/$notepage/customize" params={{ notepage: np.slug }}>
+                        <a href={`/customize/${np.slug}`}>
                           <Palette aria-hidden />
                           Customize
-                        </Link>
+                        </a>
                       </Button>
                     </div>
                   </div>
