@@ -33,6 +33,7 @@ import { Route as TopicsIndexRouteImport } from './routes/topics.index'
 import { Route as TopicsTagRouteImport } from './routes/topics.$tag'
 import { Route as NotepageNotepageNoteIdRouteImport } from './routes/$notepage.notepage.$noteId'
 import { Route as NotepageNotetagsTagRouteImport } from './routes/$notepage.notetags.$tag'
+import { Route as NotepagesNotepageCustomizeRouteImport } from './routes/notepages.$notepage.customize'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -154,6 +155,12 @@ const NotepageNotetagsTagRoute = NotepageNotetagsTagRouteImport.update({
   path: '/notetags/$tag',
   getParentRoute: () => NotepageRoute,
 } as any)
+const NotepagesNotepageCustomizeRoute =
+  NotepagesNotepageCustomizeRouteImport.update({
+    id: '/customize',
+    path: '/customize',
+    getParentRoute: () => NotepagesNotepageRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -172,7 +179,7 @@ export interface FileRoutesByFullPath {
   '/$notepage/about': typeof NotepageAboutRoute
   '/$notepage/guestnote': typeof NotepageGuestnoteRoute
   '/$notepage/notes': typeof NotepageNotesRoute
-  '/notepages/$notepage': typeof NotepagesNotepageRoute
+  '/notepages/$notepage': typeof NotepagesNotepageRouteWithChildren
   '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage/': typeof NotepageIndexRoute
@@ -180,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/topics/': typeof TopicsIndexRoute
   '/$notepage/notepage/$noteId': typeof NotepageNotepageNoteIdRoute
   '/$notepage/notetags/$tag': typeof NotepageNotetagsTagRoute
+  '/notepages/$notepage/customize': typeof NotepagesNotepageCustomizeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -196,7 +204,7 @@ export interface FileRoutesByTo {
   '/$notepage/about': typeof NotepageAboutRoute
   '/$notepage/guestnote': typeof NotepageGuestnoteRoute
   '/$notepage/notes': typeof NotepageNotesRoute
-  '/notepages/$notepage': typeof NotepagesNotepageRoute
+  '/notepages/$notepage': typeof NotepagesNotepageRouteWithChildren
   '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage': typeof NotepageIndexRoute
@@ -204,6 +212,7 @@ export interface FileRoutesByTo {
   '/topics': typeof TopicsIndexRoute
   '/$notepage/notepage/$noteId': typeof NotepageNotepageNoteIdRoute
   '/$notepage/notetags/$tag': typeof NotepageNotetagsTagRoute
+  '/notepages/$notepage/customize': typeof NotepagesNotepageCustomizeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -223,7 +232,7 @@ export interface FileRoutesById {
   '/$notepage/about': typeof NotepageAboutRoute
   '/$notepage/guestnote': typeof NotepageGuestnoteRoute
   '/$notepage/notes': typeof NotepageNotesRoute
-  '/notepages/$notepage': typeof NotepagesNotepageRoute
+  '/notepages/$notepage': typeof NotepagesNotepageRouteWithChildren
   '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage/': typeof NotepageIndexRoute
@@ -231,6 +240,7 @@ export interface FileRoutesById {
   '/topics/': typeof TopicsIndexRoute
   '/$notepage/notepage/$noteId': typeof NotepageNotepageNoteIdRoute
   '/$notepage/notetags/$tag': typeof NotepageNotetagsTagRoute
+  '/notepages/$notepage/customize': typeof NotepagesNotepageCustomizeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/topics/'
     | '/$notepage/notepage/$noteId'
     | '/$notepage/notetags/$tag'
+    | '/notepages/$notepage/customize'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/topics'
     | '/$notepage/notepage/$noteId'
     | '/$notepage/notetags/$tag'
+    | '/notepages/$notepage/customize'
   id:
     | '__root__'
     | '/'
@@ -309,6 +321,7 @@ export interface FileRouteTypes {
     | '/topics/'
     | '/$notepage/notepage/$noteId'
     | '/$notepage/notetags/$tag'
+    | '/notepages/$notepage/customize'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -499,6 +512,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotepageNotetagsTagRouteImport
       parentRoute: typeof NotepageRoute
     }
+    '/notepages/$notepage/customize': {
+      id: '/notepages/$notepage/customize'
+      path: '/customize'
+      fullPath: '/notepages/$notepage/customize'
+      preLoaderRoute: typeof NotepagesNotepageCustomizeRouteImport
+      parentRoute: typeof NotepagesNotepageRoute
+    }
   }
 }
 
@@ -524,14 +544,25 @@ const NotepageRouteWithChildren = NotepageRoute._addFileChildren(
   NotepageRouteChildren,
 )
 
+interface NotepagesNotepageRouteChildren {
+  NotepagesNotepageCustomizeRoute: typeof NotepagesNotepageCustomizeRoute
+}
+
+const NotepagesNotepageRouteChildren: NotepagesNotepageRouteChildren = {
+  NotepagesNotepageCustomizeRoute: NotepagesNotepageCustomizeRoute,
+}
+
+const NotepagesNotepageRouteWithChildren =
+  NotepagesNotepageRoute._addFileChildren(NotepagesNotepageRouteChildren)
+
 interface NotepagesRouteChildren {
-  NotepagesNotepageRoute: typeof NotepagesNotepageRoute
+  NotepagesNotepageRoute: typeof NotepagesNotepageRouteWithChildren
   NotepagesNewRoute: typeof NotepagesNewRoute
   NotepagesIndexRoute: typeof NotepagesIndexRoute
 }
 
 const NotepagesRouteChildren: NotepagesRouteChildren = {
-  NotepagesNotepageRoute: NotepagesNotepageRoute,
+  NotepagesNotepageRoute: NotepagesNotepageRouteWithChildren,
   NotepagesNewRoute: NotepagesNewRoute,
   NotepagesIndexRoute: NotepagesIndexRoute,
 }

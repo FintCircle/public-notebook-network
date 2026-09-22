@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, Eye, PenLine, Plus } from "lucide-react";
+import { BookOpen, Eye, Palette, PenLine, Plus } from "lucide-react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
 import { notepages, notesOf } from "@/data/inktella";
@@ -78,12 +78,20 @@ function MyNotepages() {
                     </div>
                   </div>
                   <div className="mt-7">
-                    <Button variant="outline" asChild>
-                      <Link to="/notepages/$notepage" params={{ notepage: np.slug }}>
-                        <PenLine aria-hidden />
-                        Notes <span className="opacity-50">{entries.length}</span>
-                      </Link>
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="outline" asChild>
+                        <Link to="/notepages/$notepage" params={{ notepage: np.slug }}>
+                          <PenLine aria-hidden />
+                          Notes <span className="opacity-50">{entries.length}</span>
+                        </Link>
+                      </Button>
+                      <Button variant="outline" asChild>
+                        <Link to="/notepages/$notepage/customize" params={{ notepage: np.slug }}>
+                          <Palette aria-hidden />
+                          Customize
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </article>
