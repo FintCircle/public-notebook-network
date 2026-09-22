@@ -28,6 +28,12 @@ export type Notepage = {
     backgroundPosition: string;
     overlayOpacity: number;
   };
+  header: {
+    navLabel: string;
+    eyebrow: string;
+    title: string;
+    description: string;
+  };
 };
 
 export type Note = {
@@ -73,6 +79,12 @@ export const notepages: Notepage[] = [
       backgroundPosition: "center",
       overlayOpacity: 0.2,
     },
+    header: {
+      navLabel: "Derrick's Notes",
+      eyebrow: "the notebook entries",
+      title: "Notes from Derrick Mbabazi",
+      description: "Thoughts, things I'm building, and whatever else ends up here.",
+    },
   },
   {
     slug: "amara",
@@ -100,6 +112,12 @@ export const notepages: Notepage[] = [
       backgroundPosition: "center",
       overlayOpacity: 0.3,
     },
+    header: {
+      navLabel: "Things I Notice",
+      eyebrow: "the notebook entries",
+      title: "Notes from Amara",
+      description: "Small observations, mostly about mornings.",
+    },
   },
   {
     slug: "joel",
@@ -126,6 +144,12 @@ export const notepages: Notepage[] = [
       backgroundColor: "#b8c1af",
       backgroundPosition: "center",
       overlayOpacity: 0.24,
+    },
+    header: {
+      navLabel: "Joel, rebuilding",
+      eyebrow: "the notebook entries",
+      title: "Notes from Joel",
+      description: "Notes from the second attempt.",
     },
   },
 ];
