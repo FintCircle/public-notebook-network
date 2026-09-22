@@ -7,7 +7,7 @@ import {
   Newspaper,
   Tags,
   PenLine,
-  Search,
+  Shuffle,
   Settings2,
   UserRound,
   SlidersHorizontal,
@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import derrickPortrait from "@/assets/derrick-portrait.jpg";
 import { useAuth } from "@/lib/auth";
+import { useRandomizer } from "@/lib/randomizer";
 
 const items = [
   { to: "/notella", label: "Notella", icon: Newspaper },
@@ -32,6 +33,7 @@ const utilityLinkClass =
 export function SiteNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, signOut } = useAuth();
+  const { randomize } = useRandomizer();
   const navigate = useNavigate();
 
   return (
@@ -46,9 +48,15 @@ export function SiteNav() {
               Inktella
             </Link>
             <div className="flex items-center gap-2">
-              <Link to="/explore" className={utilityLinkClass} aria-label="Search" title="Search">
-                <Search aria-hidden />
-              </Link>
+              <button
+                type="button"
+                className={utilityLinkClass}
+                aria-label="Open a random note"
+                title="Surprise me with a random note"
+                onClick={randomize}
+              >
+                <Shuffle aria-hidden />
+              </button>
               {isAuthenticated ? (
                 <button
                   type="button"
