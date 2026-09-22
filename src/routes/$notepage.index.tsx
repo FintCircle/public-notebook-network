@@ -54,7 +54,7 @@ function NotepageHome() {
   };
 
   return (
-    <main className="h-[100dvh] w-full overflow-hidden bg-black">
+    <main className="h-[100dvh] w-full overflow-hidden bg-transparent">
       <section className="notepage-cover relative flex h-[100dvh] min-h-[100dvh] w-full overflow-hidden px-7 pb-9 pt-8 text-[var(--np-cover-ink)] sm:px-16 sm:pb-14 sm:pt-12">
         <div className="relative z-10 flex w-full flex-col">
           <div className="flex items-start justify-between">
