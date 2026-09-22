@@ -41,7 +41,7 @@ function NoteView() {
         ← entry from {np.name}
       </Link>
 
-      <article className="measure mt-12">
+      <article className="notepage-reading-surface measure mt-12 px-5 py-6 sm:px-8 sm:py-8">
         <h1 className="text-3xl leading-tight tracking-tight sm:text-[2.1rem]">{note.title}</h1>
         <p className="mt-3 text-sm opacity-55">{note.date}</p>
 

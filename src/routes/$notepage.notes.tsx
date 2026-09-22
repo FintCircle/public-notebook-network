@@ -24,7 +24,7 @@ function NotepageNotes() {
         <p className="mt-5 max-w-[42ch] text-base leading-relaxed opacity-65 sm:text-lg">{np.description}</p>
       </header>
 
-      <section aria-label={`${np.name} notes`} className="divide-y divide-current/10">
+      <section aria-label={`${np.name} notes`} className="notepage-reading-surface divide-y divide-current/10 px-5 sm:px-8">
         {entries.map((note) => <NoteEntry key={note.id} note={note} />)}
       </section>
     </main>
