@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Check, Circle, ShieldCheck } from "lucide-react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
+import { AuthOnly } from "@/lib/auth";
 
 export const Route = createFileRoute("/ink-program")({
   head: () => ({
@@ -29,6 +30,7 @@ function InkProgram() {
   const complete = requirements.every((requirement) => requirement.complete);
 
   return (
+    <AuthOnly message="The Ink Program is where notebooks get paid. First, let the notebook know your name.">
     <div className="min-h-screen">
       <SiteNav />
       <main className="mx-auto max-w-3xl px-5 py-12 sm:py-16">
@@ -126,5 +128,6 @@ function InkProgram() {
       </main>
       <SiteFooter />
     </div>
+    </AuthOnly>
   );
 }

@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Guestnote } from "@/components/guestnote";
 import { getNotepage } from "@/data/inktella";
+import { AuthOnly } from "@/lib/auth";
 
 export const Route = createFileRoute("/$notepage/guestnote")({
   component: GuestnotePage,
@@ -13,6 +14,7 @@ function GuestnotePage() {
   if (!np) return null;
 
   return (
+    <AuthOnly message="Guestnotes are for verified humans. Even the kind ones need a name tag.">
     <main className="min-h-screen overflow-x-hidden bg-transparent px-5 pb-28 pt-7 sm:px-10 sm:pb-16 sm:pt-12">
       <div className="mx-auto max-w-5xl">
         <Link
@@ -40,5 +42,6 @@ function GuestnotePage() {
         </p>
       </div>
     </main>
+    </AuthOnly>
   );
 }
