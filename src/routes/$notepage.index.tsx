@@ -86,7 +86,7 @@ function NotepageHome() {
               <img
                 src={np.portrait}
                 alt={`${np.owner}, owner of ${np.name}`}
-                className="notepage-owner-image mt-7 mb-3 h-auto w-[min(42vw,9.5rem)] rounded-[38%] sm:mt-5 sm:mb-4 sm:w-[min(27vw,17rem)]"
+                className="notepage-owner-image mt-7 mb-3 h-auto w-[min(42vw,9.5rem)] sm:mt-5 sm:mb-4 sm:w-[min(27vw,17rem)]"
               />
               <div className="mb-3 flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.16em] opacity-85 sm:mb-5 sm:gap-3 sm:text-sm sm:tracking-[0.2em]">
                 <span>{np.owner}</span>

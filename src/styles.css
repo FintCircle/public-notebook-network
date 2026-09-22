@@ -129,8 +129,8 @@
   aspect-ratio: 4 / 5;
   object-fit: cover;
   object-position: center 25%;
-  -webkit-mask-image: radial-gradient(ellipse at center 38%, #000 29%, rgba(0, 0, 0, 0.9) 49%, rgba(0, 0, 0, 0.4) 70%, transparent 94%);
-  mask-image: radial-gradient(ellipse at center 38%, #000 29%, rgba(0, 0, 0, 0.9) 49%, rgba(0, 0, 0, 0.4) 70%, transparent 94%);
+  -webkit-mask-image: radial-gradient(ellipse at center 38%, #000 25%, rgba(0, 0, 0, 0.94) 43%, rgba(0, 0, 0, 0.58) 62%, rgba(0, 0, 0, 0.18) 82%, transparent 100%);
+  mask-image: radial-gradient(ellipse at center 38%, #000 25%, rgba(0, 0, 0, 0.94) 43%, rgba(0, 0, 0, 0.58) 62%, rgba(0, 0, 0, 0.18) 82%, transparent 100%);
 }
 
 .notepage-cover {
@@ -148,8 +148,8 @@
 
 @media (max-width: 639px) {
   .notepage-owner-image {
-    -webkit-mask-image: radial-gradient(ellipse at center 36%, #000 25%, rgba(0, 0, 0, 0.88) 47%, rgba(0, 0, 0, 0.34) 69%, transparent 93%);
-    mask-image: radial-gradient(ellipse at center 36%, #000 25%, rgba(0, 0, 0, 0.88) 47%, rgba(0, 0, 0, 0.34) 69%, transparent 93%);
+    -webkit-mask-image: radial-gradient(ellipse at center 36%, #000 21%, rgba(0, 0, 0, 0.92) 41%, rgba(0, 0, 0, 0.52) 61%, rgba(0, 0, 0, 0.14) 81%, transparent 100%);
+    mask-image: radial-gradient(ellipse at center 36%, #000 21%, rgba(0, 0, 0, 0.92) 41%, rgba(0, 0, 0, 0.52) 61%, rgba(0, 0, 0, 0.14) 81%, transparent 100%);
   }
 }
 
