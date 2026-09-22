@@ -5,6 +5,7 @@ import { SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AuthOnly } from "@/lib/auth";
 
 export const Route = createFileRoute("/notepages/new")({
   head: () => ({ meta: [
@@ -26,6 +27,10 @@ const backgrounds = [
 const types = ["Space Grotesk", "Instrument Serif", "Lora"] as const;
 
 function NewNotepage() {
+  return <AuthOnly message="Creating a Notepage is a big step. The notebook would like to know who is holding the pen."><NewNotepageForm /></AuthOnly>;
+}
+
+function NewNotepageForm() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");

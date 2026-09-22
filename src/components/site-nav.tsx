@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   BadgeDollarSign,
@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import derrickPortrait from "@/assets/derrick-portrait.jpg";
+import { useAuth } from "@/lib/auth";
 
 const items = [
   { to: "/notella", label: "Notella", icon: Newspaper },
@@ -29,6 +30,8 @@ const utilityLinkClass =
 
 export function SiteNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -45,6 +48,7 @@ export function SiteNav() {
               <Link to="/explore" className={utilityLinkClass} aria-label="Search" title="Search">
                 <Search aria-hidden />
               </Link>
+              {!isAuthenticated && <Link to="/sign-in" className="rounded-full border border-primary px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/10">Join</Link>}
               <button
                 type="button"
                 className="size-10 overflow-hidden rounded-full ring-1 ring-border transition-transform hover:scale-105"
@@ -122,8 +126,8 @@ export function SiteNav() {
                 className="size-14 rounded-full object-cover ring-1 ring-border"
               />
               <div>
-                <p className="font-medium">Derrick</p>
-                <p className="text-sm text-muted-foreground">Signed in</p>
+                <p className="font-medium">{isAuthenticated ? "Derrick" : "Just browsing"}</p>
+                <p className="text-sm text-muted-foreground">{isAuthenticated ? "Signed in" : "Not signed in"}</p>
               </div>
             </div>
             <nav className="mt-8 flex flex-col gap-2" aria-label="Profile settings">
@@ -145,9 +149,9 @@ export function SiteNav() {
             <button
               type="button"
               className="mt-auto border-t border-border pt-5 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={() => { if (isAuthenticated) signOut(); else navigate({ to: "/sign-in" }); setIsMenuOpen(false); }}
             >
-              Sign out
+              {isAuthenticated ? "Sign out" : "Join / Sign in"}
             </button>
           </aside>
         </div>

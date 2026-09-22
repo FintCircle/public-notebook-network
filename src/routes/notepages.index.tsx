@@ -3,6 +3,7 @@ import { BookOpen, Eye, Palette, PenLine, Plus } from "lucide-react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
 import { notepages, notesOf } from "@/data/inktella";
+import { AuthOnly } from "@/lib/auth";
 
 export const Route = createFileRoute("/notepages/")({
   head: () => ({
@@ -25,6 +26,7 @@ function MyNotepages() {
   const mine = notepages.slice(0, 2);
 
   return (
+    <AuthOnly message="Your notebooks are private until you tell us who you are. The public ones can wait outside.">
     <div className="min-h-screen">
       <SiteNav />
       <main className="mx-auto max-w-4xl px-5 py-12 sm:py-16">
@@ -101,5 +103,6 @@ function MyNotepages() {
       </main>
       <SiteFooter />
     </div>
+    </AuthOnly>
   );
 }

@@ -20,6 +20,7 @@ import { Route as NotepagesRouteImport } from './routes/notepages'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WriteRouteImport } from './routes/write'
 import { Route as NotepageIndexRouteImport } from './routes/$notepage.index'
@@ -88,6 +89,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -173,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/sign-in': typeof SignInRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
   '/$notepage/about': typeof NotepageAboutRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/sign-in': typeof SignInRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
   '/$notepage/about': typeof NotepageAboutRoute
@@ -226,6 +234,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/sign-in': typeof SignInRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
   '/$notepage/about': typeof NotepageAboutRoute
@@ -255,6 +264,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/profile'
+    | '/sign-in'
     | '/terms'
     | '/write'
     | '/$notepage/about'
@@ -280,6 +290,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/profile'
+    | '/sign-in'
     | '/terms'
     | '/write'
     | '/$notepage/about'
@@ -307,6 +318,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/profile'
+    | '/sign-in'
     | '/terms'
     | '/write'
     | '/$notepage/about'
@@ -335,6 +347,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
+  SignInRoute: typeof SignInRoute
   TermsRoute: typeof TermsRoute
   WriteRoute: typeof WriteRoute
   CustomizeNotepageRoute: typeof CustomizeNotepageRoute
@@ -419,6 +432,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -572,6 +592,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
+  SignInRoute: SignInRoute,
   TermsRoute: TermsRoute,
   WriteRoute: WriteRoute,
   CustomizeNotepageRoute: CustomizeNotepageRoute,

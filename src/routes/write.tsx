@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "reac
 import { SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
 import { getNotepage, notepages } from "@/data/inktella";
+import { AuthOnly } from "@/lib/auth";
 
 export const Route = createFileRoute("/write")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -31,6 +32,10 @@ export const Route = createFileRoute("/write")({
 type ToolbarState = { top: number; left: number } | null;
 
 export default function Write() {
+  return <AuthOnly message="The blank page is waiting, but it prefers introductions first."><WriteContent /></AuthOnly>;
+}
+
+function WriteContent() {
   const { notepage } = Route.useSearch();
   const selectedNotepage = notepage ? getNotepage(notepage) : undefined;
 
