@@ -104,7 +104,7 @@ export function SiteNav() {
         </div>
       </header>
 
-      {isMenuOpen && (
+      {isAuthenticated && isMenuOpen && (
         <div
           className="fixed inset-0 z-50"
           role="dialog"
