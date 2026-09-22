@@ -105,12 +105,40 @@
 
 /* A themed Notepage sets these; defaults keep the platform look. */
 @utility notepage-theme {
-  background-color: var(--np-bg, var(--paper));
+  background-color: var(--np-background-color, var(--np-bg, var(--paper)));
   color: var(--np-ink, var(--ink));
   --font-heading-family: var(--np-heading, "Space Grotesk", sans-serif);
   --font-body-family: var(--np-body, "DM Sans", sans-serif);
   --font-hand-family: var(--np-hand, "Caveat", cursive);
   --np-cover-ink: var(--notepage-cover-ink);
+}
+
+.notepage-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100dvh;
+  background-color: var(--np-background-color, var(--np-bg, var(--paper)));
+  background-position: var(--np-background-position, center);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.notepage-background-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  width: 100vw;
+  height: 100dvh;
+  background: color-mix(in oklab, var(--np-bg, var(--paper)) calc(var(--np-overlay-opacity, 0.2) * 100%), transparent);
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .notepage-background-overlay {
+    background: color-mix(in oklab, var(--np-bg, var(--paper)) calc(max(var(--np-overlay-opacity, 0.2), 0.32) * 100%), transparent);
+  }
 }
 
 @utility notepage-cover-shade {
