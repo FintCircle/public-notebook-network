@@ -1,15 +1,18 @@
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   BadgeDollarSign,
-  Bell,
   BookOpen,
   Compass,
-  Menu,
   Newspaper,
   Tags,
   PenLine,
   Search,
+  Settings2,
+  SlidersHorizontal,
+  X,
 } from "lucide-react";
+import derrickPortrait from "@/assets/derrick-portrait.jpg";
 
 const items = [
   { to: "/notella", label: "Notella", icon: Newspaper },
@@ -25,51 +28,131 @@ const utilityLinkClass =
   "inline-flex size-10 items-center justify-center rounded-full bg-muted text-foreground transition-colors hover:bg-accent";
 
 export function SiteNav() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
-    <header className="border-b border-border/70 bg-background">
-      <div className="mx-auto max-w-5xl">
-        <div className="flex items-center justify-between px-5 py-3">
-          <Link to="/" className="font-heading text-2xl font-semibold tracking-tight text-primary">
-            Inktella
-          </Link>
-          <div className="flex items-center gap-2">
-            <Link to="/explore" className={utilityLinkClass} aria-label="Search" title="Search">
-              <Search aria-hidden />
+    <>
+      <header className="border-b border-border/70 bg-background">
+        <div className="mx-auto max-w-5xl">
+          <div className="flex items-center justify-between px-5 py-3">
+            <Link
+              to="/"
+              className="font-heading text-2xl font-semibold tracking-tight text-primary"
+            >
+              Inktella
             </Link>
-            <button type="button" className={utilityLinkClass} aria-label="Menu" title="Menu">
-              <Menu aria-hidden />
-            </button>
-          </div>
-        </div>
-        <nav
-          className="grid grid-cols-6 border-t border-border/60 px-2"
-          aria-label="Primary navigation"
-        >
-          {[
-            ...items,
-            { to: "/topics", label: "Topics", icon: Tags },
-            { to: "/ink-program", label: "Ink Program", icon: BadgeDollarSign },
-          ].map((item, index) => {
-            const Icon = item.icon;
-            const href = item.to === "/write" ? "/write" : item.to;
-            return (
-              <Link
-                key={`${item.label}-${index}`}
-                to={href}
-                {...(item.to === "/write" ? { search: { notepage: undefined } } : {})}
-                activeProps={{ className: "text-primary" }}
-                className={iconLinkClass}
-                aria-label={item.label}
-                title={item.label}
-              >
-                <Icon aria-hidden />
-                <span className="sr-only">{item.label}</span>
+            <div className="flex items-center gap-2">
+              <Link to="/explore" className={utilityLinkClass} aria-label="Search" title="Search">
+                <Search aria-hidden />
               </Link>
-            );
-          })}
-        </nav>
-      </div>
-    </header>
+              <button
+                type="button"
+                className="size-10 overflow-hidden rounded-full ring-1 ring-border transition-transform hover:scale-105"
+                aria-label="Open your profile menu"
+                title="Profile menu"
+                onClick={() => setIsMenuOpen(true)}
+              >
+                <img
+                  src={derrickPortrait}
+                  alt="Derrick's profile"
+                  className="size-full object-cover"
+                />
+              </button>
+            </div>
+          </div>
+          <nav
+            className="grid grid-cols-6 border-t border-border/60 px-2"
+            aria-label="Primary navigation"
+          >
+            {[
+              ...items,
+              { to: "/topics", label: "Topics", icon: Tags },
+              { to: "/ink-program", label: "Ink Program", icon: BadgeDollarSign },
+            ].map((item, index) => {
+              const Icon = item.icon;
+              const href = item.to === "/write" ? "/write" : item.to;
+              return (
+                <Link
+                  key={`${item.label}-${index}`}
+                  to={href}
+                  {...(item.to === "/write" ? { search: { notepage: undefined } } : {})}
+                  activeProps={{ className: "text-primary" }}
+                  className={iconLinkClass}
+                  aria-label={item.label}
+                  title={item.label}
+                >
+                  <Icon aria-hidden />
+                  <span className="sr-only">{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      </header>
+
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 z-50"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Profile menu"
+        >
+          <button
+            type="button"
+            className="absolute inset-0 bg-foreground/20 backdrop-blur-[2px]"
+            aria-label="Close profile menu"
+            onClick={() => setIsMenuOpen(false)}
+          />
+          <aside className="absolute right-0 top-0 flex h-full w-[min(22rem,calc(100%-2rem))] flex-col border-l border-border bg-background p-6 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <span className="hand text-xl">your corner of Inktella</span>
+              <button
+                type="button"
+                className={iconLinkClass}
+                aria-label="Close profile menu"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <X aria-hidden />
+              </button>
+            </div>
+            <div className="mt-8 flex items-center gap-3">
+              <img
+                src={derrickPortrait}
+                alt="Derrick's profile"
+                className="size-14 rounded-full object-cover ring-1 ring-border"
+              />
+              <div>
+                <p className="font-medium">Derrick</p>
+                <p className="text-sm text-muted-foreground">Signed in</p>
+              </div>
+            </div>
+            <nav className="mt-8 flex flex-col gap-2" aria-label="Profile settings">
+              <Link
+                to="/topics"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
+              >
+                <SlidersHorizontal aria-hidden className="size-4" /> Manage topics
+              </Link>
+              <Link
+                to="/notepages"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
+              >
+                <Settings2 aria-hidden className="size-4" /> Manage Notepages
+              </Link>
+            </nav>
+            <button
+              type="button"
+              className="mt-auto border-t border-border pt-5 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Sign out
+            </button>
+          </aside>
+        </div>
+      )}
+    </>
   );
 }
 
