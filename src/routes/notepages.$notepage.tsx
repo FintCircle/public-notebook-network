@@ -60,59 +60,71 @@ function PostsManagement() {
   return (
     <div className="min-h-screen">
       <SiteNav />
-      <main className="mx-auto max-w-4xl px-5 py-10 sm:py-16">
+      <main className="min-h-[calc(100dvh-4rem)] w-full">
         <Link
           to="/notepages"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+          className="flex h-10 items-center gap-2 border-b border-border/70 px-5 text-xs text-muted-foreground transition-colors hover:text-foreground sm:px-8"
         >
           <ArrowLeft aria-hidden /> Back to Notepages
         </Link>
-        <section className="mt-8 overflow-hidden rounded-2xl border border-border/70 bg-card">
-          <div className="flex flex-wrap items-start justify-between gap-5 border-b border-border/70 p-5 sm:p-8">
+        <section className="overflow-hidden border-b border-border/70 bg-card">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/70 px-5 py-5 sm:px-8 sm:py-6">
             <div>
               <p className="text-sm text-muted-foreground">{notepage.owner}&apos;s Notepage</p>
-              <h1 className="mt-2 text-3xl font-semibold sm:text-5xl">Posts</h1>
-              <p className="mt-3 max-w-xl text-muted-foreground">{notepage.description}</p>
+              <h1 className="mt-1 text-3xl font-semibold">Posts</h1>
+              <p className="mt-1 max-w-xl text-sm text-muted-foreground">{notepage.description}</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button asChild>
-                <Link to="/write" search={{ notepage: notepage.slug }}>
-                  <PenLine aria-hidden />
-                  New Post
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/$notepage" params={{ notepage: notepage.slug }}>
-                  <ExternalLink aria-hidden />
-                  View
-                </Link>
-              </Button>
+              <div className="flex gap-2">
+                <Button asChild size="icon" aria-label="New post" title="New post">
+                  <Link to="/write" search={{ notepage: notepage.slug }}>
+                    <PenLine aria-hidden />
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  asChild
+                  size="icon"
+                  aria-label="View Notepage"
+                  title="View Notepage"
+                >
+                  <Link to="/$notepage" params={{ notepage: notepage.slug }}>
+                    <ExternalLink aria-hidden />
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-1 border-b border-border/70 bg-muted/40 p-2 text-sm">
-            <span className="rounded-lg bg-background px-4 py-2 font-medium shadow-sm">
+          <div className="flex border-b border-border/70 bg-muted/30 p-2 text-sm">
+            <span className="rounded-md bg-background px-4 py-2 font-medium shadow-sm">
               Published <span className="ml-1 opacity-50">{notes.length}</span>
             </span>
             <span className="px-4 py-2 text-muted-foreground">
               Drafts <span className="ml-1 opacity-50">0</span>
             </span>
           </div>
-          <div className="p-5 sm:p-8">
-            <div className="mb-5 flex items-center justify-between gap-3">
-              <h2 className="text-2xl font-semibold">{new Date().getFullYear()}</h2>
-              <div className="flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" onClick={exportNotes}>
+          <div className="px-5 py-5 sm:px-8 sm:py-6">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-xl font-semibold">{new Date().getFullYear()}</h2>
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Export notes"
+                  title="Export notes"
+                  onClick={exportNotes}
+                >
                   <Download aria-hidden />
-                  Export notes
                 </Button>
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="icon"
                   className="text-destructive hover:text-destructive"
+                  aria-label="Delete Notepage"
+                  title="Delete Notepage"
                   onClick={deleteNotepage}
                 >
                   <Trash2 aria-hidden />
-                  Delete
                 </Button>
               </div>
             </div>
@@ -122,7 +134,7 @@ function PostsManagement() {
                   key={note.id}
                   to="/$notepage/notepage/$noteId"
                   params={{ notepage: notepage.slug, noteId: note.id }}
-                  className="flex gap-4 py-4 transition-colors hover:bg-muted/50"
+                  className="flex gap-4 border-b border-border/60 py-3 transition-colors last:border-b-0 hover:bg-muted/50"
                 >
                   <time
                     dateTime={note.publishedAt}
