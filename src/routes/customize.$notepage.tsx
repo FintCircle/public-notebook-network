@@ -41,6 +41,9 @@ function CustomizeNotepage() {
   const np = getNotepage(slug);
   const [fontPack, setFontPack] = useState(fontPacks[0]);
   const [background, setBackground] = useState(np?.appearance.backgroundColor ?? "#f5f1e8");
+  const [backgroundType, setBackgroundType] = useState(np?.appearance.backgroundType ?? "image");
+  const [backgroundPosition, setBackgroundPosition] = useState(np?.appearance.backgroundPosition ?? "center");
+  const [overlayOpacity, setOverlayOpacity] = useState(np?.appearance.overlayOpacity ?? 0.2);
   const [cover, setCover] = useState(np?.portrait ?? "");
   if (!np) return null;
 
@@ -54,6 +57,9 @@ function CustomizeNotepage() {
           "--np-heading": fontPack.heading,
           "--np-body": fontPack.body,
           "--np-hand": fontPack.hand,
+          "--np-background-color": background,
+          "--np-background-position": backgroundPosition,
+          "--np-overlay-opacity": overlayOpacity,
         } as React.CSSProperties
       }
     >
@@ -149,23 +155,43 @@ function CustomizeNotepage() {
             <div className="rounded-2xl border border-border/70 bg-card p-5 sm:p-7">
               <div className="flex items-center gap-2">
                 <Palette aria-hidden className="size-5" />
-                <h2 className="text-lg font-semibold">Notes background</h2>
+                <h2 className="text-lg font-semibold">Page background</h2>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">
-                Set the fallback color that fills the viewport behind your notes and pages.
+                Control the fixed background behind every page in this Notepage.
               </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <button type="button" onClick={() => setBackgroundType("image")} className={`rounded-xl border p-3 text-left text-sm ${backgroundType === "image" ? "border-foreground bg-muted" : "border-border/70"}`}>
+                  Use portrait image
+                </button>
+                <button type="button" onClick={() => setBackgroundType("color")} className={`rounded-xl border p-3 text-left text-sm ${backgroundType === "color" ? "border-foreground bg-muted" : "border-border/70"}`}>
+                  Use solid color
+                </button>
+              </div>
               <div className="mt-5 flex items-center gap-4">
                 <input
-                  aria-label="Notes background color"
+                  aria-label="Page background color"
                   type="color"
                   value={background.startsWith("#") ? background : "#f5f1e8"}
                   onChange={(event) => setBackground(event.target.value)}
                   className="size-12 cursor-pointer rounded-lg border-0 bg-transparent p-0"
                 />
-                <span className="font-mono text-sm uppercase text-muted-foreground">
-                  {background}
-                </span>
+                <span className="font-mono text-sm uppercase text-muted-foreground">{background}</span>
               </div>
+              <label className="mt-5 block text-sm font-medium">
+                Image position
+                <select value={backgroundPosition} onChange={(event) => setBackgroundPosition(event.target.value)} className="mt-2 w-full rounded-lg border border-border/70 bg-background px-3 py-2">
+                  <option value="center">Center</option>
+                  <option value="center top">Top</option>
+                  <option value="center bottom">Bottom</option>
+                  <option value="left center">Left</option>
+                  <option value="right center">Right</option>
+                </select>
+              </label>
+              <label className="mt-5 block text-sm font-medium">
+                Reading overlay
+                <input aria-label="Reading overlay" type="range" min="0" max="0.7" step="0.05" value={overlayOpacity} onChange={(event) => setOverlayOpacity(Number(event.target.value))} className="mt-3 w-full" />
+              </label>
             </div>
           </section>
           <aside className="lg:sticky lg:top-6 lg:self-start">
@@ -177,15 +203,16 @@ function CustomizeNotepage() {
                 <div
                   className="absolute inset-0"
                   style={
-                    cover.startsWith("linear")
-                      ? { background: cover }
-                      : {
+                    backgroundType === "image"
+                      ? {
                           backgroundImage: `url(${cover})`,
                           backgroundSize: "cover",
-                          backgroundPosition: "center",
+                          backgroundPosition,
                         }
+                      : { backgroundColor: background }
                   }
                 />
+                <div className="absolute inset-0" style={{ background: `rgba(255,255,255,${overlayOpacity})` }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                 <div className="relative flex h-full flex-col justify-end p-6 text-white">
                   <p className="text-xs uppercase tracking-[0.16em]">{np.owner}</p>
