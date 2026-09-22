@@ -83,7 +83,7 @@
   }
 
   body {
-    background-color: var(--color-background);
+    background-color: transparent;
     color: var(--color-foreground);
     font-family: var(--font-body-family);
     -webkit-font-smoothing: antialiased;
@@ -105,7 +105,7 @@
 
 /* A themed Notepage sets these; defaults keep the platform look. */
 @utility notepage-theme {
-  background-color: var(--np-background-color, var(--np-bg, var(--paper)));
+  background-color: transparent;
   color: var(--np-ink, var(--ink));
   --font-heading-family: var(--np-heading, "Space Grotesk", sans-serif);
   --font-body-family: var(--np-body, "DM Sans", sans-serif);
@@ -139,7 +139,7 @@
 }
 
 .notepage-cover {
-  background-color: #fff;
+  background-color: transparent;
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
@@ -171,7 +171,7 @@
 }
 
 .notepage-content-page {
-  background: #fff;
+  background: transparent;
   color: #000;
 }
 
@@ -182,11 +182,11 @@
 
 .notepage-content-page main,
 .notepage-content-page section {
-  background-color: #fff;
+  background-color: transparent;
 }
 
 .notepage-theme:has(.note-detail-page) {
-  background: #fff;
+  background: transparent;
   color: #000;
 }
 
