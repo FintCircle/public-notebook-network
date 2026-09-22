@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
 import { SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
-import { getNotepage, notepages } from "@/data/inktella";
+import { getNotepage, interests, notepages } from "@/data/inktella";
 import { AuthOnly } from "@/lib/auth";
 
 export const Route = createFileRoute("/write")({
@@ -82,6 +82,7 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [toolbar, setToolbar] = useState<ToolbarState>(null);
   const [tags, setTags] = useState("");
+  const [topics, setTopics] = useState<string[]>([]);
   const [status, setStatus] = useState<string | null>(null);
   const [isAddingImage, setIsAddingImage] = useState(false);
 
@@ -262,14 +263,35 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
         <hr className="rule-irregular mt-12" />
 
         <div className="mt-8">
-          <label htmlFor="notetags" className="hand text-lg opacity-70">
-            notetags (optional)
+          <div className="flex items-baseline justify-between gap-4">
+            <label className="hand text-lg opacity-70">topic (choose at least one)</label>
+            <span className="text-xs opacity-50">platform topics</span>
+          </div>
+          <p className="mt-1 text-sm opacity-55">Your note will appear under the topics you select.</p>
+          <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Platform topics">
+            {interests.map((topic) => {
+              const selected = topics.includes(topic);
+              return (
+                <button
+                  key={topic}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => setTopics((current) => selected ? current.filter((item) => item !== topic) : [...current, topic])}
+                  className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border/70 hover:border-foreground"}`}
+                >
+                  {topic}
+                </button>
+              );
+            })}
+          </div>
+          <label htmlFor="notetags" className="mt-6 block text-sm opacity-60">
+            Additional tags (optional)
           </label>
           <input
             id="notetags"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            placeholder="#building #design #thoughts"
+            placeholder="#personal-project #draft"
             className="mt-2 w-full border-b border-border bg-transparent py-2 text-sm outline-none placeholder:opacity-40 focus:border-foreground"
           />
         </div>
@@ -284,7 +306,7 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
           </button>
           <button
             type="button"
-            onClick={() => setStatus("Published. Your note now has its own link.")}
+            onClick={() => setStatus(topics.length ? "Published. Your note now has its own link." : "Choose a platform topic first — even notes need a little neighborhood.")}
             className="rounded-md bg-primary px-5 py-2.5 text-sm text-primary-foreground hover:opacity-90"
           >
             Publish
