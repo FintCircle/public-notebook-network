@@ -49,7 +49,7 @@
   --font-body-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-hand-family: "Caveat", "Gloria Hallelujah", cursive;
 
-  --paper: oklch(0.985 0.003 95);
+  --paper: #fff;
   --ink: oklch(0.19 0.012 265);
   --ink-soft: oklch(0.52 0.014 265);
   --mark: oklch(0.62 0.14 30);
@@ -125,14 +125,44 @@
   background-repeat: no-repeat;
 }
 
-.notepage-theme:has(.note-list-page),
-.notepage-theme:has(.note-detail-page) {
-  background: var(--np-background-color, #fff);
+.notepage-cover {
+  background-color: #fff;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2.15rem,
+    rgba(28, 55, 84, 0.12) 2.15rem,
+    rgba(28, 55, 84, 0.12) 2.2rem
+  ), linear-gradient(to right, transparent 1rem, rgba(205, 75, 75, 0.22) 1rem, rgba(205, 75, 75, 0.22) 1.05rem, transparent 1.05rem);
+  color: #111;
+  --notepage-cover-ink: #111;
 }
 
-.notepage-theme:has(.note-list-page) .notepage-background,
-.notepage-theme:has(.note-list-page) .notepage-background-overlay {
+@media (min-width: 640px) {
+  .notepage-cover {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2.15rem,
+      rgba(28, 55, 84, 0.12) 2.15rem,
+      rgba(28, 55, 84, 0.12) 2.2rem
+    ), linear-gradient(to right, transparent 2.5rem, rgba(205, 75, 75, 0.22) 2.5rem, rgba(205, 75, 75, 0.22) 2.55rem, transparent 2.55rem);
+  }
+}
+
+.notepage-content-page {
+  background: #fff;
+  color: #000;
+}
+
+.notepage-content-page .notepage-background,
+.notepage-content-page .notepage-background-overlay {
   display: none;
+}
+
+.notepage-content-page main,
+.notepage-content-page section {
+  background-color: #fff;
 }
 
 .notepage-theme:has(.note-detail-page) {

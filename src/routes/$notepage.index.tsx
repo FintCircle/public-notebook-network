@@ -56,15 +56,6 @@ function NotepageHome() {
   return (
     <main className="h-[100dvh] w-full overflow-hidden bg-black">
       <section className="notepage-cover relative flex h-[100dvh] min-h-[100dvh] w-full overflow-hidden px-7 pb-9 pt-8 text-[var(--np-cover-ink)] sm:px-16 sm:pb-14 sm:pt-12">
-        <img
-          src={np.portrait}
-          alt={`${np.owner}, owner of ${np.name}`}
-          width={816}
-          height={816}
-          className="absolute inset-0 size-full object-cover object-center opacity-75"
-        />
-        <div aria-hidden className="notepage-cover-shade absolute inset-0" />
-
         <div className="relative z-10 flex w-full flex-col">
           <div className="flex items-start justify-between">
             <div>
@@ -78,7 +69,7 @@ function NotepageHome() {
                 type="button"
                 aria-label="Share this Notepage"
                 onClick={shareNotepage}
-                className="grid size-14 place-items-center rounded-full bg-white/15 backdrop-blur-sm transition-colors hover:bg-white/25"
+                className="grid size-14 place-items-center rounded-full border border-black/15 bg-white/70 transition-colors hover:bg-white"
               >
                 <Share2 aria-hidden className="size-6" />
               </button>
@@ -91,7 +82,7 @@ function NotepageHome() {
           </div>
 
           <div className="mt-auto grid gap-7 sm:grid-cols-[1fr_auto] sm:items-end sm:gap-16">
-            <div className="-mx-2 rounded-2xl bg-black/20 p-2 backdrop-blur-[2px] sm:mx-0 sm:rounded-none sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+            <div className="sm:mx-0 sm:p-0">
               <div className="mb-3 flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.16em] opacity-85 sm:mb-5 sm:gap-3 sm:text-sm sm:tracking-[0.2em]">
                 <span>{np.owner}</span>
                 <span className="h-px w-7 bg-current/70" />
@@ -113,7 +104,7 @@ function NotepageHome() {
             </div>
 
             <nav
-              className="flex items-center gap-6 border-t border-white/25 pt-3 text-xs sm:gap-7 sm:border-t-0 sm:border-l sm:pl-8 sm:pt-4 sm:text-sm"
+              className="flex items-center gap-6 border-t border-black/15 pt-3 text-xs sm:gap-7 sm:border-t-0 sm:border-l sm:border-black/15 sm:pl-8 sm:pt-4 sm:text-sm"
               aria-label="Notepage"
             >
               <Link
