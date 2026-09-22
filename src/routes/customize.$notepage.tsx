@@ -3,7 +3,7 @@ import { ArrowLeft, Check, Image, Palette, Type, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
-import { getNotepage, themeStyle } from "@/data/inktella";
+import { getNotepage, platformBackgroundColors, themeStyle } from "@/data/inktella";
 
 const fontPacks = [
   {
@@ -232,15 +232,22 @@ function CustomizeNotepage() {
                   <Button type="button" variant="outline" onClick={() => applyImageUrl(backgroundUrl, setBackgroundImage)}>Use URL</Button>
                 </div>
               </div>
-              <div className="mt-5 flex items-center gap-4">
-                <input
-                  aria-label="Page background color"
-                  type="color"
-                  value={background.startsWith("#") ? background : "#f5f1e8"}
-                  onChange={(event) => setBackground(event.target.value)}
-                  className="size-12 cursor-pointer rounded-lg border-0 bg-transparent p-0"
-                />
-                <span className="font-mono text-sm uppercase text-muted-foreground">{background}</span>
+              <div className="mt-5">
+                <p className="text-sm font-medium">Choose a platform color</p>
+                <div className="mt-3 flex flex-wrap gap-3" role="group" aria-label="Platform background colors">
+                  {platformBackgroundColors.map((color) => (
+                    <button
+                      key={color.value}
+                      type="button"
+                      aria-label={color.name}
+                      aria-pressed={background === color.value}
+                      onClick={() => { setBackground(color.value); setBackgroundType("color"); }}
+                      className={`size-10 rounded-full border-2 transition-transform hover:scale-105 ${background === color.value ? "border-foreground ring-2 ring-foreground/20 ring-offset-2" : "border-white/80"}`}
+                      style={{ backgroundColor: color.value }}
+                    />
+                  ))}
+                </div>
+                <span className="mt-3 block font-mono text-xs uppercase text-muted-foreground">{background}</span>
               </div>
               <label className="mt-5 block text-sm font-medium">
                 Image position
