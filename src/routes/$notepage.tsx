@@ -1,6 +1,6 @@
 import { createFileRoute, notFound, Outlet, useLocation } from "@tanstack/react-router";
 import { NotepageNetworkMenu } from "@/components/notepage-network-menu";
-import { getNotepage, themeStyle } from "@/data/inktella";
+import { getNotepage, notepageAppearance, themeStyle } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage")({
   beforeLoad: ({ params }) => {
@@ -16,8 +16,9 @@ function NotepageShell() {
   if (!np) return null;
   const isCover = location.pathname === `/${notepage}`;
 
-  const backgroundStyle = np.appearance.backgroundType === "image" && np.appearance.backgroundImage
-    ? { backgroundImage: `url(${np.appearance.backgroundImage})` }
+  const appearance = notepageAppearance(np);
+  const backgroundStyle = appearance.backgroundType === "image" && appearance.backgroundImage
+    ? { backgroundImage: `url(${appearance.backgroundImage})` }
     : undefined;
 
   return (
