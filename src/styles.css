@@ -133,9 +133,21 @@
     transparent 2.15rem,
     rgba(28, 55, 84, 0.12) 2.15rem,
     rgba(28, 55, 84, 0.12) 2.2rem
-  ), linear-gradient(to right, transparent 4.25rem, rgba(205, 75, 75, 0.22) 4.25rem, rgba(205, 75, 75, 0.22) 4.3rem, transparent 4.3rem);
+  ), linear-gradient(to right, transparent 1rem, rgba(205, 75, 75, 0.22) 1rem, rgba(205, 75, 75, 0.22) 1.05rem, transparent 1.05rem);
   color: #111;
   --notepage-cover-ink: #111;
+}
+
+@media (min-width: 640px) {
+  .notepage-cover {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2.15rem,
+      rgba(28, 55, 84, 0.12) 2.15rem,
+      rgba(28, 55, 84, 0.12) 2.2rem
+    ), linear-gradient(to right, transparent 2.5rem, rgba(205, 75, 75, 0.22) 2.5rem, rgba(205, 75, 75, 0.22) 2.55rem, transparent 2.55rem);
+  }
 }
 
 .notepage-content-page {
