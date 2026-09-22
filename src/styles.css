@@ -125,6 +125,14 @@
   background-repeat: no-repeat;
 }
 
+.notepage-owner-image {
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center 25%;
+  -webkit-mask-image: radial-gradient(ellipse at center 43%, #000 34%, rgba(0, 0, 0, 0.92) 53%, rgba(0, 0, 0, 0.48) 73%, transparent 96%);
+  mask-image: radial-gradient(ellipse at center 43%, #000 34%, rgba(0, 0, 0, 0.92) 53%, rgba(0, 0, 0, 0.48) 73%, transparent 96%);
+}
+
 .notepage-cover {
   background-color: #fff;
   background-image: repeating-linear-gradient(
@@ -136,6 +144,13 @@
   ), linear-gradient(to right, transparent 1rem, rgba(205, 75, 75, 0.22) 1rem, rgba(205, 75, 75, 0.22) 1.05rem, transparent 1.05rem);
   color: #111;
   --notepage-cover-ink: #111;
+}
+
+@media (max-width: 639px) {
+  .notepage-owner-image {
+    -webkit-mask-image: radial-gradient(ellipse at center 42%, #000 30%, rgba(0, 0, 0, 0.9) 52%, rgba(0, 0, 0, 0.42) 74%, transparent 96%);
+    mask-image: radial-gradient(ellipse at center 42%, #000 30%, rgba(0, 0, 0, 0.9) 52%, rgba(0, 0, 0, 0.42) 74%, transparent 96%);
+  }
 }
 
 @media (min-width: 640px) {

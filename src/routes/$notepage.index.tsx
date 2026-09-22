@@ -83,6 +83,11 @@ function NotepageHome() {
 
           <div className="mt-auto grid gap-7 sm:grid-cols-[1fr_auto] sm:items-end sm:gap-16">
             <div className="sm:mx-0 sm:p-0">
+              <img
+                src={np.portrait}
+                alt={`${np.owner}, owner of ${np.name}`}
+                className="notepage-owner-image mb-2 h-auto w-[min(48vw,11rem)] sm:mb-3 sm:w-[min(30vw,20rem)]"
+              />
               <div className="mb-3 flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.16em] opacity-85 sm:mb-5 sm:gap-3 sm:text-sm sm:tracking-[0.2em]">
                 <span>{np.owner}</span>
                 <span className="h-px w-7 bg-current/70" />
