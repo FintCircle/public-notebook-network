@@ -35,7 +35,7 @@ function NotepageShell() {
   }
 
   const appearance = notepageAppearance(np);
-  const backgroundStyle = appearance.backgroundType === "image" && appearance.backgroundImage
+  const backgroundStyle = !isCover && appearance.backgroundType === "image" && appearance.backgroundImage
     ? { backgroundImage: `url(${appearance.backgroundImage})` }
     : undefined;
 
