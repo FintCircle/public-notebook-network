@@ -125,12 +125,41 @@
   background-repeat: no-repeat;
 }
 
-.notepage-reading-surface {
-  border-radius: 1.25rem;
-  background: color-mix(in oklab, var(--np-bg, var(--paper)) 78%, transparent);
-  box-shadow: 0 1rem 3rem color-mix(in oklab, var(--np-ink, var(--ink)) 8%, transparent);
-  backdrop-filter: blur(3px);
+.notepage-theme:has(.note-detail-page) {
+  background: #fff;
+  color: #000;
 }
+
+.notepage-theme:has(.note-detail-page) .notepage-background,
+.notepage-theme:has(.note-detail-page) .notepage-background-overlay {
+  display: none;
+}
+
+.note-detail-copy {
+  font-family: var(--font-body-family);
+  font-size: 1.125rem;
+  line-height: 1.78;
+  color: #111;
+}
+
+.note-detail-copy > * + * {
+  margin-top: 1.35em;
+}
+
+.note-detail-copy h2,
+.note-detail-copy h3 {
+  color: #000;
+  font-family: var(--font-body-family);
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .note-detail-copy {
+    font-size: 1.0625rem;
+    line-height: 1.72;
+  }
+}
+
 
 .notepage-background-overlay {
   position: fixed;
