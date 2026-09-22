@@ -2,6 +2,15 @@ import amaraPortrait from "@/assets/amara-portrait.jpg";
 import derrickPortrait from "@/assets/derrick-portrait.jpg";
 import joelPortrait from "@/assets/joel-portrait.jpg";
 
+export const platformBackgroundColors = [
+  { name: "Paper", value: "#f5f1e8" },
+  { name: "Sky", value: "#dbeafe" },
+  { name: "Sage", value: "#dce8d5" },
+  { name: "Lavender", value: "#e8e0f2" },
+  { name: "Peach", value: "#f8dfcf" },
+  { name: "Ink", value: "#1f2933" },
+] as const;
+
 export type Notepage = {
   slug: string;
   name: string;

@@ -125,6 +125,16 @@
   background-repeat: no-repeat;
 }
 
+.notepage-theme:has(.note-list-page),
+.notepage-theme:has(.note-detail-page) {
+  background: var(--np-background-color, #fff);
+}
+
+.notepage-theme:has(.note-list-page) .notepage-background,
+.notepage-theme:has(.note-list-page) .notepage-background-overlay {
+  display: none;
+}
+
 .notepage-theme:has(.note-detail-page) {
   background: #fff;
   color: #000;
