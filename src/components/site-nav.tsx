@@ -9,6 +9,7 @@ import {
   PenLine,
   Search,
   Settings2,
+  UserRound,
   SlidersHorizontal,
   X,
 } from "lucide-react";
@@ -48,20 +49,29 @@ export function SiteNav() {
               <Link to="/explore" className={utilityLinkClass} aria-label="Search" title="Search">
                 <Search aria-hidden />
               </Link>
-              {!isAuthenticated && <Link to="/sign-in" className="rounded-full border border-primary px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/10">Join</Link>}
-              <button
-                type="button"
-                className="size-10 overflow-hidden rounded-full ring-1 ring-border transition-transform hover:scale-105"
-                aria-label="Open your profile menu"
-                title="Profile menu"
-                onClick={() => setIsMenuOpen(true)}
-              >
-                <img
-                  src={derrickPortrait}
-                  alt="Derrick's profile"
-                  className="size-full object-cover"
-                />
-              </button>
+              {isAuthenticated ? (
+                <button
+                  type="button"
+                  className="size-10 overflow-hidden rounded-full ring-1 ring-border transition-transform hover:scale-105"
+                  aria-label="Open your profile menu"
+                  title="Profile menu"
+                  onClick={() => setIsMenuOpen(true)}
+                >
+                  <img
+                    src={derrickPortrait}
+                    alt="Derrick's profile"
+                    className="size-full object-cover"
+                  />
+                </button>
+              ) : (
+                <Link
+                  to="/sign-in"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/10"
+                >
+                  <UserRound aria-hidden className="size-4" />
+                  Join
+                </Link>
+              )}
             </div>
           </div>
           <nav
