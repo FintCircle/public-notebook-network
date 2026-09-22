@@ -40,7 +40,7 @@ function NotepageShell() {
     : undefined;
 
   return (
-    <div className="notepage-theme relative min-h-screen" style={themeStyle(np)} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+    <div className={`notepage-theme relative min-h-screen ${isCover ? "notepage-cover-page" : "notepage-content-page"}`} style={themeStyle(np)} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       <div className="notepage-background" aria-hidden="true" style={backgroundStyle} />
       <div className="notepage-background-overlay" aria-hidden="true" />
       {/* Required: the Notepage home, notes and local Notetag pages render here. */}

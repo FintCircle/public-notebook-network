@@ -63,7 +63,6 @@ function NotepageAbout() {
   const pageStyle = {
     "--np-bg": notepage.theme.bg,
     "--np-ink": notepage.theme.ink,
-    backgroundColor: notepage.theme.bg,
   } as CSSProperties;
 
   const formatBio = (command: string, value?: string) => {

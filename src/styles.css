@@ -49,7 +49,7 @@
   --font-body-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-hand-family: "Caveat", "Gloria Hallelujah", cursive;
 
-  --paper: oklch(0.985 0.003 95);
+  --paper: #fff;
   --ink: oklch(0.19 0.012 265);
   --ink-soft: oklch(0.52 0.014 265);
   --mark: oklch(0.62 0.14 30);
@@ -125,14 +125,19 @@
   background-repeat: no-repeat;
 }
 
-.notepage-theme:has(.note-list-page),
-.notepage-theme:has(.note-detail-page) {
-  background: var(--np-background-color, #fff);
+.notepage-content-page {
+  background: #fff;
+  color: #000;
 }
 
-.notepage-theme:has(.note-list-page) .notepage-background,
-.notepage-theme:has(.note-list-page) .notepage-background-overlay {
+.notepage-content-page .notepage-background,
+.notepage-content-page .notepage-background-overlay {
   display: none;
+}
+
+.notepage-content-page main,
+.notepage-content-page section {
+  background-color: #fff;
 }
 
 .notepage-theme:has(.note-detail-page) {

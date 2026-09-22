@@ -14,7 +14,7 @@ function NotepageNotes() {
   if (!np) return null;
 
   return (
-    <main className="note-list-page mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-16" style={{ backgroundColor: np.appearance.backgroundColor, color: np.theme.ink }}>
+    <main className="note-list-page mx-auto max-w-3xl bg-white px-5 py-10 text-black sm:px-8 sm:py-16">
       <header className="border-b border-current/15 pb-10">
         <Link to="/$notepage" params={{ notepage }} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] opacity-55 hover:opacity-100">
           <ArrowLeft aria-hidden className="size-4" /> {np.header.navLabel}
