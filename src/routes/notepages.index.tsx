@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, Download, Eye, FileText, PenLine, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { BookOpen, Eye, PenLine, Plus } from "lucide-react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
 import { notepages, notesOf } from "@/data/inktella";
@@ -23,23 +22,7 @@ export const Route = createFileRoute("/notepages/")({
 });
 
 function MyNotepages() {
-  const [removed, setRemoved] = useState<string[]>([]);
-  const mine = notepages.slice(0, 2).filter((np) => !removed.includes(np.slug));
-
-  function exportNotes(np: (typeof notepages)[number]) {
-    const payload = JSON.stringify({ notepage: np, notes: notesOf(np.slug) }, null, 2);
-    const url = URL.createObjectURL(new Blob([payload], { type: "application/json" }));
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${np.slug}-notes.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function deleteNotepage(np: (typeof notepages)[number]) {
-    if (window.confirm(`Delete ${np.name} forever? This cannot be undone.`))
-      setRemoved((current) => [...current, np.slug]);
-  }
+  const mine = notepages.slice(0, 2);
 
   return (
     <div className="min-h-screen">
@@ -94,53 +77,13 @@ function MyNotepages() {
                       </Button>
                     </div>
                   </div>
-                  <div className="mt-7 flex items-center gap-1 rounded-xl bg-muted p-1 text-sm">
-                    <span className="rounded-lg bg-background px-4 py-2 font-medium shadow-sm">
-                      Notes <span className="ml-1 opacity-50">{entries.length}</span>
-                    </span>
-                    <span className="px-4 py-2 opacity-55">Pages</span>
-                    <span className="px-4 py-2 opacity-55">Comments</span>
-                  </div>
-                </div>
-                <div className="p-5 sm:p-7">
-                  <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                    <h3 className="text-2xl font-semibold">Notes</h3>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => exportNotes(np)}>
-                        <Download aria-hidden />
-                        Export notes
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => deleteNotepage(np)}
-                      >
-                        <Trash2 aria-hidden />
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="flex flex-col divide-y divide-border/60">
-                    {entries.map((note) => (
-                      <Link
-                        key={note.id}
-                        to="/$notepage/notepage/$noteId"
-                        params={{ notepage: np.slug, noteId: note.id }}
-                        className="flex gap-4 py-3 transition-colors hover:bg-muted/50"
-                      >
-                        <time
-                          dateTime={note.publishedAt}
-                          className="w-24 shrink-0 text-sm text-muted-foreground"
-                        >
-                          {new Date(note.publishedAt).toLocaleDateString("en-US", {
-                            day: "2-digit",
-                            month: "short",
-                          })}
-                        </time>
-                        <span className="font-medium">{note.title}</span>
+                  <div className="mt-7">
+                    <Button variant="outline" asChild>
+                      <Link to="/notepages/$notepage" params={{ notepage: np.slug }}>
+                        <PenLine aria-hidden />
+                        Notes <span className="opacity-50">{entries.length}</span>
                       </Link>
-                    ))}
+                    </Button>
                   </div>
                 </div>
               </article>
