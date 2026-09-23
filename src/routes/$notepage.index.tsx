@@ -75,7 +75,7 @@ function NotepageHome() {
                 Notepages
               </p>
             </div>
-            <div className="flex flex-col items-end gap-2">
+            <div className="absolute right-0 top-0 flex items-center gap-2">
               {np.inkProgramApproved && (
                 <Sheet onOpenChange={(open) => { if (open) setInkSent(false); }}>
                   <SheetTrigger asChild>
