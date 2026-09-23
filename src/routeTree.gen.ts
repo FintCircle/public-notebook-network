@@ -21,6 +21,7 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as SignedOutRouteImport } from './routes/signed-out'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WriteRouteImport } from './routes/write'
 import { Route as NotepageIndexRouteImport } from './routes/$notepage.index'
@@ -94,6 +95,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignedOutRoute = SignedOutRouteImport.update({
+  id: '/signed-out',
+  path: '/signed-out',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/sign-in': typeof SignInRoute
+  '/signed-out': typeof SignedOutRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
   '/$notepage/about': typeof NotepageAboutRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/sign-in': typeof SignInRoute
+  '/signed-out': typeof SignedOutRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
   '/$notepage/about': typeof NotepageAboutRoute
@@ -235,6 +243,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/sign-in': typeof SignInRoute
+  '/signed-out': typeof SignedOutRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
   '/$notepage/about': typeof NotepageAboutRoute
@@ -265,6 +274,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/sign-in'
+    | '/signed-out'
     | '/terms'
     | '/write'
     | '/$notepage/about'
@@ -291,6 +301,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/sign-in'
+    | '/signed-out'
     | '/terms'
     | '/write'
     | '/$notepage/about'
@@ -319,6 +330,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/sign-in'
+    | '/signed-out'
     | '/terms'
     | '/write'
     | '/$notepage/about'
@@ -348,6 +360,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   SignInRoute: typeof SignInRoute
+  SignedOutRoute: typeof SignedOutRoute
   TermsRoute: typeof TermsRoute
   WriteRoute: typeof WriteRoute
   CustomizeNotepageRoute: typeof CustomizeNotepageRoute
@@ -439,6 +452,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signed-out': {
+      id: '/signed-out'
+      path: '/signed-out'
+      fullPath: '/signed-out'
+      preLoaderRoute: typeof SignedOutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -593,6 +613,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   SignInRoute: SignInRoute,
+  SignedOutRoute: SignedOutRoute,
   TermsRoute: TermsRoute,
   WriteRoute: WriteRoute,
   CustomizeNotepageRoute: CustomizeNotepageRoute,

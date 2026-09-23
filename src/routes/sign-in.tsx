@@ -19,7 +19,7 @@ function SignIn() {
       <p className="hand text-3xl text-muted-foreground">one tiny account, many little notes</p>
       <h1 className="mt-4 font-heading text-4xl tracking-tight sm:text-5xl">Come on in.</h1>
       <p className="mt-5 max-w-md leading-relaxed text-muted-foreground">Sign in to write, like notes, leave guestnotes, and make a Notepage. Google sign-in will be connected here next.</p>
-      <button type="button" onClick={() => { signIn(); navigate({ to: "/" }); }} className="mt-8 rounded-md bg-primary px-6 py-3 text-sm text-primary-foreground">Continue with Google</button>
+      <button type="button" onClick={() => { signIn(); navigate({ to: "/notella" }); }} className="mt-8 rounded-md bg-primary px-6 py-3 text-sm text-primary-foreground">Continue with Google</button>
       <p className="mt-4 text-xs text-muted-foreground">Preview setup only — no Google account is requested yet.</p>
     </main><SiteFooter /></div>
   );
