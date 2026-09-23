@@ -2,7 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   BadgeDollarSign,
-  BookOpen,
+  Bell,
   Compass,
   Newspaper,
   Tags,
@@ -21,7 +21,7 @@ const items = [
   { to: "/notella", label: "Notella", icon: Newspaper },
   { to: "/explore", label: "Explore", icon: Compass },
   { to: "/write", label: "Note down", icon: PenLine },
-  { to: "/notepages", label: "My Notepages", icon: BookOpen },
+  { to: "/notifications", label: "Notifications", icon: Bell },
 ];
 
 const iconLinkClass =
