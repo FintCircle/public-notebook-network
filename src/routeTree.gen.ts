@@ -14,7 +14,6 @@ import { Route as NotepageRouteImport } from './routes/$notepage'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
-import { Route as InkProgramRouteImport } from './routes/ink-program'
 import { Route as NotellaRouteImport } from './routes/notella'
 import { Route as NotepagesRouteImport } from './routes/notepages'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -62,11 +61,6 @@ const ExploreRoute = ExploreRouteImport.update({
 const GuidelinesRoute = GuidelinesRouteImport.update({
   id: '/guidelines',
   path: '/guidelines',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InkProgramRoute = InkProgramRouteImport.update({
-  id: '/ink-program',
-  path: '/ink-program',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotellaRoute = NotellaRouteImport.update({
@@ -191,7 +185,6 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/explore': typeof ExploreRoute
   '/guidelines': typeof GuidelinesRoute
-  '/ink-program': typeof InkProgramRoute
   '/notella': typeof NotellaRoute
   '/notepages': typeof NotepagesRouteWithChildren
   '/notifications': typeof NotificationsRoute
@@ -221,7 +214,6 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/explore': typeof ExploreRoute
   '/guidelines': typeof GuidelinesRoute
-  '/ink-program': typeof InkProgramRoute
   '/notella': typeof NotellaRoute
   '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
@@ -252,7 +244,6 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/explore': typeof ExploreRoute
   '/guidelines': typeof GuidelinesRoute
-  '/ink-program': typeof InkProgramRoute
   '/notella': typeof NotellaRoute
   '/notepages': typeof NotepagesRouteWithChildren
   '/notifications': typeof NotificationsRoute
@@ -285,7 +276,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/explore'
     | '/guidelines'
-    | '/ink-program'
     | '/notella'
     | '/notepages'
     | '/notifications'
@@ -315,7 +305,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/explore'
     | '/guidelines'
-    | '/ink-program'
     | '/notella'
     | '/notifications'
     | '/pricing'
@@ -345,7 +334,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/explore'
     | '/guidelines'
-    | '/ink-program'
     | '/notella'
     | '/notepages'
     | '/notifications'
@@ -377,7 +365,6 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ExploreRoute: typeof ExploreRoute
   GuidelinesRoute: typeof GuidelinesRoute
-  InkProgramRoute: typeof InkProgramRoute
   NotellaRoute: typeof NotellaRoute
   NotepagesRoute: typeof NotepagesRouteWithChildren
   NotificationsRoute: typeof NotificationsRoute
@@ -429,13 +416,6 @@ declare module '@tanstack/react-router' {
       path: '/guidelines'
       fullPath: '/guidelines'
       preLoaderRoute: typeof GuidelinesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ink-program': {
-      id: '/ink-program'
-      path: '/ink-program'
-      fullPath: '/ink-program'
-      preLoaderRoute: typeof InkProgramRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notella': {
@@ -646,7 +626,6 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ExploreRoute: ExploreRoute,
   GuidelinesRoute: GuidelinesRoute,
-  InkProgramRoute: InkProgramRoute,
   NotellaRoute: NotellaRoute,
   NotepagesRoute: NotepagesRouteWithChildren,
   NotificationsRoute: NotificationsRoute,

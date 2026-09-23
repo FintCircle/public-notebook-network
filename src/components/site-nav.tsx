@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  BadgeDollarSign,
   Bell,
   Compass,
   Newspaper,
@@ -89,7 +88,6 @@ export function SiteNav() {
             {[
               ...items,
               { to: "/topics", label: "Topics", icon: Tags },
-              { to: "/ink-program", label: "Ink Program", icon: BadgeDollarSign },
             ].map((item, index) => {
               const Icon = item.icon;
               const href = item.to === "/write" ? "/write" : item.to;
