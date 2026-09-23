@@ -32,7 +32,7 @@ function NoteView() {
   if (!note || !np) return null;
 
   return (
-    <main className="note-detail-page mx-auto max-w-2xl bg-white px-5 py-12 text-black sm:px-8 sm:py-16">
+    <main className="note-detail-page mx-auto max-w-2xl bg-white px-5 py-12 pb-44 text-black sm:px-8 sm:py-16 sm:pb-40">
       <Link
         to="/$notepage"
         params={{ notepage }}

@@ -45,7 +45,7 @@ export function RandomizerButton() {
       onClick={randomize}
       aria-label="Open another random note"
       title="Another note, chosen by chaos"
-      className="fixed bottom-6 right-5 z-40 inline-flex size-14 items-center justify-center rounded-full border border-border bg-background/90 text-primary shadow-xl backdrop-blur transition-transform hover:rotate-12 hover:scale-105"
+      className="fixed bottom-6 right-5 z-40 inline-flex size-14 items-center justify-center rounded-full border border-border bg-background/90 text-primary shadow-xl backdrop-blur transition-transform hover:rotate-12 hover:scale-105 sm:bottom-8 sm:right-8"
     >
       <Shuffle aria-hidden className="size-6" />
       <span className="sr-only">Another random note</span>
