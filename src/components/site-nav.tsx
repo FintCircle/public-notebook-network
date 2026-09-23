@@ -42,7 +42,7 @@ export function SiteNav() {
         <div className="mx-auto max-w-5xl">
           <div className="flex items-center justify-between px-5 py-3">
             <Link
-              to="/"
+              to={isAuthenticated ? "/notella" : "/"}
               className="font-heading text-2xl font-semibold tracking-tight text-primary"
             >
               Inktella
@@ -167,7 +167,7 @@ export function SiteNav() {
             <button
               type="button"
               className="mt-auto border-t border-border pt-5 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
-              onClick={() => { if (isAuthenticated) signOut(); else navigate({ to: "/sign-in" }); setIsMenuOpen(false); }}
+              onClick={() => { if (isAuthenticated) { signOut(); navigate({ to: "/signed-out" }); } else { navigate({ to: "/sign-in" }); } setIsMenuOpen(false); }}
             >
               {isAuthenticated ? "Sign out" : "Join / Sign in"}
             </button>
