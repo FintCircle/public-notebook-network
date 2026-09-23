@@ -17,6 +17,7 @@ import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as InkProgramRouteImport } from './routes/ink-program'
 import { Route as NotellaRouteImport } from './routes/notella'
 import { Route as NotepagesRouteImport } from './routes/notepages'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -75,6 +76,11 @@ const NotellaRoute = NotellaRouteImport.update({
 const NotepagesRoute = NotepagesRouteImport.update({
   id: '/notepages',
   path: '/notepages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/ink-program': typeof InkProgramRoute
   '/notella': typeof NotellaRoute
   '/notepages': typeof NotepagesRouteWithChildren
+  '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -209,6 +216,7 @@ export interface FileRoutesByTo {
   '/guidelines': typeof GuidelinesRoute
   '/ink-program': typeof InkProgramRoute
   '/notella': typeof NotellaRoute
+  '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/ink-program': typeof InkProgramRoute
   '/notella': typeof NotellaRoute
   '/notepages': typeof NotepagesRouteWithChildren
+  '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -270,6 +279,7 @@ export interface FileRouteTypes {
     | '/ink-program'
     | '/notella'
     | '/notepages'
+    | '/notifications'
     | '/pricing'
     | '/privacy'
     | '/profile'
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/guidelines'
     | '/ink-program'
     | '/notella'
+    | '/notifications'
     | '/pricing'
     | '/privacy'
     | '/profile'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/ink-program'
     | '/notella'
     | '/notepages'
+    | '/notifications'
     | '/pricing'
     | '/privacy'
     | '/profile'
@@ -356,6 +368,7 @@ export interface RootRouteChildren {
   InkProgramRoute: typeof InkProgramRoute
   NotellaRoute: typeof NotellaRoute
   NotepagesRoute: typeof NotepagesRouteWithChildren
+  NotificationsRoute: typeof NotificationsRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
@@ -424,6 +437,13 @@ declare module '@tanstack/react-router' {
       path: '/notepages'
       fullPath: '/notepages'
       preLoaderRoute: typeof NotepagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -609,6 +629,7 @@ const rootRouteChildren: RootRouteChildren = {
   InkProgramRoute: InkProgramRoute,
   NotellaRoute: NotellaRoute,
   NotepagesRoute: NotepagesRouteWithChildren,
+  NotificationsRoute: NotificationsRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,

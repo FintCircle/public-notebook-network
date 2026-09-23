@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Compass, Menu, PenLine, Search, Tags, X } from "lucide-react";
+import { Bell, Compass, Menu, PenLine, Search, Tags, X } from "lucide-react";
 import type { Notepage } from "@/data/inktella";
 import { themeStyle } from "@/data/inktella";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ const links = [
   { to: "/write", label: "Note down", note: "write something", icon: PenLine },
   { to: "/notella", label: "Notella", note: "read around", icon: Compass },
   { to: "/topics", label: "Topics", note: "browse themes", icon: Tags },
-  { to: "/notepages", label: "My Notepages", note: "your notebooks", icon: BookOpen },
+  { to: "/notifications", label: "Notifications", note: "see what happened", icon: Bell },
   { to: "/explore", label: "Find", note: "discover people", icon: Search },
 ] as const;
 
