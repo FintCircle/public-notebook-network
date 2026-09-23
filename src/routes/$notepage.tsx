@@ -38,7 +38,7 @@ function NotepageShell() {
     <div className={`notepage-theme relative min-h-screen ${isCover ? "notepage-cover-page" : "notepage-content-page"}`} style={themeStyle(np)} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       {/* Required: the Notepage home, notes and local Notetag pages render here. */}
       <div className="relative z-10"><Outlet /></div>
-      {!isCover && <NotepageNetworkMenu notepage={np} side={location.pathname.endsWith("/notes") ? "left" : "right"} />}
+      {!isCover && <NotepageNetworkMenu notepage={np} side={location.pathname.includes("/notepage/") ? "left" : "right"} />}
     </div>
   );
 }
