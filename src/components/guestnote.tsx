@@ -1,4 +1,4 @@
-import { Heart, MapPin, Menu, Send } from "lucide-react";
+import { Heart, MapPin, MessageCirclePlus, Send } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { Notepage } from "@/data/inktella";
 
@@ -89,7 +89,7 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
   }
 
   return (
-    <section id="guestnote" className="mt-12 sm:mt-16" aria-labelledby="guestnote-heading">
+    <section id="guestnote" className="mt-12 pt-16 sm:mt-16 sm:pt-0" aria-labelledby="guestnote-heading">
       <h2 id="guestnote-heading" className="sr-only">
         Guestnotes from visitors
       </h2>
@@ -187,7 +187,7 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
       <div className={`fixed inset-x-4 top-4 z-20 transition-all duration-300 sm:hidden ${showComposer ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-5 opacity-0"}`}>
         <form
           onSubmit={submitMessage}
-          className="flex items-center gap-3 rounded-full bg-[var(--np-ink)] p-2 pl-5 text-[var(--np-bg)] shadow-xl shadow-black/15"
+          className="flex items-center gap-3 rounded-full bg-[var(--np-ink)] p-2 pl-5 pr-3 text-[var(--np-bg)] shadow-xl shadow-black/15"
         >
           <label className="min-w-0 flex-1">
             <span className="sr-only">Guestnote message</span>
@@ -205,7 +205,7 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
             className="grid size-12 shrink-0 place-items-center rounded-full bg-[var(--np-bg)] text-[var(--np-ink)] shadow-sm transition-transform hover:scale-105 disabled:opacity-40"
             aria-label="Post guestnote"
           >
-            <Menu aria-hidden className="size-5" />
+            <MessageCirclePlus aria-hidden className="size-5" />
           </button>
         </form>
       </div>
