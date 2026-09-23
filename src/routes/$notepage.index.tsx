@@ -82,9 +82,9 @@ function NotepageHome() {
                     <button
                       type="button"
                       aria-label={`Ink ${np.owner}`}
-                      className="grid size-14 place-items-center rounded-full border border-black/15 bg-white/70 transition-colors hover:bg-white"
+className="grid size-14 place-items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-600 transition-colors hover:bg-emerald-500/20"
                     >
-                      <Feather aria-hidden className="size-6" />
+                      <Feather aria-hidden className="size-6 stroke-[2.25]" />
                     </button>
                   </SheetTrigger>
                   <SheetContent side="bottom" className="rounded-t-[2rem] border-black/10 bg-[#fbfaf6] px-6 pb-8 pt-8 text-[#171717] sm:mx-auto sm:max-w-xl">
