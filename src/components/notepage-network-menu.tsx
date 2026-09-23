@@ -6,11 +6,11 @@ import { themeStyle } from "@/data/inktella";
 import { Button } from "@/components/ui/button";
 
 const links = [
-  { to: "/write", label: "Note down", note: "", icon: PenLine },
+  { to: "/write", label: "Note down", note: "write something", icon: PenLine },
   { to: "/notella", label: "Notella", note: "read around", icon: Compass },
-  { to: "/topics", label: "Topics", note: "", icon: Tags },
-  { to: "/notepages", label: "My Notepages", note: "", icon: BookOpen },
-  { to: "/explore", label: "Find", note: "", icon: Search },
+  { to: "/topics", label: "Topics", note: "browse themes", icon: Tags },
+  { to: "/notepages", label: "My Notepages", note: "your notebooks", icon: BookOpen },
+  { to: "/explore", label: "Find", note: "discover people", icon: Search },
 ] as const;
 
 export function NotepageNetworkMenu({ notepage }: { notepage: Notepage }) {
@@ -27,9 +27,8 @@ export function NotepageNetworkMenu({ notepage }: { notepage: Notepage }) {
         <nav aria-label="Inktella network" className="flex flex-col items-end gap-2">
           {links.map((item) => {
             const Icon = item.icon;
-            return item.to === "/write" ? (
+            const link = item.to === "/write" ? (
               <Link
-                key={item.to}
                 to="/write"
                 search={{ notepage: undefined }}
                 className={linkClassName}
@@ -40,7 +39,6 @@ export function NotepageNetworkMenu({ notepage }: { notepage: Notepage }) {
               </Link>
             ) : (
               <Link
-                key={item.to}
                 to={item.to}
                 className={linkClassName}
                 aria-label={item.label}
@@ -48,6 +46,15 @@ export function NotepageNetworkMenu({ notepage }: { notepage: Notepage }) {
               >
                 <Icon aria-hidden />
               </Link>
+            );
+
+            return (
+              <div key={item.to} className="flex items-center gap-2">
+                <span className="hand rounded-full bg-[var(--np-bg)]/90 px-2.5 py-0.5 text-base leading-none shadow-sm backdrop-blur-sm">
+                  {item.note}
+                </span>
+                {link}
+              </div>
             );
           })}
         </nav>
