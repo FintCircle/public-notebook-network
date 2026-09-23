@@ -1,5 +1,5 @@
-import { Heart, MapPin, Send } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { Heart, MapPin, MessageCirclePlus, Send } from "lucide-react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { Notepage } from "@/data/inktella";
 
 type GuestbookEntry = {
@@ -57,6 +57,19 @@ function Avatar({ entry, notepage }: { entry: GuestbookEntry; notepage: Notepage
 export function Guestnote({ notepage }: { notepage: Notepage }) {
   const [message, setMessage] = useState("");
   const [entries, setEntries] = useState(initialEntries);
+  const [showComposer, setShowComposer] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setShowComposer(currentScrollY < 24 || currentScrollY < lastScrollY.current || currentScrollY < 120);
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   function submitMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -171,7 +184,7 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
           Post <Send aria-hidden className="size-4" />
         </button>
       </form>
-      <div className="fixed inset-x-4 top-4 z-20 sm:hidden">
+      <div className={`fixed inset-x-4 top-4 z-20 transition-all duration-300 sm:hidden ${showComposer ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-5 opacity-0"}`}>
         <form
           onSubmit={submitMessage}
           className="flex items-center gap-2 rounded-full bg-[var(--np-ink)] p-2 pl-5 text-[var(--np-bg)] shadow-xl shadow-black/15"
@@ -189,10 +202,10 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
           <button
             type="submit"
             disabled={!message.trim()}
-            className="grid size-10 shrink-0 place-items-center rounded-full bg-[var(--np-bg)] text-[var(--np-ink)] transition-opacity disabled:opacity-40"
+            className="grid size-12 shrink-0 place-items-center rounded-full bg-[var(--np-bg)] text-[var(--np-ink)] shadow-sm transition-transform hover:scale-105 disabled:opacity-40"
             aria-label="Post guestnote"
           >
-            <Send aria-hidden className="size-4" />
+            <MessageCirclePlus aria-hidden className="size-5" />
           </button>
         </form>
       </div>

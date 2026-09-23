@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Guestnote } from "@/components/guestnote";
 import { getNotepage } from "@/data/inktella";
@@ -17,15 +17,6 @@ function GuestnotePage() {
     <AuthOnly message="Guestnotes are for verified humans. Even the kind ones need a name tag.">
     <main className="min-h-screen overflow-x-hidden bg-transparent px-5 pb-28 pt-7 sm:px-10 sm:pb-16 sm:pt-12">
       <div className="mx-auto max-w-5xl">
-        <Link
-          to="/$notepage"
-          params={{ notepage: np.slug }}
-          className="inline-flex items-center gap-2 text-sm opacity-65 transition-opacity hover:opacity-100"
-        >
-          <ArrowLeft aria-hidden className="size-4" />
-          Back to {np.name}
-        </Link>
-
         <header className="relative mt-14 max-w-3xl sm:mt-16">
           <p className="hand text-xl opacity-70 sm:text-2xl">A little corner for kind words</p>
           <h1 className="mt-2 font-heading text-5xl tracking-[-0.055em] sm:text-7xl">Guestnotes</h1>
@@ -41,6 +32,14 @@ function GuestnotePage() {
           Real people. Real notes. A kinder internet.
         </p>
       </div>
+      <Link
+        to="/$notepage"
+        params={{ notepage: np.slug }}
+        aria-label={`Back to ${np.name}`}
+        className="fixed bottom-5 left-5 z-30 grid size-12 place-items-center rounded-full border border-current/15 bg-[var(--np-bg)]/90 shadow-lg backdrop-blur-sm transition-transform hover:-translate-x-0.5 sm:bottom-8 sm:left-8"
+      >
+        <ChevronLeft aria-hidden className="size-5" />
+      </Link>
     </main>
     </AuthOnly>
   );
