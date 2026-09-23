@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Compass, PenLine, Plus, Search, Tags, X } from "lucide-react";
+import { BookOpen, Compass, Menu, PenLine, Search, Tags, X } from "lucide-react";
 import type { Notepage } from "@/data/inktella";
 import { themeStyle } from "@/data/inktella";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ export function NotepageNetworkMenu({ notepage }: { notepage: Notepage }) {
 
   return (
     <div
-      className="fixed bottom-4 right-4 z-30 flex flex-col items-end gap-2 text-[var(--np-ink)]"
+      className="fixed bottom-5 right-5 z-30 flex flex-col items-end gap-3 text-[var(--np-ink)]"
       style={themeStyle(notepage)}
     >
       {open && (
@@ -58,9 +58,9 @@ export function NotepageNetworkMenu({ notepage }: { notepage: Notepage }) {
         aria-label={open ? "Close Inktella network menu" : "Open Inktella network menu"}
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="size-10 rounded-full border border-current/15 bg-[var(--np-bg)] text-[var(--np-ink)] shadow-sm transition-transform hover:scale-105 hover:bg-[var(--np-bg)]"
+        className="size-12 rounded-full border border-current/15 bg-[var(--np-bg)] text-[var(--np-ink)] shadow-sm transition-transform hover:scale-105 hover:bg-[var(--np-bg)]"
       >
-        {open ? <X aria-hidden /> : <Plus aria-hidden />}
+        {open ? <X aria-hidden /> : <Menu aria-hidden />}
       </Button>
     </div>
   );
