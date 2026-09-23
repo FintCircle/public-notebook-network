@@ -87,21 +87,22 @@ className="grid size-14 place-items-center rounded-full border border-emerald-50
                       <Feather aria-hidden className="size-6 stroke-[2.25]" />
                     </button>
                   </SheetTrigger>
-                  <SheetContent side="bottom" className="rounded-t-[2rem] border-black/10 bg-[#fbfaf6] px-6 pb-8 pt-8 text-[#171717] sm:mx-auto sm:max-w-xl">
-                    <SheetHeader className="text-left">
-                      <SheetTitle className="font-heading text-3xl tracking-tight">Ink {np.owner}</SheetTitle>
+                  <SheetContent side="bottom" className="max-h-[min(78dvh,520px)] overflow-y-auto rounded-t-[1.75rem] border-black/10 bg-[#fbfaf6] px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-5 text-[#171717] sm:mx-auto sm:max-w-xl sm:px-7">
+                    <div aria-hidden className="mx-auto mb-5 h-1 w-10 rounded-full bg-black/15" />
+                    <SheetHeader className="gap-1 text-left">
+                      <SheetTitle className="font-heading text-2xl tracking-tight sm:text-3xl">Ink {np.owner}</SheetTitle>
                       <SheetDescription className="max-w-md leading-relaxed text-[#55514a]">
                         Ink is a small way to support the people whose notes you return to. You have 24 ink to give.
                       </SheetDescription>
                     </SheetHeader>
                     {inkSent ? (
-                      <div className="mt-8 rounded-2xl border border-black/10 p-5 text-center">
+                      <div className="mt-6 rounded-2xl border border-black/10 p-5 text-center">
                         <p className="font-heading text-xl">Ink sent.</p>
                         <p className="mt-1 text-sm text-[#55514a]">Your note is on its way to {np.owner}.</p>
                       </div>
                     ) : (
                       <form
-                        className="mt-7 grid gap-5"
+                        className="mt-6 grid gap-4"
                         onSubmit={(event) => { event.preventDefault(); setInkSent(true); }}
                       >
                         <label className="grid gap-2 text-sm font-medium" htmlFor="ink-amount">
