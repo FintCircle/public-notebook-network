@@ -188,7 +188,7 @@ function Preview({
           className={
             layout === "hero"
               ? "absolute inset-0 size-full object-cover grayscale"
-              : "relative mx-auto -mt-1 size-40 rounded-full border-8 border-[var(--np-bg)] object-cover sm:size-48"
+              : "relative mx-auto -mt-1 size-40 rounded-full border-8 border-current/10 object-cover sm:size-48"
           }
         />
         {layout === "hero" && <div className="notepage-cover-shade absolute inset-0" />}
@@ -214,7 +214,7 @@ function Preview({
               <a
                 key={`${spotlight.label}-${index}`}
                 href={spotlight.href}
-                className="flex min-h-16 items-center justify-center gap-4 rounded-xl bg-[var(--np-ink)] px-5 py-4 text-lg font-medium text-[var(--np-bg)] shadow-sm transition-transform hover:-translate-y-0.5 sm:text-2xl"
+                className="flex min-h-16 items-center justify-center gap-4 rounded-xl bg-[var(--np-accent)] px-5 py-4 text-lg font-medium text-white shadow-sm transition-transform hover:-translate-y-0.5 sm:text-2xl"
               >
                 <Icon className="size-7" /> {spotlight.label}
               </a>

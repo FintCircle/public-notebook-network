@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Check, Type } from "lucide-react";
+import { ArrowLeft, Check, Palette, Type } from "lucide-react";
 import { useState } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ function CustomizeNotepage() {
   const { notepage: slug } = Route.useParams();
   const np = getNotepage(slug);
   const [fontPack, setFontPack] = useState(fontPacks[0]);
+  const [accent, setAccent] = useState(np?.theme.accent ?? "#c2410c");
   const [header, setHeader] = useState(np?.header ?? {
     navLabel: np?.name ?? "Notepage",
     eyebrow: "the notebook entries",
@@ -74,7 +75,7 @@ function CustomizeNotepage() {
             <h1 className="mt-1 text-4xl">Customize</h1>
             <p className="hand mt-2 text-xl opacity-65">make this corner feel like yours</p>
           </div>
-          <Button>
+          <Button onClick={() => window.localStorage.setItem(`notepage-accent:${slug}`, accent)}>
             <Check aria-hidden /> Save changes
           </Button>
         </div>
@@ -129,6 +130,21 @@ function CustomizeNotepage() {
                     {fontPack.id === pack.id && <Check aria-hidden className="size-4" />}
                   </button>
                 ))}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-border/70 bg-card p-5 sm:p-7">
+              <div className="flex items-center gap-2">
+                <Palette aria-hidden className="size-5" />
+                <h2 className="text-lg font-semibold">Accent color</h2>
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">Choose the ink that highlights links, buttons, notes, and little details on this Notepage.</p>
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <input aria-label="Custom accent color" type="color" value={accent} onChange={(event) => setAccent(event.target.value)} className="size-12 cursor-pointer rounded-xl border border-border/70 bg-background p-1" />
+                <div>
+                  <p className="text-sm font-medium">Your accent</p>
+                  <p className="font-mono text-xs text-muted-foreground">{accent}</p>
+                </div>
+                <span className="hand ml-auto text-lg" style={{ color: accent }}>a little mark of yours</span>
               </div>
             </div>
             </section>

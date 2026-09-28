@@ -26,6 +26,7 @@ export type Notepage = {
   theme: {
     bg: string;
     ink: string;
+    accent?: string;
     heading: string;
     body: string;
     hand: string;
@@ -314,8 +315,9 @@ export function notepageAppearance(np: Notepage): Notepage["appearance"] {
 export function themeStyle(np: Notepage): React.CSSProperties {
   const appearance = notepageAppearance(np);
   return {
-    ["--np-bg" as string]: np.theme.bg,
-    ["--np-ink" as string]: np.theme.ink,
+  ["--np-bg" as string]: np.theme.bg,
+  ["--np-ink" as string]: np.theme.ink,
+  ["--np-accent" as string]: np.theme.accent ?? "#c2410c",
     ["--np-heading" as string]: np.theme.heading,
     ["--np-body" as string]: np.theme.body,
     ["--np-hand" as string]: np.theme.hand,

@@ -1,5 +1,5 @@
 import { createFileRoute, notFound, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NotepageNetworkMenu } from "@/components/notepage-network-menu";
 import { getNotepage, notepages, themeStyle } from "@/data/inktella";
 
@@ -16,6 +16,12 @@ function NotepageShell() {
   const navigate = useNavigate();
   const touchStartX = useRef<number | null>(null);
   const np = getNotepage(notepage);
+  const [accent, setAccent] = useState(np?.theme.accent ?? "#c2410c");
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem(`notepage-accent:${notepage}`);
+    if (saved) setAccent(saved);
+  }, [notepage]);
   if (!np) return null;
   const isCover = location.pathname === `/${notepage}`;
 
@@ -35,7 +41,7 @@ function NotepageShell() {
   }
 
   return (
-    <div className={`notepage-theme relative min-h-screen ${isCover ? "notepage-cover-page" : "notepage-content-page"}`} style={themeStyle(np)} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+    <div className={`notepage-theme relative min-h-screen ${isCover ? "notepage-cover-page" : "notepage-content-page"}`} style={{ ...themeStyle(np), "--np-accent": accent } as React.CSSProperties} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       {/* Required: the Notepage home, notes and local Notetag pages render here. */}
       <div className="relative z-10"><Outlet /></div>
       {!isCover && <NotepageNetworkMenu notepage={np} side={location.pathname.includes("/notepage/") ? "left" : "right"} />}
