@@ -53,8 +53,8 @@ function NotepageHome() {
   };
 
   return (
-    <main className="h-[100dvh] w-full overflow-hidden bg-transparent">
-      <section className="notepage-cover relative flex h-[100dvh] min-h-[100dvh] w-full overflow-hidden px-7 pb-9 pt-8 text-[var(--np-cover-ink)] sm:px-16 sm:pb-14 sm:pt-12">
+    <main className="min-h-screen w-full overflow-x-hidden bg-transparent">
+      <section className="notepage-cover relative flex min-h-[100dvh] w-full overflow-x-hidden px-7 pb-9 pt-8 text-[var(--np-cover-ink)] sm:px-16 sm:pb-12 sm:pt-10">
         <div className="relative z-10 flex w-full flex-col">
           <div className="flex items-start justify-between">
             <div>
@@ -85,7 +85,7 @@ function NotepageHome() {
               <img
                 src={np.portrait}
                 alt={`${np.owner}, owner of ${np.name}`}
-                className="notepage-owner-image mt-7 mb-3 h-auto w-[min(42vw,9.5rem)] sm:mt-5 sm:mb-4 sm:w-[min(27vw,17rem)]"
+                className="notepage-owner-image mt-7 mb-3 h-auto w-[min(42vw,9.5rem)] sm:mt-3 sm:mb-3 sm:w-[min(18vw,10rem)]"
               />
               <div className="mb-3 flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.16em] opacity-85 sm:mb-5 sm:gap-3 sm:text-sm sm:tracking-[0.2em]">
                 <span>{np.owner}</span>

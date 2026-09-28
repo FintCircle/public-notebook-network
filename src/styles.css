@@ -126,11 +126,15 @@
 }
 
 .notepage-owner-image {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1;
   object-fit: cover;
   object-position: center 25%;
-  -webkit-mask-image: radial-gradient(ellipse at center 38%, #000 25%, rgba(0, 0, 0, 0.94) 43%, rgba(0, 0, 0, 0.58) 62%, rgba(0, 0, 0, 0.18) 82%, transparent 100%);
-  mask-image: radial-gradient(ellipse at center 38%, #000 25%, rgba(0, 0, 0, 0.94) 43%, rgba(0, 0, 0, 0.58) 62%, rgba(0, 0, 0, 0.18) 82%, transparent 100%);
+  border: 2px solid currentColor;
+  border-radius: 48% 52% 47% 53% / 52% 46% 54% 48%;
+  padding: 0.35rem;
+  transform: rotate(-2deg);
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 68%, rgba(0, 0, 0, 0.96) 78%, rgba(0, 0, 0, 0.58) 90%, transparent 100%);
+  mask-image: radial-gradient(ellipse at center, #000 68%, rgba(0, 0, 0, 0.96) 78%, rgba(0, 0, 0, 0.58) 90%, transparent 100%);
 }
 
 .notepage-cover-page .notepage-background,
