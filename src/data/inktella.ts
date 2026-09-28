@@ -23,7 +23,6 @@ export type Notepage = {
   countryCode: string;
   interests: string[];
   links: Array<{ label: string; href: string }>;
-  inkProgramApproved?: boolean;
   theme: {
     bg: string;
     ink: string;
@@ -75,8 +74,7 @@ export const notepages: Notepage[] = [
       { label: "Website", href: "https://example.com" },
       { label: "GitHub", href: "https://github.com" },
     ],
-    inkProgramApproved: true,
-    theme: {
+      theme: {
       bg: "oklch(0.975 0.012 90)",
       ink: "oklch(0.21 0.015 60)",
       heading: '"Space Grotesk", sans-serif',

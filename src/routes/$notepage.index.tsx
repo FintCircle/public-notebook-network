@@ -1,16 +1,7 @@
 import { useState } from "react";
-import { ArrowRight, Feather, MessageCircle, Share2, UserRound } from "lucide-react";
+import { ArrowRight, MessageCircle, Share2, UserRound } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getNotepage } from "@/data/inktella";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-
 export const Route = createFileRoute("/$notepage/")({
   head: ({ params }) => {
     const np = getNotepage(params.notepage);
@@ -33,9 +24,6 @@ function NotepageHome() {
   const { notepage } = Route.useParams();
   const np = getNotepage(notepage);
   const [shareStatus, setShareStatus] = useState<string | null>(null);
-  const [inkAmount, setInkAmount] = useState("1");
-  const [inkNote, setInkNote] = useState("");
-  const [inkSent, setInkSent] = useState(false);
   if (!np) return null;
 
   const shareNotepage = async () => {
@@ -76,67 +64,6 @@ function NotepageHome() {
               </p>
             </div>
             <div className="absolute right-0 top-0 flex items-center gap-2">
-              {np.inkProgramApproved && (
-                <Sheet onOpenChange={(open) => { if (open) setInkSent(false); }}>
-                  <SheetTrigger asChild>
-                    <button
-                      type="button"
-                      aria-label={`Ink ${np.owner}`}
-className="grid size-14 place-items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-600 transition-colors hover:bg-emerald-500/20"
-                    >
-                      <Feather aria-hidden className="size-6 stroke-[2.25]" />
-                    </button>
-                  </SheetTrigger>
-                  <SheetContent side="bottom" className="max-h-[min(78dvh,520px)] overflow-y-auto rounded-t-[1.75rem] border-black/10 bg-[#fbfaf6] px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-5 text-[#171717] sm:mx-auto sm:max-w-xl sm:px-7">
-                    <div aria-hidden className="mx-auto mb-5 h-1 w-10 rounded-full bg-black/15" />
-                    <SheetHeader className="gap-1 text-left">
-                      <SheetTitle className="font-heading text-2xl tracking-tight sm:text-3xl">Ink {np.owner}</SheetTitle>
-                      <SheetDescription className="max-w-md leading-relaxed text-[#55514a]">
-                        Ink is a small way to support the people whose notes you return to. You have 24 ink to give.
-                      </SheetDescription>
-                    </SheetHeader>
-                    {inkSent ? (
-                      <div className="mt-6 rounded-2xl border border-black/10 p-5 text-center">
-                        <p className="font-heading text-xl">Ink sent.</p>
-                        <p className="mt-1 text-sm text-[#55514a]">Your note is on its way to {np.owner}.</p>
-                      </div>
-                    ) : (
-                      <form
-                        className="mt-6 grid gap-4"
-                        onSubmit={(event) => { event.preventDefault(); setInkSent(true); }}
-                      >
-                        <label className="grid gap-2 text-sm font-medium" htmlFor="ink-amount">
-                          How much ink?
-                          <input
-                            id="ink-amount"
-                            type="number"
-                            min="1"
-                            max="24"
-                            inputMode="numeric"
-                            value={inkAmount}
-                            onChange={(event) => setInkAmount(event.target.value)}
-                            className="rounded-xl border border-black/15 bg-transparent px-4 py-3 text-lg outline-none focus:border-black"
-                          />
-                        </label>
-                        <label className="grid gap-2 text-sm font-medium" htmlFor="ink-note">
-                          Note <span className="font-normal text-[#77736c]">(optional)</span>
-                          <textarea
-                            id="ink-note"
-                            rows={3}
-                            value={inkNote}
-                            onChange={(event) => setInkNote(event.target.value)}
-                            placeholder={`Say something kind to ${np.owner}…`}
-                            className="resize-none rounded-xl border border-black/15 bg-transparent px-4 py-3 font-normal outline-none placeholder:text-[#99948b] focus:border-black"
-                          />
-                        </label>
-                        <button type="submit" className="rounded-full bg-[#171717] px-5 py-3.5 text-sm font-medium text-white transition-opacity hover:opacity-85">
-                          Send ink to {np.owner}
-                        </button>
-                      </form>
-                    )}
-                  </SheetContent>
-                </Sheet>
-              )}
               <button
                 type="button"
                 aria-label="Share this Notepage"
