@@ -188,7 +188,7 @@ function Preview({
           className={
             layout === "hero"
               ? "absolute inset-0 size-full object-cover grayscale"
-              : "relative mx-auto -mt-1 size-40 rounded-full border-8 border-[var(--np-accent)] object-cover sm:size-48"
+              : "relative mx-auto -mt-1 size-40 rounded-full border-8 border-current/10 object-cover sm:size-48"
           }
         />
         {layout === "hero" && <div className="notepage-cover-shade absolute inset-0" />}

@@ -101,7 +101,7 @@ function NotepageHome() {
               <Link
                 to="/$notepage/notes"
                 params={{ notepage: np.slug }}
-                className="mt-5 inline-flex items-center gap-5 rounded-full bg-[var(--np-cover-ink)] px-5 py-3 text-xs font-medium text-black transition-transform hover:scale-[1.02] sm:mt-6 sm:gap-6 sm:px-6 sm:py-3.5 sm:text-sm"
+                className="mt-5 inline-flex items-center gap-5 rounded-full bg-[var(--np-accent)] px-5 py-3 text-xs font-medium text-white transition-transform hover:scale-[1.02] sm:mt-6 sm:gap-6 sm:px-6 sm:py-3.5 sm:text-sm"
               >
                 Start reading <ArrowRight aria-hidden />
               </Link>
