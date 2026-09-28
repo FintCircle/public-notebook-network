@@ -125,6 +125,37 @@
   background-repeat: no-repeat;
 }
 
+.notepage-country-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  color: color-mix(in oklab, currentColor 68%, transparent);
+  transform: rotate(-4deg);
+}
+
+.notepage-country-map {
+  width: min(42vw, 14rem);
+  height: auto;
+  overflow: visible;
+}
+
+.notepage-country-map path {
+  fill: color-mix(in oklab, currentColor 7%, transparent);
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-dasharray: 2 3;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.notepage-country-figure figcaption {
+  margin-top: -0.1rem;
+  font-family: var(--font-hand-family);
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+}
+
 .notepage-owner-image {
   aspect-ratio: 1;
   object-fit: cover;
@@ -156,6 +187,21 @@
 }
 
 @media (max-width: 639px) {
+  .notepage-country-figure {
+    margin-top: -0.5rem;
+    align-items: flex-start;
+    transform: rotate(-3deg) translateX(0.5rem);
+  }
+
+  .notepage-country-map {
+    width: min(32vw, 7.5rem);
+  }
+
+  .notepage-country-figure figcaption {
+    margin-left: 0.7rem;
+    font-size: 1rem;
+  }
+
   .notepage-owner-image {
     -webkit-mask-image: radial-gradient(ellipse at center 36%, #000 21%, rgba(0, 0, 0, 0.92) 41%, rgba(0, 0, 0, 0.52) 61%, rgba(0, 0, 0, 0.14) 81%, transparent 100%);
     mask-image: radial-gradient(ellipse at center 36%, #000 21%, rgba(0, 0, 0, 0.92) 41%, rgba(0, 0, 0, 0.52) 61%, rgba(0, 0, 0, 0.14) 81%, transparent 100%);
