@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Bell,
+  CircleHelp,
   Compass,
   Newspaper,
   Tags,
@@ -21,7 +22,7 @@ const items = [
   { to: "/explore", label: "Explore", icon: Compass },
   { to: "/write", label: "Note down", icon: PenLine },
   { to: "/notifications", label: "Notifications", icon: Bell },
-  { to: "/question", label: "One question a day", icon: Tags },
+  { to: "/question", label: "One question a day", icon: CircleHelp },
 ];
 
 const iconLinkClass =
@@ -166,7 +167,7 @@ export function SiteNav() {
                 onClick={() => setIsMenuOpen(false)}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
               >
-                <Tags aria-hidden className="size-4" /> One question a day
+                <CircleHelp aria-hidden className="size-4" /> One question a day
               </Link>
             </nav>
             <button

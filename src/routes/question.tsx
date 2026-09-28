@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
-import { Flag, Heart, LockKeyhole, MessageCircle, Send, Shuffle, Sparkles } from "lucide-react";
+import { Flag, Heart, LockKeyhole, MessageCircle, Send, Shuffle } from "lucide-react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -71,23 +71,17 @@ function QuestionPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav />
-      <main className="mx-auto max-w-3xl px-5 py-10 sm:py-16">
-        <header className="border-b border-border/70 pb-8">
-          <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
-            ← Back to the home feed
-          </Link>
-          <div className="mt-10 flex items-start justify-between gap-5">
-            <div>
-              <p className="hand text-lg text-muted-foreground">a small pause for a big internet</p>
-              <h1 className="mt-2 text-4xl tracking-tight sm:text-6xl">One question a day.</h1>
-            </div>
-            <div className="rounded-full bg-accent p-3 text-accent-foreground">
-              <Sparkles aria-hidden className="size-5" />
-            </div>
+      <main className="mx-auto max-w-3xl px-5 py-5 sm:py-8">
+        <header className="border-b border-border/70 pb-5">
+          <div className="flex items-center justify-between gap-4">
+            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+              ← Home
+            </Link>
+            <p className="hand text-base text-muted-foreground">think first, then read the room</p>
           </div>
-          <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Inktella asks everyone the same question. Give your point of view before you hear
-            theirs.
+          <h1 className="mt-5 text-3xl tracking-tight sm:text-4xl">One question a day.</h1>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Everyone sees the same question. Give your point of view before you hear theirs.
           </p>
         </header>
 
