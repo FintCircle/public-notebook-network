@@ -21,6 +21,7 @@ const items = [
   { to: "/explore", label: "Explore", icon: Compass },
   { to: "/write", label: "Note down", icon: PenLine },
   { to: "/notifications", label: "Notifications", icon: Bell },
+  { to: "/question", label: "One question a day", icon: Tags },
 ];
 
 const iconLinkClass =
@@ -85,10 +86,7 @@ export function SiteNav() {
             className="grid grid-cols-6 border-t border-border/60 px-2"
             aria-label="Primary navigation"
           >
-            {[
-              ...items,
-              { to: "/topics", label: "Topics", icon: Tags },
-            ].map((item, index) => {
+            {[...items, { to: "/topics", label: "Topics", icon: Tags }].map((item, index) => {
               const Icon = item.icon;
               const href = item.to === "/write" ? "/write" : item.to;
               return (
@@ -143,7 +141,9 @@ export function SiteNav() {
               />
               <div>
                 <p className="font-medium">{isAuthenticated ? "Derrick" : "Just browsing"}</p>
-                <p className="text-sm text-muted-foreground">{isAuthenticated ? "Signed in" : "Not signed in"}</p>
+                <p className="text-sm text-muted-foreground">
+                  {isAuthenticated ? "Signed in" : "Not signed in"}
+                </p>
               </div>
             </div>
             <nav className="mt-8 flex flex-col gap-2" aria-label="Profile settings">
@@ -161,11 +161,26 @@ export function SiteNav() {
               >
                 <Settings2 aria-hidden className="size-4" /> Manage Notepages
               </Link>
+              <Link
+                to="/question"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
+              >
+                <Tags aria-hidden className="size-4" /> One question a day
+              </Link>
             </nav>
             <button
               type="button"
               className="mt-auto border-t border-border pt-5 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
-              onClick={() => { if (isAuthenticated) { signOut(); navigate({ to: "/signed-out" }); } else { navigate({ to: "/sign-in" }); } setIsMenuOpen(false); }}
+              onClick={() => {
+                if (isAuthenticated) {
+                  signOut();
+                  navigate({ to: "/signed-out" });
+                } else {
+                  navigate({ to: "/sign-in" });
+                }
+                setIsMenuOpen(false);
+              }}
             >
               {isAuthenticated ? "Sign out" : "Join / Sign in"}
             </button>

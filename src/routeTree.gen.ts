@@ -20,6 +20,7 @@ import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as QuestionRouteImport } from './routes/question'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignedOutRouteImport } from './routes/signed-out'
 import { Route as StatsRouteImport } from './routes/stats'
@@ -91,6 +92,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuestionRoute = QuestionRouteImport.update({
+  id: '/question',
+  path: '/question',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignInRoute = SignInRouteImport.update({
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/question': typeof QuestionRoute
   '/sign-in': typeof SignInRoute
   '/signed-out': typeof SignedOutRoute
   '/stats': typeof StatsRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/question': typeof QuestionRoute
   '/sign-in': typeof SignInRoute
   '/signed-out': typeof SignedOutRoute
   '/stats': typeof StatsRoute
@@ -250,6 +258,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/question': typeof QuestionRoute
   '/sign-in': typeof SignInRoute
   '/signed-out': typeof SignedOutRoute
   '/stats': typeof StatsRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/profile'
+    | '/question'
     | '/sign-in'
     | '/signed-out'
     | '/stats'
@@ -310,6 +320,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/profile'
+    | '/question'
     | '/sign-in'
     | '/signed-out'
     | '/stats'
@@ -340,6 +351,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/profile'
+    | '/question'
     | '/sign-in'
     | '/signed-out'
     | '/stats'
@@ -371,6 +383,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
+  QuestionRoute: typeof QuestionRoute
   SignInRoute: typeof SignInRoute
   SignedOutRoute: typeof SignedOutRoute
   StatsRoute: typeof StatsRoute
@@ -458,6 +471,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/question': {
+      id: '/question'
+      path: '/question'
+      fullPath: '/question'
+      preLoaderRoute: typeof QuestionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-in': {
@@ -632,6 +652,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
+  QuestionRoute: QuestionRoute,
   SignInRoute: SignInRoute,
   SignedOutRoute: SignedOutRoute,
   StatsRoute: StatsRoute,
