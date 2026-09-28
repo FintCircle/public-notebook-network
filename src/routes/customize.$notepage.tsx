@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Check, Palette, Type } from "lucide-react";
+import { ArrowLeft, Check, ImagePlus, Palette, Type } from "lucide-react";
 import { useState } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
@@ -41,12 +41,16 @@ function CustomizeNotepage() {
   const np = getNotepage(slug);
   const [fontPack, setFontPack] = useState(fontPacks[0]);
   const [accent, setAccent] = useState(np?.theme.accent ?? "#c2410c");
-  const [header, setHeader] = useState(np?.header ?? {
-    navLabel: np?.name ?? "Notepage",
-    eyebrow: "the notebook entries",
-    title: `Notes from ${np?.owner ?? "you"}`,
-    description: np?.description ?? "",
-  });
+  const [background, setBackground] = useState<"ruled" | "white" | "custom">("ruled");
+  const [customBackground, setCustomBackground] = useState("");
+  const [header, setHeader] = useState(
+    np?.header ?? {
+      navLabel: np?.name ?? "Notepage",
+      eyebrow: "the notebook entries",
+      title: `Notes from ${np?.owner ?? "you"}`,
+      description: np?.description ?? "",
+    },
+  );
   if (!np) return null;
 
   return (
@@ -75,7 +79,14 @@ function CustomizeNotepage() {
             <h1 className="mt-1 text-4xl">Customize</h1>
             <p className="hand mt-2 text-xl opacity-65">make this corner feel like yours</p>
           </div>
-          <Button onClick={() => window.localStorage.setItem(`notepage-accent:${slug}`, accent)}>
+          <Button
+            onClick={() => {
+              window.localStorage.setItem(`notepage-accent:${slug}`, accent);
+              window.localStorage.setItem(`notepage-background:${slug}`, background);
+              if (customBackground)
+                window.localStorage.setItem(`notepage-custom-background:${slug}`, customBackground);
+            }}
+          >
             <Check aria-hidden /> Save changes
           </Button>
         </div>
@@ -86,15 +97,33 @@ function CustomizeNotepage() {
                 <Type aria-hidden className="size-5" />
                 <h2 className="text-lg font-semibold">Upper section</h2>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">Write the welcome text readers see before your notes.</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Write the welcome text readers see before your notes.
+              </p>
               <div className="mt-5 grid gap-4">
-                {([['navLabel', 'Back-link label'], ['eyebrow', 'Small handwritten line'], ['title', 'Heading'], ['description', 'Description']] as const).map(([field, label]) => (
+                {(
+                  [
+                    ["navLabel", "Back-link label"],
+                    ["eyebrow", "Small handwritten line"],
+                    ["title", "Heading"],
+                    ["description", "Description"],
+                  ] as const
+                ).map(([field, label]) => (
                   <label key={field} className="grid gap-2 text-sm font-medium">
                     {label}
                     {field === "description" ? (
-                      <textarea value={header[field]} onChange={(event) => setHeader({ ...header, [field]: event.target.value })} rows={3} className="rounded-xl border border-border/70 bg-background px-3 py-2 font-normal" />
+                      <textarea
+                        value={header[field]}
+                        onChange={(event) => setHeader({ ...header, [field]: event.target.value })}
+                        rows={3}
+                        className="rounded-xl border border-border/70 bg-background px-3 py-2 font-normal"
+                      />
                     ) : (
-                      <input value={header[field]} onChange={(event) => setHeader({ ...header, [field]: event.target.value })} className="rounded-xl border border-border/70 bg-background px-3 py-2 font-normal" />
+                      <input
+                        value={header[field]}
+                        onChange={(event) => setHeader({ ...header, [field]: event.target.value })}
+                        className="rounded-xl border border-border/70 bg-background px-3 py-2 font-normal"
+                      />
                     )}
                   </label>
                 ))}
@@ -134,20 +163,90 @@ function CustomizeNotepage() {
             </div>
             <div className="rounded-2xl border border-border/70 bg-card p-5 sm:p-7">
               <div className="flex items-center gap-2">
+                <ImagePlus aria-hidden className="size-5" />
+                <h2 className="text-lg font-semibold">Cover background</h2>
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Keep the ruled notebook texture, use a clean white cover, or upload your own white
+                background image.
+              </p>
+              <div className="mt-5 grid gap-2 sm:grid-cols-3">
+                {(
+                  [
+                    ["ruled", "Notebook ruled"],
+                    ["white", "Plain white"],
+                    ["custom", "Upload white"],
+                  ] as const
+                ).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setBackground(value)}
+                    className={`rounded-xl border px-3 py-3 text-left text-sm ${background === value ? "border-foreground bg-muted" : "border-border/70 hover:bg-muted/50"}`}
+                  >
+                    <span className="block font-medium">{label}</span>
+                    <span className="mt-1 block text-xs text-muted-foreground">
+                      {value === "ruled"
+                        ? "Default paper lines"
+                        : value === "white"
+                          ? "No texture"
+                          : "Your own image"}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {background === "custom" && (
+                <label className="mt-4 grid gap-2 text-sm font-medium">
+                  White cover image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = () => setCustomBackground(String(reader.result));
+                      reader.readAsDataURL(file);
+                    }}
+                    className="rounded-xl border border-border/70 bg-background px-3 py-2 text-sm font-normal"
+                  />
+                  {customBackground && (
+                    <img
+                      src={customBackground}
+                      alt="Uploaded cover preview"
+                      className="h-28 w-full rounded-xl border border-border/70 object-cover"
+                    />
+                  )}
+                </label>
+              )}
+            </div>
+            <div className="rounded-2xl border border-border/70 bg-card p-5 sm:p-7">
+              <div className="flex items-center gap-2">
                 <Palette aria-hidden className="size-5" />
                 <h2 className="text-lg font-semibold">Accent color</h2>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">Choose the ink that highlights links, buttons, notes, and little details on this Notepage.</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Choose the ink that highlights links, buttons, notes, and little details on this
+                Notepage.
+              </p>
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <input aria-label="Custom accent color" type="color" value={accent} onChange={(event) => setAccent(event.target.value)} className="size-12 cursor-pointer rounded-xl border border-border/70 bg-background p-1" />
+                <input
+                  aria-label="Custom accent color"
+                  type="color"
+                  value={accent}
+                  onChange={(event) => setAccent(event.target.value)}
+                  className="size-12 cursor-pointer rounded-xl border border-border/70 bg-background p-1"
+                />
                 <div>
                   <p className="text-sm font-medium">Your accent</p>
                   <p className="font-mono text-xs text-muted-foreground">{accent}</p>
                 </div>
-                <span className="hand ml-auto text-lg" style={{ color: accent }}>a little mark of yours</span>
+                <span className="hand ml-auto text-lg" style={{ color: accent }}>
+                  a little mark of yours
+                </span>
               </div>
             </div>
-            </section>
+          </section>
         </div>
       </main>
       <SiteFooter />

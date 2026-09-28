@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NotepageRouteImport } from './routes/$notepage'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as NotellaRouteImport } from './routes/notella'
@@ -20,6 +21,7 @@ import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as QuestionRouteImport } from './routes/question'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignedOutRouteImport } from './routes/signed-out'
 import { Route as StatsRouteImport } from './routes/stats'
@@ -29,6 +31,8 @@ import { Route as NotepageIndexRouteImport } from './routes/$notepage.index'
 import { Route as NotepageAboutRouteImport } from './routes/$notepage.about'
 import { Route as NotepageGuestnoteRouteImport } from './routes/$notepage.guestnote'
 import { Route as NotepageNotesRouteImport } from './routes/$notepage.notes'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminSectionRouteImport } from './routes/admin.$section'
 import { Route as CustomizeNotepageRouteImport } from './routes/customize.$notepage'
 import { Route as NotepagesIndexRouteImport } from './routes/notepages.index'
 import { Route as NotepagesNotepageRouteImport } from './routes/notepages.$notepage'
@@ -51,6 +55,11 @@ const NotepageRoute = NotepageRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -91,6 +100,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuestionRoute = QuestionRouteImport.update({
+  id: '/question',
+  path: '/question',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignInRoute = SignInRouteImport.update({
@@ -138,6 +152,16 @@ const NotepageNotesRoute = NotepageNotesRouteImport.update({
   path: '/notes',
   getParentRoute: () => NotepageRoute,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSectionRoute = AdminSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => AdminRoute,
+} as any)
 const CustomizeNotepageRoute = CustomizeNotepageRouteImport.update({
   id: '/customize/$notepage',
   path: '/customize/$notepage',
@@ -183,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$notepage': typeof NotepageRouteWithChildren
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/explore': typeof ExploreRoute
   '/guidelines': typeof GuidelinesRoute
   '/notella': typeof NotellaRoute
@@ -191,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/question': typeof QuestionRoute
   '/sign-in': typeof SignInRoute
   '/signed-out': typeof SignedOutRoute
   '/stats': typeof StatsRoute
@@ -199,11 +225,13 @@ export interface FileRoutesByFullPath {
   '/$notepage/about': typeof NotepageAboutRoute
   '/$notepage/guestnote': typeof NotepageGuestnoteRoute
   '/$notepage/notes': typeof NotepageNotesRoute
+  '/admin/$section': typeof AdminSectionRoute
   '/customize/$notepage': typeof CustomizeNotepageRoute
   '/notepages/$notepage': typeof NotepagesNotepageRoute
   '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage/': typeof NotepageIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/notepages/': typeof NotepagesIndexRoute
   '/topics/': typeof TopicsIndexRoute
   '/$notepage/notepage/$noteId': typeof NotepageNotepageNoteIdRoute
@@ -219,6 +247,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/question': typeof QuestionRoute
   '/sign-in': typeof SignInRoute
   '/signed-out': typeof SignedOutRoute
   '/stats': typeof StatsRoute
@@ -227,11 +256,13 @@ export interface FileRoutesByTo {
   '/$notepage/about': typeof NotepageAboutRoute
   '/$notepage/guestnote': typeof NotepageGuestnoteRoute
   '/$notepage/notes': typeof NotepageNotesRoute
+  '/admin/$section': typeof AdminSectionRoute
   '/customize/$notepage': typeof CustomizeNotepageRoute
   '/notepages/$notepage': typeof NotepagesNotepageRoute
   '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage': typeof NotepageIndexRoute
+  '/admin': typeof AdminIndexRoute
   '/notepages': typeof NotepagesIndexRoute
   '/topics': typeof TopicsIndexRoute
   '/$notepage/notepage/$noteId': typeof NotepageNotepageNoteIdRoute
@@ -242,6 +273,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$notepage': typeof NotepageRouteWithChildren
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/explore': typeof ExploreRoute
   '/guidelines': typeof GuidelinesRoute
   '/notella': typeof NotellaRoute
@@ -250,6 +282,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/question': typeof QuestionRoute
   '/sign-in': typeof SignInRoute
   '/signed-out': typeof SignedOutRoute
   '/stats': typeof StatsRoute
@@ -258,11 +291,13 @@ export interface FileRoutesById {
   '/$notepage/about': typeof NotepageAboutRoute
   '/$notepage/guestnote': typeof NotepageGuestnoteRoute
   '/$notepage/notes': typeof NotepageNotesRoute
+  '/admin/$section': typeof AdminSectionRoute
   '/customize/$notepage': typeof CustomizeNotepageRoute
   '/notepages/$notepage': typeof NotepagesNotepageRoute
   '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage/': typeof NotepageIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/notepages/': typeof NotepagesIndexRoute
   '/topics/': typeof TopicsIndexRoute
   '/$notepage/notepage/$noteId': typeof NotepageNotepageNoteIdRoute
@@ -274,6 +309,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$notepage'
     | '/about'
+    | '/admin'
     | '/explore'
     | '/guidelines'
     | '/notella'
@@ -282,6 +318,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/profile'
+    | '/question'
     | '/sign-in'
     | '/signed-out'
     | '/stats'
@@ -290,11 +327,13 @@ export interface FileRouteTypes {
     | '/$notepage/about'
     | '/$notepage/guestnote'
     | '/$notepage/notes'
+    | '/admin/$section'
     | '/customize/$notepage'
     | '/notepages/$notepage'
     | '/notepages/new'
     | '/topics/$tag'
     | '/$notepage/'
+    | '/admin/'
     | '/notepages/'
     | '/topics/'
     | '/$notepage/notepage/$noteId'
@@ -310,6 +349,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/profile'
+    | '/question'
     | '/sign-in'
     | '/signed-out'
     | '/stats'
@@ -318,11 +358,13 @@ export interface FileRouteTypes {
     | '/$notepage/about'
     | '/$notepage/guestnote'
     | '/$notepage/notes'
+    | '/admin/$section'
     | '/customize/$notepage'
     | '/notepages/$notepage'
     | '/notepages/new'
     | '/topics/$tag'
     | '/$notepage'
+    | '/admin'
     | '/notepages'
     | '/topics'
     | '/$notepage/notepage/$noteId'
@@ -332,6 +374,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$notepage'
     | '/about'
+    | '/admin'
     | '/explore'
     | '/guidelines'
     | '/notella'
@@ -340,6 +383,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/profile'
+    | '/question'
     | '/sign-in'
     | '/signed-out'
     | '/stats'
@@ -348,11 +392,13 @@ export interface FileRouteTypes {
     | '/$notepage/about'
     | '/$notepage/guestnote'
     | '/$notepage/notes'
+    | '/admin/$section'
     | '/customize/$notepage'
     | '/notepages/$notepage'
     | '/notepages/new'
     | '/topics/$tag'
     | '/$notepage/'
+    | '/admin/'
     | '/notepages/'
     | '/topics/'
     | '/$notepage/notepage/$noteId'
@@ -363,6 +409,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   NotepageRoute: typeof NotepageRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ExploreRoute: typeof ExploreRoute
   GuidelinesRoute: typeof GuidelinesRoute
   NotellaRoute: typeof NotellaRoute
@@ -371,6 +418,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
+  QuestionRoute: typeof QuestionRoute
   SignInRoute: typeof SignInRoute
   SignedOutRoute: typeof SignedOutRoute
   StatsRoute: typeof StatsRoute
@@ -402,6 +450,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -458,6 +513,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/question': {
+      id: '/question'
+      path: '/question'
+      fullPath: '/question'
+      preLoaderRoute: typeof QuestionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-in': {
@@ -522,6 +584,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/$notepage/notes'
       preLoaderRoute: typeof NotepageNotesRouteImport
       parentRoute: typeof NotepageRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/$section': {
+      id: '/admin/$section'
+      path: '/$section'
+      fullPath: '/admin/$section'
+      preLoaderRoute: typeof AdminSectionRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/customize/$notepage': {
       id: '/customize/$notepage'
@@ -604,6 +680,18 @@ const NotepageRouteWithChildren = NotepageRoute._addFileChildren(
   NotepageRouteChildren,
 )
 
+interface AdminRouteChildren {
+  AdminSectionRoute: typeof AdminSectionRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminSectionRoute: AdminSectionRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface NotepagesRouteChildren {
   NotepagesNotepageRoute: typeof NotepagesNotepageRoute
   NotepagesNewRoute: typeof NotepagesNewRoute
@@ -624,6 +712,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   NotepageRoute: NotepageRouteWithChildren,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   ExploreRoute: ExploreRoute,
   GuidelinesRoute: GuidelinesRoute,
   NotellaRoute: NotellaRoute,
@@ -632,6 +721,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
+  QuestionRoute: QuestionRoute,
   SignInRoute: SignInRoute,
   SignedOutRoute: SignedOutRoute,
   StatsRoute: StatsRoute,
