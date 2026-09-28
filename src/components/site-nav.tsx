@@ -4,6 +4,7 @@ import {
   Bell,
   CircleHelp,
   Compass,
+  ShieldCheck,
   Newspaper,
   Tags,
   PenLine,
@@ -168,6 +169,13 @@ export function SiteNav() {
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
               >
                 <CircleHelp aria-hidden className="size-4" /> One question a day
+              </Link>
+              <Link
+                to="/admin"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
+              >
+                <ShieldCheck aria-hidden className="size-4" /> Admin area
               </Link>
             </nav>
             <button
