@@ -1,5 +1,4 @@
-import { useMemo, useState } from "react";
-import { geoMercator, geoPath } from "d3-geo";
+import { useState } from "react";
 import { ArrowRight, MessageCircle, Share2, UserRound } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { getNotepage } from "@/data/inktella";
@@ -20,37 +19,6 @@ export const Route = createFileRoute("/$notepage/")({
   },
   component: NotepageHome,
 });
-
-const ugandaGeometry = {
-  type: "Polygon" as const,
-  coordinates: [[
-    [29.55, -1.2], [30.45, -1.35], [31.2, -1.1], [32.1, -1.45], [33.0, -1.25],
-    [33.9, -1.55], [34.85, -1.2], [34.95, -0.25], [34.75, 0.55], [34.55, 1.35],
-    [34.35, 2.2], [34.55, 3.15], [34.25, 4.2], [33.55, 4.3], [32.9, 3.8],
-    [32.2, 3.55], [31.5, 3.75], [30.8, 3.45], [30.05, 3.15], [29.65, 2.4],
-    [29.6, 1.5], [29.3, 0.8], [29.55, -0.05], [29.55, -1.2],
-  ]],
-};
-
-function CountrySilhouette({ country }: { country: string }) {
-  const path = useMemo(() => {
-    const projection = geoMercator().fitSize([220, 190], {
-      type: "Feature",
-      properties: {},
-      geometry: ugandaGeometry,
-    });
-    return geoPath(projection)(ugandaGeometry);
-  }, []);
-
-  return (
-    <figure className="notepage-country-figure" aria-label={`${country} silhouette`}>
-      <svg viewBox="0 0 220 190" role="img" aria-hidden="true" className="notepage-country-map">
-        <path d={path ?? undefined} />
-      </svg>
-      <figcaption>{country}</figcaption>
-    </figure>
-  );
-}
 
 function NotepageHome() {
   const { notepage } = Route.useParams();
@@ -112,7 +80,7 @@ function NotepageHome() {
             </div>
           </div>
 
-          <div className="mt-auto grid gap-7 sm:grid-cols-[minmax(0,1fr)_minmax(10rem,18rem)_auto] sm:items-end sm:gap-10 lg:gap-16">
+          <div className="mt-auto grid gap-7 sm:grid-cols-[1fr_auto] sm:items-end sm:gap-16">
             <div className="sm:mx-0 sm:p-0">
               <img
                 src={np.portrait}
@@ -138,8 +106,6 @@ function NotepageHome() {
                 Start reading <ArrowRight aria-hidden />
               </Link>
             </div>
-
-            <CountrySilhouette country={np.country} />
 
             <nav
               className="flex items-center gap-6 border-t border-black/15 pt-3 text-xs sm:gap-7 sm:border-t-0 sm:border-l sm:border-black/15 sm:pl-8 sm:pt-4 sm:text-sm"
