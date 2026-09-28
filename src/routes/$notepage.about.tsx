@@ -90,7 +90,7 @@ function NotepageAbout() {
 
   return (
     <main
-      className="min-h-screen px-4 py-5 text-[var(--np-ink)] sm:px-8 sm:py-10"
+      className="min-h-screen px-3 py-3 text-[var(--np-ink)] sm:px-8 sm:py-10"
       style={pageStyle}
     >
       <div className="mx-auto max-w-5xl">
@@ -188,25 +188,27 @@ function Preview({
           className={
             layout === "hero"
               ? "absolute inset-0 size-full object-cover grayscale"
-              : "relative mx-auto -mt-1 size-40 rounded-full border-8 border-current/10 object-cover sm:size-48"
+              : "relative mx-auto -mt-1 size-28 rounded-full border-6 border-current/10 object-cover sm:size-48"
           }
         />
         {layout === "hero" && <div className="notepage-cover-shade absolute inset-0" />}
         <div
-          className={layout === "hero" ? "absolute inset-x-0 bottom-10 px-6 text-white" : "pt-7"}
+          className={
+            layout === "hero" ? "absolute inset-x-0 bottom-10 px-6 text-white" : "pt-4 sm:pt-7"
+          }
         >
           <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">
             {notepage.owner} · {notepage.country}
           </p>
-          <h1 className="mt-3 font-heading text-4xl font-bold uppercase tracking-[0.12em] sm:text-5xl">
+          <h1 className="mt-2 font-heading text-3xl font-bold uppercase tracking-[0.1em] sm:mt-3 sm:text-5xl">
             {title}
           </h1>
-          <p className="mx-auto mt-4 max-w-xl text-lg font-medium leading-relaxed opacity-85 sm:text-xl">
+          <p className="mx-auto mt-2 max-w-xl text-base font-medium leading-snug opacity-85 sm:mt-4 sm:text-xl sm:leading-relaxed">
             {subtitle}
           </p>
         </div>
       </div>
-      <div className={`${layout === "hero" ? "px-6 py-10 sm:px-12" : "pt-9"}`}>
+      <div className={`${layout === "hero" ? "px-6 py-10 sm:px-12" : "pt-5 sm:pt-9"}`}>
         <div className="flex flex-col gap-3">
           {spotlights.map((spotlight, index) => {
             const Icon = spotlightIcons[spotlight.icon];
