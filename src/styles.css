@@ -111,7 +111,21 @@
   --font-body-family: var(--np-body, "DM Sans", sans-serif);
   --font-hand-family: var(--np-hand, "Caveat", cursive);
   --np-cover-ink: var(--notepage-cover-ink);
-}
+  --np-accent-soft: color-mix(in oklab, var(--np-accent) 14%, transparent);
+  --np-accent-border: color-mix(in oklab, var(--np-accent) 42%, var(--np-ink));
+  }
+
+  .notepage-theme a:hover,
+  .notepage-theme .text-accent,
+  .notepage-theme .hand::after {
+  color: var(--np-accent);
+  }
+
+  .notepage-theme button:hover,
+  .notepage-theme [data-accent="true"] {
+  border-color: var(--np-accent-border);
+  background-color: var(--np-accent-soft);
+  }
 
 .notepage-background {
   position: fixed;
