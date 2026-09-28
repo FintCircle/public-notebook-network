@@ -1,7 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
-import { Flag, Heart, LockKeyhole, MessageCircle, Send, Shuffle } from "lucide-react";
+import {
+  ArrowUpRight,
+  Flag,
+  Heart,
+  LockKeyhole,
+  MapPin,
+  MessageCircle,
+  Send,
+  Shuffle,
+  X,
+} from "lucide-react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -15,6 +25,12 @@ type Answer = {
   answer: string;
   likes: number;
   avatar: string;
+  bio: string;
+  country?: string;
+  countryCode?: string;
+  answers: number;
+  joined: number;
+  notepage?: { name: string; description: string; href: string };
 };
 
 const answers: Answer[] = [
@@ -25,6 +41,16 @@ const answers: Answer[] = [
     answer: "I would make more room for the people and ideas that keep surprising me.",
     likes: 84,
     avatar: "https://i.pravatar.cc/96?img=47",
+    bio: "Building things, writing things.",
+    country: "Uganda",
+    countryCode: "ug",
+    answers: 126,
+    joined: 2026,
+    notepage: {
+      name: "Thoughts While Building",
+      description: "Notes on making, learning, and staying curious.",
+      href: "/derrick",
+    },
   },
   {
     id: 2,
@@ -33,6 +59,11 @@ const answers: Answer[] = [
     answer: "Less rushing. More noticing the small, ordinary things that are already enough.",
     likes: 61,
     avatar: "https://i.pravatar.cc/96?img=12",
+    bio: "Learning to notice what matters.",
+    country: "United States",
+    countryCode: "us",
+    answers: 89,
+    joined: 2025,
   },
   {
     id: 3,
@@ -56,6 +87,7 @@ function QuestionPage() {
   const [tab, setTab] = useState<"top" | "new" | "random">("top");
   const [liked, setLiked] = useState<number[]>([]);
   const [shared, setShared] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<Answer | null>(null);
 
   const visibleAnswers = useMemo(() => {
     if (tab === "new") return [...answers].reverse();
@@ -179,17 +211,26 @@ function QuestionPage() {
             <div className="mt-5 divide-y divide-border/70">
               {visibleAnswers.map((item) => (
                 <article key={item.id} className="flex gap-4 py-5">
-                  <Link to="/profile" className="shrink-0">
+                  <button
+                    type="button"
+                    className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    onClick={() => setSelectedProfile(item)}
+                    aria-label={`View ${item.name}'s profile`}
+                  >
                     <Avatar className="size-10">
                       <AvatarImage src={item.avatar} alt="" />
                       <AvatarFallback>{item.name.slice(0, 1)}</AvatarFallback>
                     </Avatar>
-                  </Link>
+                  </button>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-                      <Link to="/profile" className="font-medium hover:underline">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedProfile(item)}
+                        className="font-medium hover:underline"
+                      >
                         {item.name}
-                      </Link>
+                      </button>
                       <span className="text-muted-foreground">@{item.handle} · 2h</span>
                     </div>
                     <p className="mt-2 text-base leading-relaxed">{item.answer}</p>
@@ -237,6 +278,82 @@ function QuestionPage() {
             </p>
           )}
         </section>
+
+        {selectedProfile && (
+          <div
+            className="fixed inset-0 z-50"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${selectedProfile.name}'s profile`}
+          >
+            <button
+              type="button"
+              className="absolute inset-0 bg-foreground/20"
+              aria-label="Close profile"
+              onClick={() => setSelectedProfile(null)}
+            />
+            <section
+              className="absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-3xl border-t border-border bg-background p-6 shadow-2xl sm:left-1/2 sm:max-w-lg sm:-translate-x-1/2 sm:rounded-3xl sm:border"
+              aria-labelledby="profile-sheet-title"
+            >
+              <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-muted-foreground/30 sm:hidden" />
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <Avatar className="size-16">
+                    <AvatarImage
+                      src={selectedProfile.avatar}
+                      alt={`${selectedProfile.name} profile photo`}
+                    />
+                    <AvatarFallback>{selectedProfile.name.slice(0, 1)}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h2 id="profile-sheet-title" className="text-xl font-semibold">
+                      {selectedProfile.name}
+                    </h2>
+                    <p className="text-sm text-muted-foreground">@{selectedProfile.handle}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedProfile(null)}
+                  className="rounded-full p-2 hover:bg-muted"
+                  aria-label="Close profile"
+                >
+                  <X aria-hidden className="size-5" />
+                </button>
+              </div>
+              <p className="mt-5 text-base">{selectedProfile.bio}</p>
+              <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                {selectedProfile.country && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin aria-hidden className="size-4" />
+                    {selectedProfile.country}
+                  </span>
+                )}
+                <span>{selectedProfile.answers} points of view (answers)</span>
+                <span>Joined {selectedProfile.joined}</span>
+              </div>
+              {selectedProfile.notepage && (
+                <Link
+                  to={selectedProfile.notepage.href}
+                  onClick={() => setSelectedProfile(null)}
+                  className="mt-6 flex items-center justify-between rounded-2xl border border-border/70 p-4 transition-colors hover:bg-muted"
+                >
+                  <span>
+                    <span className="block text-xs uppercase tracking-wider text-muted-foreground">
+                      Notepage
+                    </span>
+                    <span className="mt-1 block font-medium">{selectedProfile.notepage.name}</span>
+                    <span className="mt-1 block text-sm text-muted-foreground">
+                      {selectedProfile.notepage.description}
+                    </span>
+                  </span>
+                  <ArrowUpRight aria-hidden className="size-5 shrink-0" />
+                </Link>
+              )}
+            </section>
+          </div>
+        )}
 
         <section className="border-t border-border/70 pt-8" aria-labelledby="archive-heading">
           <div className="flex items-end justify-between gap-4">
