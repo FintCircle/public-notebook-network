@@ -1,4 +1,10 @@
-import { createFileRoute, notFound, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  notFound,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { NotepageNetworkMenu } from "@/components/notepage-network-menu";
 import { getNotepage, notepages, themeStyle } from "@/data/inktella";
@@ -17,10 +23,17 @@ function NotepageShell() {
   const touchStartX = useRef<number | null>(null);
   const np = getNotepage(notepage);
   const [accent, setAccent] = useState(np?.theme.accent ?? "#c2410c");
+  const [coverBackground, setCoverBackground] = useState<"ruled" | "white" | "custom">("ruled");
+  const [customCover, setCustomCover] = useState("");
 
   useEffect(() => {
     const saved = window.localStorage.getItem(`notepage-accent:${notepage}`);
     if (saved) setAccent(saved);
+    const savedBackground = window.localStorage.getItem(`notepage-background:${notepage}`) as
+      "ruled" | "white" | "custom" | null;
+    const savedCustom = window.localStorage.getItem(`notepage-custom-background:${notepage}`);
+    if (savedBackground) setCoverBackground(savedBackground);
+    if (savedCustom) setCustomCover(savedCustom);
   }, [notepage]);
   if (!np) return null;
   const isCover = location.pathname === `/${notepage}`;
@@ -41,10 +54,33 @@ function NotepageShell() {
   }
 
   return (
-    <div className={`notepage-theme relative min-h-screen ${isCover ? "notepage-cover-page" : "notepage-content-page"}`} style={{ ...themeStyle(np), "--np-accent": accent } as React.CSSProperties} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+    <div
+      className={`notepage-theme relative min-h-screen ${isCover ? "notepage-cover-page" : "notepage-content-page"}`}
+      style={
+        {
+          ...themeStyle(np),
+          "--np-accent": accent,
+          "--np-cover-background-image":
+            coverBackground === "custom" && customCover
+              ? `url(${customCover})`
+              : coverBackground === "white"
+                ? "none"
+                : undefined,
+        } as React.CSSProperties
+      }
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Required: the Notepage home, notes and local Notetag pages render here. */}
-      <div className="relative z-10"><Outlet /></div>
-      {!isCover && <NotepageNetworkMenu notepage={np} side={location.pathname.includes("/notepage/") ? "left" : "right"} />}
+      <div className="relative z-10">
+        <Outlet />
+      </div>
+      {!isCover && (
+        <NotepageNetworkMenu
+          notepage={np}
+          side={location.pathname.includes("/notepage/") ? "left" : "right"}
+        />
+      )}
     </div>
   );
 }

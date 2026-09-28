@@ -113,19 +113,19 @@
   --np-cover-ink: var(--notepage-cover-ink);
   --np-accent-soft: color-mix(in oklab, var(--np-accent) 14%, transparent);
   --np-accent-border: color-mix(in oklab, var(--np-accent) 42%, var(--np-ink));
-  }
+}
 
-  .notepage-theme a:hover,
-  .notepage-theme .text-accent,
-  .notepage-theme .hand::after {
+.notepage-theme a:hover,
+.notepage-theme .text-accent,
+.notepage-theme .hand::after {
   color: var(--np-accent);
-  }
+}
 
-  .notepage-theme button:hover,
-  .notepage-theme [data-accent="true"] {
+.notepage-theme button:hover,
+.notepage-theme [data-accent="true"] {
   border-color: var(--np-accent-border);
   background-color: var(--np-accent-soft);
-  }
+}
 
 .notepage-background {
   position: fixed;
@@ -147,8 +147,20 @@
   border-radius: 48% 52% 47% 53% / 52% 46% 54% 48%;
   padding: 0.35rem;
   transform: rotate(-2deg);
-  -webkit-mask-image: radial-gradient(ellipse at center, #000 68%, rgba(0, 0, 0, 0.96) 78%, rgba(0, 0, 0, 0.58) 90%, transparent 100%);
-  mask-image: radial-gradient(ellipse at center, #000 68%, rgba(0, 0, 0, 0.96) 78%, rgba(0, 0, 0, 0.58) 90%, transparent 100%);
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    #000 68%,
+    rgba(0, 0, 0, 0.96) 78%,
+    rgba(0, 0, 0, 0.58) 90%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse at center,
+    #000 68%,
+    rgba(0, 0, 0, 0.96) 78%,
+    rgba(0, 0, 0, 0.58) 90%,
+    transparent 100%
+  );
 }
 
 .notepage-cover-page .notepage-background,
@@ -158,33 +170,67 @@
 
 .notepage-cover {
   background-color: transparent;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 2.15rem,
-    rgba(28, 55, 84, 0.12) 2.15rem,
-    rgba(28, 55, 84, 0.12) 2.2rem
-  ), linear-gradient(to right, transparent 1rem, rgba(205, 75, 75, 0.22) 1rem, rgba(205, 75, 75, 0.22) 1.05rem, transparent 1.05rem);
+  background-image: var(
+    --np-cover-background-image,
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2.15rem,
+      rgba(28, 55, 84, 0.12) 2.15rem,
+      rgba(28, 55, 84, 0.12) 2.2rem
+    ),
+    linear-gradient(
+      to right,
+      transparent 1rem,
+      rgba(205, 75, 75, 0.22) 1rem,
+      rgba(205, 75, 75, 0.22) 1.05rem,
+      transparent 1.05rem
+    )
+  );
   color: #111;
   --notepage-cover-ink: #111;
 }
 
 @media (max-width: 639px) {
   .notepage-owner-image {
-    -webkit-mask-image: radial-gradient(ellipse at center 36%, #000 21%, rgba(0, 0, 0, 0.92) 41%, rgba(0, 0, 0, 0.52) 61%, rgba(0, 0, 0, 0.14) 81%, transparent 100%);
-    mask-image: radial-gradient(ellipse at center 36%, #000 21%, rgba(0, 0, 0, 0.92) 41%, rgba(0, 0, 0, 0.52) 61%, rgba(0, 0, 0, 0.14) 81%, transparent 100%);
+    -webkit-mask-image: radial-gradient(
+      ellipse at center 36%,
+      #000 21%,
+      rgba(0, 0, 0, 0.92) 41%,
+      rgba(0, 0, 0, 0.52) 61%,
+      rgba(0, 0, 0, 0.14) 81%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse at center 36%,
+      #000 21%,
+      rgba(0, 0, 0, 0.92) 41%,
+      rgba(0, 0, 0, 0.52) 61%,
+      rgba(0, 0, 0, 0.14) 81%,
+      transparent 100%
+    );
   }
 }
 
 @media (min-width: 640px) {
   .notepage-cover {
-    background-image: repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent 2.15rem,
-      rgba(28, 55, 84, 0.12) 2.15rem,
-      rgba(28, 55, 84, 0.12) 2.2rem
-    ), linear-gradient(to right, transparent 2.5rem, rgba(205, 75, 75, 0.22) 2.5rem, rgba(205, 75, 75, 0.22) 2.55rem, transparent 2.55rem);
+    background-image: var(
+      --np-cover-background-image,
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 2.15rem,
+        rgba(28, 55, 84, 0.12) 2.15rem,
+        rgba(28, 55, 84, 0.12) 2.2rem
+      ),
+      linear-gradient(
+        to right,
+        transparent 2.5rem,
+        rgba(205, 75, 75, 0.22) 2.5rem,
+        rgba(205, 75, 75, 0.22) 2.55rem,
+        transparent 2.55rem
+      )
+    );
   }
 }
 
@@ -238,20 +284,27 @@
   }
 }
 
-
 .notepage-background-overlay {
   position: fixed;
   inset: 0;
   z-index: 1;
   width: 100vw;
   height: 100dvh;
-  background: color-mix(in oklab, var(--np-bg, var(--paper)) calc(max(var(--np-overlay-opacity, 0.2), 0.28) * 100%), transparent);
+  background: color-mix(
+    in oklab,
+    var(--np-bg, var(--paper)) calc(max(var(--np-overlay-opacity, 0.2), 0.28) * 100%),
+    transparent
+  );
   pointer-events: none;
 }
 
 @media (max-width: 640px) {
   .notepage-background-overlay {
-    background: color-mix(in oklab, var(--np-bg, var(--paper)) calc(max(var(--np-overlay-opacity, 0.2), 0.32) * 100%), transparent);
+    background: color-mix(
+      in oklab,
+      var(--np-bg, var(--paper)) calc(max(var(--np-overlay-opacity, 0.2), 0.32) * 100%),
+      transparent
+    );
   }
 }
 
