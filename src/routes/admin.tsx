@@ -30,7 +30,7 @@ const adminItems: AdminItem[] = [
   { label: "Questions", path: "/admin/questions", icon: CircleHelp },
   { label: "Users", path: "/admin/users", icon: Users },
   { label: "Reports", path: "/admin/reports", icon: Flag },
-  { label: "Topics", path: "/admin/topics", icon: Hash },
+  { label: "Categories", path: "/admin/topics", icon: Hash },
   { label: "Tags", path: "/admin/tags", icon: Tags },
 ];
 
@@ -231,8 +231,8 @@ export const adminSections: Record<
     ],
   },
   topics: {
-    title: "Topics",
-    description: "Curate the subjects people gather around, inspired by an Explore Topics shelf.",
+    title: "Categories",
+    description: "Manage the categories used to organize the Explore section.",
     icon: Hash,
     rows: [
       ["Art", "Explore visual work, process, and perspective", ""],
@@ -342,7 +342,7 @@ export function AdminSection({ section }: { section: string }) {
       </div>
       {section === "topics" && (
         <form className="border-b border-border pb-5" onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const name = String(form.get("name") ?? "").trim(); const description = String(form.get("description") ?? "").trim(); if (!name || !description) return; setTopicItems((items) => [...items, [name, description, ""]].sort((a, b) => a[0].localeCompare(b[0]))); event.currentTarget.reset(); }}>
-          <div className="grid gap-2 sm:grid-cols-[14rem_1fr_auto]"><input name="name" required placeholder="Topic name" className="rounded-lg border border-border bg-background px-3 py-2 text-sm" /><input name="description" required placeholder="Short description for the topic page" className="rounded-lg border border-border bg-background px-3 py-2 text-sm" /><button type="submit" className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground"><Plus className="size-4" aria-hidden />Publish topic</button></div>
+          <div className="grid gap-2 sm:grid-cols-[14rem_1fr_auto]"><input name="name" required placeholder="Category name" className="rounded-lg border border-border bg-background px-3 py-2 text-sm" /><input name="description" required placeholder="Short description for the category page" className="rounded-lg border border-border bg-background px-3 py-2 text-sm" /><button type="submit" className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground"><Plus className="size-4" aria-hidden />Publish category</button></div>
         </form>
       )}
       {section === "questions" ? (
