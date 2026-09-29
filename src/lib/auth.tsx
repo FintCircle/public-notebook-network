@@ -1,24 +1,51 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import type { User } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+import { InktellaStoreProvider } from "@/lib/inktella-store";
 
 type AuthContextValue = {
   isAuthenticated: boolean;
-  signIn: () => void;
-  signOut: () => void;
+  loading: boolean;
+  user: User | null;
+  displayName: string;
+  signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+    supabase.auth.getSession().then(({ data: s }) => {
+      setUser(s.session?.user ?? null);
+      setLoading(false);
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+
+  const meta = user?.user_metadata as { full_name?: string; name?: string } | undefined;
+  const displayName = meta?.full_name ?? meta?.name ?? user?.email?.split("@")[0] ?? "";
 
   return (
-    <AuthContext.Provider value={{
-      isAuthenticated,
-      signIn: () => setIsAuthenticated(true),
-      signOut: () => setIsAuthenticated(false),
-    }}>
-      {children}
+    <AuthContext.Provider
+      value={{
+        isAuthenticated: !!user,
+        loading,
+        user,
+        displayName,
+        signOut: async () => {
+          await supabase.auth.signOut();
+        },
+      }}
+    >
+      <InktellaStoreProvider userId={user?.id ?? null}>{children}</InktellaStoreProvider>
     </AuthContext.Provider>
   );
 }
@@ -30,9 +57,10 @@ export function useAuth() {
 }
 
 export function AuthGate({ children, message = "This corner is for signed-in notebook people." }: { children: ReactNode; message?: string }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
 
+  if (loading) return null;
   if (isAuthenticated) return children;
 
   return (
