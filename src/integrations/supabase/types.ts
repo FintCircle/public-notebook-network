@@ -14,7 +14,275 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      guestnotes: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          notepage_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          notepage_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          notepage_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guestnotes_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guestnotes_notepage_id_fkey"
+            columns: ["notepage_id"]
+            isOneToOne: false
+            referencedRelation: "notepages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      likes: {
+        Row: {
+          created_at: string
+          note_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          note_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          note_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      note_notetags: {
+        Row: {
+          note_id: string
+          notetag_id: string
+        }
+        Insert: {
+          note_id: string
+          notetag_id: string
+        }
+        Update: {
+          note_id?: string
+          notetag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "note_notetags_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "note_notetags_notetag_id_fkey"
+            columns: ["notetag_id"]
+            isOneToOne: false
+            referencedRelation: "notetags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notepages: {
+        Row: {
+          accent: string
+          bg: string
+          body_font: string
+          cover_path: string | null
+          created_at: string
+          description: string
+          hand_font: string
+          heading_font: string
+          id: string
+          ink: string
+          name: string
+          owner_id: string
+          paid_until: string | null
+          slug: string
+        }
+        Insert: {
+          accent?: string
+          bg?: string
+          body_font?: string
+          cover_path?: string | null
+          created_at?: string
+          description?: string
+          hand_font?: string
+          heading_font?: string
+          id?: string
+          ink?: string
+          name: string
+          owner_id: string
+          paid_until?: string | null
+          slug: string
+        }
+        Update: {
+          accent?: string
+          bg?: string
+          body_font?: string
+          cover_path?: string | null
+          created_at?: string
+          description?: string
+          hand_font?: string
+          heading_font?: string
+          id?: string
+          ink?: string
+          name?: string
+          owner_id?: string
+          paid_until?: string | null
+          slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notepages_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notes: {
+        Row: {
+          author_id: string
+          created_at: string
+          html: string
+          id: string
+          notepage_id: string
+          preview: string
+          published_at: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          html?: string
+          id?: string
+          notepage_id: string
+          preview?: string
+          published_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          html?: string
+          id?: string
+          notepage_id?: string
+          preview?: string
+          published_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notes_notepage_id_fkey"
+            columns: ["notepage_id"]
+            isOneToOne: false
+            referencedRelation: "notepages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notetags: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          bio: string
+          country: string
+          country_code: string
+          created_at: string
+          display_name: string
+          id: string
+          interests: string[]
+          links: Json
+          portrait_url: string | null
+        }
+        Insert: {
+          bio?: string
+          country?: string
+          country_code?: string
+          created_at?: string
+          display_name?: string
+          id: string
+          interests?: string[]
+          links?: Json
+          portrait_url?: string | null
+        }
+        Update: {
+          bio?: string
+          country?: string
+          country_code?: string
+          created_at?: string
+          display_name?: string
+          id?: string
+          interests?: string[]
+          links?: Json
+          portrait_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
