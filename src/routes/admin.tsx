@@ -1,20 +1,24 @@
 import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 import {
   BookOpen,
+  ChevronDown,
   ChevronRight,
   CircleHelp,
-  FileText,
+  ExternalLink,
   Flag,
   FolderOpen,
   Hash,
   Image,
   LayoutDashboard,
+  Plus,
   Search,
+  Trash2,
   ShieldCheck,
   Tags,
   Upload,
   Users,
 } from "lucide-react";
+import { useState } from "react";
 import type { ComponentType } from "react";
 
 export const Route = createFileRoute("/admin")({ component: AdminLayout });
@@ -24,7 +28,6 @@ type AdminItem = { label: string; path: string; icon: ComponentType<{ className?
 const adminItems: AdminItem[] = [
   { label: "Overview", path: "/admin", icon: LayoutDashboard },
   { label: "Notepages", path: "/admin/notepages", icon: BookOpen },
-  { label: "Notes", path: "/admin/notes", icon: FileText },
   { label: "Questions", path: "/admin/questions", icon: CircleHelp },
   { label: "Users", path: "/admin/users", icon: Users },
   { label: "Reports", path: "/admin/reports", icon: Flag },
@@ -35,7 +38,6 @@ const adminItems: AdminItem[] = [
 
 const stats = [
   ["Notepages", "248", "+12 this month", BookOpen],
-  ["Notes", "8,492", "+184 this week", FileText],
   ["People", "3,106", "+47 this week", Users],
   ["Open reports", "14", "Needs attention", Flag],
 ] as const;
@@ -195,22 +197,12 @@ export const adminSections: Record<
 > = {
   notepages: {
     title: "Notepages",
-    description: "Review and manage every public notebook.",
+    description: "Manage public notebooks and the notes inside each one.",
     icon: BookOpen,
     rows: [
-      ["Derrick's Notes", "Derrick Mbabazi", "Published"],
-      ["Small Experiments", "Maya Okafor", "Published"],
-      ["Field Notes", "Jon Bell", "Needs review"],
-    ],
-  },
-  notes: {
-    title: "Notes",
-    description: "Moderate notes across the network.",
-    icon: FileText,
-    rows: [
-      ["I keep rebuilding things", "Derrick's Notes", "Published"],
-      ["A useful kind of unfinished", "Small Experiments", "Published"],
-      ["The first draft is a door", "Field Notes", "Flagged"],
+      ["Derrick's Notes", "Derrick Mbabazi · 24 notes", "Published"],
+      ["Small Experiments", "Maya Okafor · 18 notes", "Published"],
+      ["Field Notes", "Jon Bell · 9 notes", "Published"],
     ],
   },
   questions: {
@@ -235,12 +227,12 @@ export const adminSections: Record<
   },
   reports: {
     title: "Reports",
-    description: "Keep the public notebook thoughtful and safe.",
+    description: "Review reports made on answers and comments from Questions.",
     icon: Flag,
     rows: [
-      ["A quiet place to begin", "Harassment · 2 reports", "Open"],
-      ["Anonymous image upload", "Copyright · 1 report", "Open"],
-      ["Comment on field notes", "Spam · resolved", "Resolved"],
+      ["Maya Okafor's answer", "Harassment · 2 reports · hidden", "Open"],
+      ["Jon Bell's answer", "Spam · 1 report · hidden", "Open"],
+      ["Derrick Mbabazi's comment", "Off-topic · resolved", "Resolved"],
     ],
   },
   topics: {
@@ -276,8 +268,9 @@ export const adminSections: Record<
 };
 
 export function AdminSection({ section }: { section: string }) {
-  const config = adminSections[section] ?? adminSections.notes;
+  const config = adminSections[section] ?? adminSections.notepages;
   const Icon = config.icon;
+  const [expandedNotepage, setExpandedNotepage] = useState<string | null>(null);
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -291,11 +284,14 @@ export function AdminSection({ section }: { section: string }) {
         </div>
         <button
           type="button"
-          className="rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground"
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground"
         >
+          <Plus className="size-4" aria-hidden />
           {section === "questions"
             ? "Schedule question"
-            : `Add ${config.title.replace("User ", "")}`}
+            : section === "notepages"
+              ? "Add Notepage"
+              : `Add ${config.title.replace("User ", "")}`}
         </button>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -326,20 +322,93 @@ export function AdminSection({ section }: { section: string }) {
           <span />
         </div>
         {config.rows.map(([name, detail, status]) => (
-          <div
-            key={name}
-            className="grid gap-3 border-b border-border px-5 py-4 last:border-0 sm:grid-cols-[1fr_1fr_9rem_2rem] sm:items-center sm:gap-4"
-          >
-            <div className="font-medium">{name}</div>
-            <div className="text-sm text-muted-foreground">{detail}</div>
-            <div>
+          <div key={name} className="border-b border-border last:border-0">
+            <div className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-center sm:gap-4">
+              <div className="font-medium">{name}</div>
+              <div className="text-sm text-muted-foreground">{detail}</div>
               <span
-                className={`inline-flex rounded-full px-2 py-1 text-xs ${status === "Open" || status === "Pending" || status === "Flagged" || status === "Needs review" ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"}`}
+                className={`inline-flex w-fit rounded-full px-2 py-1 text-xs ${status === "Open" || status === "Pending" || status === "Flagged" || status === "Needs review" ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"}`}
               >
                 {status}
               </span>
+              {section === "notepages" ? (
+                <div className="flex flex-wrap gap-1 sm:justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setExpandedNotepage(expandedNotepage === name ? null : name)}
+                    className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
+                  >
+                    <ChevronDown
+                      className={`size-3 transition-transform ${expandedNotepage === name ? "rotate-180" : ""}`}
+                      aria-hidden
+                    />
+                    Notes
+                  </button>
+                  <Link
+                    to={name === "Derrick's Notes" ? "/derrick" : "/"}
+                    target="_blank"
+                    className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
+                  >
+                    <ExternalLink className="size-3" aria-hidden />
+                    View
+                  </Link>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="size-3" aria-hidden />
+                    Delete
+                  </button>
+                </div>
+              ) : section === "reports" ? (
+                <div className="flex gap-1 sm:justify-end">
+                  <button
+                    type="button"
+                    className="rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
+                  >
+                    Review
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-md px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="mr-1 inline size-3" aria-hidden />
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <ChevronRight
+                  className="hidden size-4 text-muted-foreground sm:block"
+                  aria-hidden
+                />
+              )}
             </div>
-            <ChevronRight className="hidden size-4 text-muted-foreground sm:block" aria-hidden />
+            {section === "notepages" && expandedNotepage === name && (
+              <div className="border-t border-border bg-muted/30 px-5 py-3">
+                <p className="mb-2 text-xs uppercase tracking-wider text-muted-foreground">
+                  Notes in {name}
+                </p>
+                {[
+                  "I keep rebuilding things",
+                  "Something I noticed today",
+                  "Why I'm simplifying Pangisa",
+                ].map((note) => (
+                  <div
+                    key={note}
+                    className="flex items-center justify-between gap-3 border-t border-border/70 py-2 text-sm"
+                  >
+                    <span>{note}</span>
+                    <button
+                      type="button"
+                      className="inline-flex shrink-0 items-center gap-1 text-xs text-destructive hover:underline"
+                    >
+                      <Trash2 className="size-3" aria-hidden />
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>
