@@ -16,8 +16,9 @@ import {
   Tags,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ComponentType } from "react";
+import { notes } from "@/data/inktella";
 
 export const Route = createFileRoute("/admin")({ component: AdminLayout });
 
@@ -303,6 +304,17 @@ export function AdminSection({ section }: { section: string }) {
   const [questionDate, setQuestionDate] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [topicItems, setTopicItems] = useState(config.rows);
+  const [tagItems, setTagItems] = useState(config.rows.map(([name]) => ({ name, count: 0 })));
+  const [editingTag, setEditingTag] = useState<string | null>(null);
+  const tagCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const note of notes) {
+      for (const tag of note.notetags) {
+        counts.set(tag.toLowerCase(), (counts.get(tag.toLowerCase()) ?? 0) + 1);
+      }
+    }
+    return counts;
+  }, []);
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -314,17 +326,19 @@ export function AdminSection({ section }: { section: string }) {
           <h2 className="mt-2 text-3xl font-semibold tracking-tight">{config.title}</h2>
           <p className="mt-1 text-sm text-muted-foreground">{config.description}</p>
         </div>
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground"
-        >
-          <Plus className="size-4" aria-hidden />
-          {section === "questions"
-            ? "Schedule question"
-            : section === "notepages"
-              ? "Add Notepage"
-              : `Add ${config.title.replace("User ", "")}`}
-        </button>
+        {section !== "topics" && section !== "tags" && (
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground"
+          >
+            <Plus className="size-4" aria-hidden />
+            {section === "questions"
+              ? "Schedule question"
+              : section === "notepages"
+                ? "Add Notepage"
+                : `Add ${config.title.replace("User ", "")}`}
+          </button>
+        )}
       </div>
       {section === "topics" && (
         <form className="border-b border-border pb-5" onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const name = String(form.get("name") ?? "").trim(); const description = String(form.get("description") ?? "").trim(); if (!name || !description) return; setTopicItems((items) => [...items, [name, description, ""]].sort((a, b) => a[0].localeCompare(b[0]))); event.currentTarget.reset(); }}>
@@ -527,14 +541,52 @@ export function AdminSection({ section }: { section: string }) {
           </section>
         </div>
       ) : null}
-      {section !== "questions" && section !== "topics" && (
-        <div className="flex flex-wrap gap-2">
-          <button type="button" className="rounded-lg border border-border bg-background px-3 py-2 text-sm">All</button>
-          <button type="button" className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-muted-foreground">Needs review</button>
-          <button type="button" className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-muted-foreground">Recently updated</button>
+      {section === "tags" ? (
+        <div className="divide-y divide-border border-y border-border">
+          {tagItems.map((item) => (
+            <div key={item.name} className="flex items-center justify-between gap-4 py-4">
+              {editingTag === item.name ? (
+                <input
+                  autoFocus
+                  defaultValue={item.name.replace(/^#/, "")}
+                  aria-label={`Edit ${item.name}`}
+                  onBlur={(event) => {
+                    const nextName = event.target.value.trim().replace(/^#/, "");
+                    if (nextName) {
+                      setTagItems((items) =>
+                        items.map((tag) =>
+                          tag.name === item.name ? { ...tag, name: `#${nextName}` } : tag,
+                        ),
+                      );
+                    }
+                    setEditingTag(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") event.currentTarget.blur();
+                    if (event.key === "Escape") setEditingTag(null);
+                  }}
+                  className="min-w-0 flex-1 border-b border-primary bg-transparent py-1 text-base font-medium outline-none"
+                />
+              ) : (
+                <span className="min-w-0 flex-1 text-base font-medium">{item.name}</span>
+              )}
+              <div className="flex shrink-0 items-center gap-3">
+                <span className="text-sm text-muted-foreground">
+                  {tagCounts.get(item.name.toLowerCase()) ?? item.count} {tagCounts.get(item.name.toLowerCase()) === 1 ? "note" : "notes"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setEditingTag(editingTag === item.name ? null : item.name)}
+                  className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
-      {section !== "questions" && (
+      ) : null}
+      {section !== "questions" && section !== "tags" && (
         <div className="overflow-hidden rounded-xl border border-border bg-background">
           <div className="hidden grid-cols-[1fr_1fr_9rem_2rem] gap-4 border-b border-border bg-muted/40 px-5 py-3 text-xs uppercase tracking-wider text-muted-foreground sm:grid">
             <span>Item</span>
