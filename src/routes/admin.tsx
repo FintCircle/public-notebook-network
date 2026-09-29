@@ -234,14 +234,14 @@ export const adminSections: Record<
     description: "Curate the subjects people gather around, inspired by an Explore Topics shelf.",
     icon: Hash,
     rows: [
-      ["Art", "Explore visual work, process, and perspective", "Featured"],
-      ["Creativity", "Ideas, practice, and making things", "Active"],
-      ["Culture", "People, places, and the stories between them", "Active"],
-      ["Design", "How we shape useful and beautiful things", "Active"],
-      ["Health", "Wellbeing, balance, and living better", "Active"],
-      ["Personal growth", "Learning, reflection, and becoming", "Active"],
-      ["Technology", "Tools, systems, and the future we build", "Active"],
-      ["Writing", "Words, craft, and the work of expression", "Active"],
+      ["Art", "Explore visual work, process, and perspective", ""],
+      ["Creativity", "Ideas, practice, and making things", ""],
+      ["Culture", "People, places, and the stories between them", ""],
+      ["Design", "How we shape useful and beautiful things", ""],
+      ["Health", "Wellbeing, balance, and living better", ""],
+      ["Personal growth", "Learning, reflection, and becoming", ""],
+      ["Technology", "Tools, systems, and the future we build", ""],
+      ["Writing", "Words, craft, and the work of expression", ""],
     ],
   },
   tags: {
@@ -302,6 +302,7 @@ export function AdminSection({ section }: { section: string }) {
   const [questionDraft, setQuestionDraft] = useState("");
   const [questionDate, setQuestionDate] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [topicItems, setTopicItems] = useState(config.rows);
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -325,6 +326,11 @@ export function AdminSection({ section }: { section: string }) {
               : `Add ${config.title.replace("User ", "")}`}
         </button>
       </div>
+      {section === "topics" && (
+        <form className="border-b border-border pb-5" onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const name = String(form.get("name") ?? "").trim(); const description = String(form.get("description") ?? "").trim(); if (!name || !description) return; setTopicItems((items) => [...items, [name, description, ""]].sort((a, b) => a[0].localeCompare(b[0]))); event.currentTarget.reset(); }}>
+          <div className="grid gap-2 sm:grid-cols-[14rem_1fr_auto]"><input name="name" required placeholder="Topic name" className="rounded-lg border border-border bg-background px-3 py-2 text-sm" /><input name="description" required placeholder="Short description for the topic page" className="rounded-lg border border-border bg-background px-3 py-2 text-sm" /><button type="submit" className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground"><Plus className="size-4" aria-hidden />Publish topic</button></div>
+        </form>
+      )}
       {section === "questions" ? (
         <div className="space-y-6">
           <section className="rounded-xl border border-border bg-background p-5">
@@ -521,26 +527,11 @@ export function AdminSection({ section }: { section: string }) {
           </section>
         </div>
       ) : null}
-      {section !== "questions" && (
+      {section !== "questions" && section !== "topics" && (
         <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            className="rounded-lg border border-border bg-background px-3 py-2 text-sm"
-          >
-            All
-          </button>
-          <button
-            type="button"
-            className="rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground"
-          >
-            Needs review
-          </button>
-          <button
-            type="button"
-            className="rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground"
-          >
-            Recently updated
-          </button>
+          <button type="button" className="rounded-lg border border-border bg-background px-3 py-2 text-sm">All</button>
+          <button type="button" className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-muted-foreground">Needs review</button>
+          <button type="button" className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-muted-foreground">Recently updated</button>
         </div>
       )}
       {section !== "questions" && (
@@ -551,7 +542,7 @@ export function AdminSection({ section }: { section: string }) {
             <span>Status</span>
             <span />
           </div>
-          {config.rows.map(([name, detail, status]) => (
+          {(section === "topics" ? topicItems : config.rows).map(([name, detail, status]) => (
             <div
               key={name}
               className={`border-b border-border last:border-0 ${section === "tags" ? "px-5 py-3" : ""}`}
