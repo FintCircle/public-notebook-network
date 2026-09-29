@@ -113,7 +113,7 @@ function QuestionPage() {
             </Link>
             <p className="hand text-base text-muted-foreground">think first, then read the room</p>
           </div>
-          <h1 className="mt-5 text-3xl tracking-tight sm:text-4xl">One question a day.</h1>
+          <h1 className="mt-5 text-3xl tracking-tight sm:text-4xl">Question of the day.</h1>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Everyone sees the same question. Give your point of view before you hear theirs.
           </p>

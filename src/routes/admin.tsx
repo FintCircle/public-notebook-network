@@ -272,7 +272,14 @@ export function AdminSection({ section }: { section: string }) {
   const Icon = config.icon;
   const [expandedNotepage, setExpandedNotepage] = useState<string | null>(null);
   const [questionItems, setQuestionItems] = useState([
-    { id: 1, title: "What are you making room for?", detail: "Today · Live", status: "Published" },
+    {
+      id: 1,
+      title: "What are you making room for?",
+      detail: "Today · Live",
+      status: "Published",
+      suggestedBy: null as string | null,
+      suggestedByHref: null as string | null,
+    },
     {
       id: 2,
       title: "What did you change your mind about?",
@@ -391,6 +398,17 @@ export function AdminSection({ section }: { section: string }) {
                 <div>
                   <p className="font-medium">{item.title}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{item.detail}</p>
+                  {item.suggestedBy && item.suggestedByHref && (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Suggested by{" "}
+                      <a
+                        href={item.suggestedByHref}
+                        className="font-medium text-foreground underline-offset-2 hover:underline"
+                      >
+                        {item.suggestedBy}
+                      </a>
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-800">
@@ -466,6 +484,8 @@ export function AdminSection({ section }: { section: string }) {
                           title: suggestion.title,
                           detail: "Today · Live",
                           status: "Published",
+                          suggestedBy: suggestion.author,
+                          suggestedByHref: `/profile/${suggestion.author.toLowerCase().replaceAll(" ", "-")}`,
                         },
                         ...items,
                       ]);
@@ -484,6 +504,8 @@ export function AdminSection({ section }: { section: string }) {
                           title: suggestion.title,
                           detail: "Upcoming · Scheduled",
                           status: "Scheduled",
+                          suggestedBy: suggestion.author,
+                          suggestedByHref: `/profile/${suggestion.author.toLowerCase().replaceAll(" ", "-")}`,
                         },
                         ...items,
                       ]);
