@@ -271,6 +271,40 @@ export function AdminSection({ section }: { section: string }) {
   const config = adminSections[section] ?? adminSections.notepages;
   const Icon = config.icon;
   const [expandedNotepage, setExpandedNotepage] = useState<string | null>(null);
+  const [questionItems, setQuestionItems] = useState([
+    { id: 1, title: "What are you making room for?", detail: "Today · Live", status: "Published" },
+    {
+      id: 2,
+      title: "What did you change your mind about?",
+      detail: "Tomorrow · Scheduled",
+      status: "Scheduled",
+    },
+    {
+      id: 3,
+      title: "What is worth doing slowly?",
+      detail: "Oct 1 · Scheduled",
+      status: "Scheduled",
+    },
+  ]);
+  const [suggestions, setSuggestions] = useState([
+    {
+      id: 4,
+      title: "What are you learning to leave unfinished?",
+      author: "Maya Chen",
+      detail: "Suggested Sep 28",
+      status: "Pending",
+    },
+    {
+      id: 5,
+      title: "What do you return to when you need clarity?",
+      author: "Jon Bell",
+      detail: "Suggested Sep 27",
+      status: "Pending",
+    },
+  ]);
+  const [questionDraft, setQuestionDraft] = useState("");
+  const [questionDate, setQuestionDate] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -294,124 +328,309 @@ export function AdminSection({ section }: { section: string }) {
               : `Add ${config.title.replace("User ", "")}`}
         </button>
       </div>
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          className="rounded-lg border border-border bg-background px-3 py-2 text-sm"
-        >
-          All
-        </button>
-        <button
-          type="button"
-          className="rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground"
-        >
-          Needs review
-        </button>
-        <button
-          type="button"
-          className="rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground"
-        >
-          Recently updated
-        </button>
-      </div>
-      <div className="overflow-hidden rounded-xl border border-border bg-background">
-        <div className="hidden grid-cols-[1fr_1fr_9rem_2rem] gap-4 border-b border-border bg-muted/40 px-5 py-3 text-xs uppercase tracking-wider text-muted-foreground sm:grid">
-          <span>Item</span>
-          <span>Owner / detail</span>
-          <span>Status</span>
-          <span />
-        </div>
-        {config.rows.map(([name, detail, status]) => (
-          <div key={name} className="border-b border-border last:border-0">
-            <div className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-center sm:gap-4">
-              <div className="font-medium">{name}</div>
-              <div className="text-sm text-muted-foreground">{detail}</div>
-              <span
-                className={`inline-flex w-fit rounded-full px-2 py-1 text-xs ${status === "Open" || status === "Pending" || status === "Flagged" || status === "Needs review" ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"}`}
+      {section === "questions" ? (
+        <div className="space-y-6">
+          <section className="rounded-xl border border-border bg-background p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h3 className="font-semibold">Add or schedule a question</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Write the shared prompt, then publish it now or choose its day.
+                </p>
+              </div>
+              <CircleHelp className="size-5 text-primary" aria-hidden />
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_12rem_auto]">
+              <input
+                value={questionDraft}
+                onChange={(event) => setQuestionDraft(event.target.value)}
+                placeholder="What would you like everyone to consider?"
+                className="rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              />
+              <input
+                type="date"
+                value={questionDate}
+                onChange={(event) => setQuestionDate(event.target.value)}
+                className="rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                aria-label="Publish date"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (!questionDraft.trim()) return;
+                  setQuestionItems((items) => [
+                    {
+                      id: Date.now(),
+                      title: questionDraft.trim(),
+                      detail: questionDate || "Today · Live",
+                      status: questionDate ? "Scheduled" : "Published",
+                    },
+                    ...items,
+                  ]);
+                  setQuestionDraft("");
+                  setQuestionDate("");
+                }}
+                className="rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground"
               >
-                {status}
-              </span>
-              {section === "notepages" ? (
-                <div className="flex flex-wrap gap-1 sm:justify-end">
-                  <button
-                    type="button"
-                    onClick={() => setExpandedNotepage(expandedNotepage === name ? null : name)}
-                    className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
-                  >
-                    <ChevronDown
-                      className={`size-3 transition-transform ${expandedNotepage === name ? "rotate-180" : ""}`}
-                      aria-hidden
-                    />
-                    Notes
-                  </button>
-                  <Link
-                    to={name === "Derrick's Notes" ? "/derrick" : "/"}
-                    target="_blank"
-                    className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
-                  >
-                    <ExternalLink className="size-3" aria-hidden />
-                    View
-                  </Link>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
-                  >
-                    <Trash2 className="size-3" aria-hidden />
-                    Delete
-                  </button>
+                Add question
+              </button>
+            </div>
+          </section>
+          <section className="rounded-xl border border-border bg-background">
+            <div className="border-b border-border p-5">
+              <h3 className="font-semibold">Published and scheduled</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Manage the questions that appear on the public page.
+              </p>
+            </div>
+            {questionItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4 last:border-0"
+              >
+                <div>
+                  <p className="font-medium">{item.title}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{item.detail}</p>
                 </div>
-              ) : section === "reports" ? (
-                <div className="flex gap-1 sm:justify-end">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-800">
+                    {item.status}
+                  </span>
                   <button
                     type="button"
+                    onClick={() => setEditingId(editingId === item.id ? null : item.id)}
                     className="rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
                   >
-                    Review
+                    Edit
                   </button>
                   <button
                     type="button"
-                    className="rounded-md px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
+                    onClick={() =>
+                      setQuestionItems((items) =>
+                        items.filter((question) => question.id !== item.id),
+                      )
+                    }
+                    className="rounded-md p-1 text-destructive hover:bg-destructive/10"
+                    aria-label={`Remove ${item.title}`}
                   >
-                    <Trash2 className="mr-1 inline size-3" aria-hidden />
-                    Remove
+                    <Trash2 className="size-4" aria-hidden />
                   </button>
                 </div>
-              ) : (
-                <ChevronRight
-                  className="hidden size-4 text-muted-foreground sm:block"
-                  aria-hidden
-                />
-              )}
+                {editingId === item.id && (
+                  <div className="basis-full border-t border-border pt-3">
+                    <input
+                      defaultValue={item.title}
+                      onBlur={(event) =>
+                        setQuestionItems((items) =>
+                          items.map((question) =>
+                            question.id === item.id
+                              ? { ...question, title: event.target.value }
+                              : question,
+                          ),
+                        )
+                      }
+                      className="w-full rounded-lg border border-border px-3 py-2 text-sm"
+                      aria-label="Edit question"
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </section>
+          <section className="rounded-xl border border-border bg-background">
+            <div className="border-b border-border p-5">
+              <h3 className="font-semibold">User suggestions</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Review, edit, publish, schedule, or remove questions suggested from the public
+                Questions page.
+              </p>
             </div>
-            {section === "notepages" && expandedNotepage === name && (
-              <div className="border-t border-border bg-muted/30 px-5 py-3">
-                <p className="mb-2 text-xs uppercase tracking-wider text-muted-foreground">
-                  Notes in {name}
-                </p>
-                {[
-                  "I keep rebuilding things",
-                  "Something I noticed today",
-                  "Why I'm simplifying Pangisa",
-                ].map((note) => (
-                  <div
-                    key={note}
-                    className="flex items-center justify-between gap-3 border-t border-border/70 py-2 text-sm"
+            {suggestions.map((suggestion) => (
+              <div
+                key={suggestion.id}
+                className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4 last:border-0"
+              >
+                <div>
+                  <p className="font-medium">{suggestion.title}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {suggestion.author} · {suggestion.detail}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuestionItems((items) => [
+                        {
+                          id: suggestion.id,
+                          title: suggestion.title,
+                          detail: "Today · Live",
+                          status: "Published",
+                        },
+                        ...items,
+                      ]);
+                      setSuggestions((items) => items.filter((item) => item.id !== suggestion.id));
+                    }}
+                    className="rounded-md bg-primary px-2 py-1 text-xs text-primary-foreground"
                   >
-                    <span>{note}</span>
+                    Publish
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuestionItems((items) => [
+                        {
+                          id: suggestion.id,
+                          title: suggestion.title,
+                          detail: "Upcoming · Scheduled",
+                          status: "Scheduled",
+                        },
+                        ...items,
+                      ]);
+                      setSuggestions((items) => items.filter((item) => item.id !== suggestion.id));
+                    }}
+                    className="rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
+                  >
+                    Schedule
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSuggestions((items) => items.filter((item) => item.id !== suggestion.id))
+                    }
+                    className="rounded-md p-1 text-destructive hover:bg-destructive/10"
+                    aria-label={`Remove suggestion ${suggestion.title}`}
+                  >
+                    <Trash2 className="size-4" aria-hidden />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </section>
+        </div>
+      ) : null}
+      {section !== "questions" && (
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            className="rounded-lg border border-border bg-background px-3 py-2 text-sm"
+          >
+            All
+          </button>
+          <button
+            type="button"
+            className="rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground"
+          >
+            Needs review
+          </button>
+          <button
+            type="button"
+            className="rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground"
+          >
+            Recently updated
+          </button>
+        </div>
+      )}
+      {section !== "questions" && (
+        <div className="overflow-hidden rounded-xl border border-border bg-background">
+          <div className="hidden grid-cols-[1fr_1fr_9rem_2rem] gap-4 border-b border-border bg-muted/40 px-5 py-3 text-xs uppercase tracking-wider text-muted-foreground sm:grid">
+            <span>Item</span>
+            <span>Owner / detail</span>
+            <span>Status</span>
+            <span />
+          </div>
+          {config.rows.map(([name, detail, status]) => (
+            <div key={name} className="border-b border-border last:border-0">
+              <div className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-center sm:gap-4">
+                <div className="font-medium">{name}</div>
+                <div className="text-sm text-muted-foreground">{detail}</div>
+                <span
+                  className={`inline-flex w-fit rounded-full px-2 py-1 text-xs ${status === "Open" || status === "Pending" || status === "Flagged" || status === "Needs review" ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"}`}
+                >
+                  {status}
+                </span>
+                {section === "notepages" ? (
+                  <div className="flex flex-wrap gap-1 sm:justify-end">
                     <button
                       type="button"
-                      className="inline-flex shrink-0 items-center gap-1 text-xs text-destructive hover:underline"
+                      onClick={() => setExpandedNotepage(expandedNotepage === name ? null : name)}
+                      className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
+                    >
+                      <ChevronDown
+                        className={`size-3 transition-transform ${expandedNotepage === name ? "rotate-180" : ""}`}
+                        aria-hidden
+                      />
+                      Notes
+                    </button>
+                    <Link
+                      to={name === "Derrick's Notes" ? "/derrick" : "/"}
+                      target="_blank"
+                      className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
+                    >
+                      <ExternalLink className="size-3" aria-hidden />
+                      View
+                    </Link>
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
                     >
                       <Trash2 className="size-3" aria-hidden />
+                      Delete
+                    </button>
+                  </div>
+                ) : section === "reports" ? (
+                  <div className="flex gap-1 sm:justify-end">
+                    <button
+                      type="button"
+                      className="rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
+                    >
+                      Review
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-md px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="mr-1 inline size-3" aria-hidden />
                       Remove
                     </button>
                   </div>
-                ))}
+                ) : (
+                  <ChevronRight
+                    className="hidden size-4 text-muted-foreground sm:block"
+                    aria-hidden
+                  />
+                )}
               </div>
-            )}
-          </div>
-        ))}
-      </div>
+              {section === "notepages" && expandedNotepage === name && (
+                <div className="border-t border-border bg-muted/30 px-5 py-3">
+                  <p className="mb-2 text-xs uppercase tracking-wider text-muted-foreground">
+                    Notes in {name}
+                  </p>
+                  {[
+                    "I keep rebuilding things",
+                    "Something I noticed today",
+                    "Why I'm simplifying Pangisa",
+                  ].map((note) => (
+                    <div
+                      key={note}
+                      className="flex items-center justify-between gap-3 border-t border-border/70 py-2 text-sm"
+                    >
+                      <span>{note}</span>
+                      <button
+                        type="button"
+                        className="inline-flex shrink-0 items-center gap-1 text-xs text-destructive hover:underline"
+                      >
+                        <Trash2 className="size-3" aria-hidden />
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

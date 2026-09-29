@@ -88,6 +88,8 @@ function QuestionPage() {
   const [liked, setLiked] = useState<number[]>([]);
   const [shared, setShared] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<Answer | null>(null);
+  const [suggestion, setSuggestion] = useState("");
+  const [suggestionSent, setSuggestionSent] = useState(false);
 
   const visibleAnswers = useMemo(() => {
     if (tab === "new") return [...answers].reverse();
@@ -354,6 +356,43 @@ function QuestionPage() {
             </section>
           </div>
         )}
+
+        <section
+          className="border-t border-border/70 py-8"
+          aria-labelledby="suggest-question-heading"
+        >
+          <p className="hand text-lg text-muted-foreground">help shape tomorrow</p>
+          <h2 id="suggest-question-heading" className="mt-1 text-2xl">
+            Suggest a question
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Have a question everyone should sit with? Send it to the Inktella team.
+          </p>
+          {suggestionSent ? (
+            <p className="mt-4 rounded-lg bg-muted px-3 py-2 text-sm">
+              Thanks — your suggestion is with the team.
+            </p>
+          ) : (
+            <form
+              className="mt-4 flex flex-col gap-2 sm:flex-row"
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (suggestion.trim()) {
+                  setSuggestionSent(true);
+                  setSuggestion("");
+                }
+              }}
+            >
+              <input
+                value={suggestion}
+                onChange={(event) => setSuggestion(event.target.value)}
+                placeholder="What should we ask?"
+                className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              />
+              <Button type="submit">Send suggestion</Button>
+            </form>
+          )}
+        </section>
 
         <section className="border-t border-border/70 pt-8" aria-labelledby="archive-heading">
           <div className="flex items-end justify-between gap-4">
