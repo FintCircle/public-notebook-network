@@ -8,14 +8,12 @@ import {
   Flag,
   FolderOpen,
   Hash,
-  Image,
   LayoutDashboard,
   Plus,
   Search,
   Trash2,
   ShieldCheck,
   Tags,
-  Upload,
   Users,
 } from "lucide-react";
 import { useState } from "react";
@@ -33,7 +31,6 @@ const adminItems: AdminItem[] = [
   { label: "Reports", path: "/admin/reports", icon: Flag },
   { label: "Topics", path: "/admin/topics", icon: Hash },
   { label: "Tags", path: "/admin/tags", icon: Tags },
-  { label: "Uploads", path: "/admin/uploads", icon: Upload },
 ];
 
 const stats = [
@@ -143,20 +140,18 @@ export function AdminOverview() {
             </div>
             <Flag className="size-5 text-primary" aria-hidden />
           </div>
-          {[
-            "Report on ‘A quiet place to begin’",
-            "New Notepage awaiting review",
-            "Upload flagged for moderation",
-          ].map((item, index) => (
-            <Link
-              key={item}
-              to={index === 0 ? "/admin/reports" : "/admin/notepages"}
-              className="flex items-center justify-between border-b border-border px-5 py-4 text-sm last:border-0 hover:bg-muted/50"
-            >
-              <span>{item}</span>
-              <ChevronRight className="size-4 text-muted-foreground" aria-hidden />
-            </Link>
-          ))}
+          {["Report on ‘A quiet place to begin’", "New Notepage awaiting review"].map(
+            (item, index) => (
+              <Link
+                key={item}
+                to={index === 0 ? "/admin/reports" : "/admin/notepages"}
+                className="flex items-center justify-between border-b border-border px-5 py-4 text-sm last:border-0 hover:bg-muted/50"
+              >
+                <span>{item}</span>
+                <ChevronRight className="size-4 text-muted-foreground" aria-hidden />
+              </Link>
+            ),
+          )}
         </section>
         <section className="rounded-xl border border-border bg-background">
           <div className="border-b border-border p-5">
@@ -167,7 +162,6 @@ export function AdminOverview() {
             {[
               ["Schedule question", "/admin/questions", CircleHelp],
               ["Review reports", "/admin/reports", Flag],
-              ["Manage uploads", "/admin/uploads", Image],
               ["Browse users", "/admin/users", Users],
             ].map(([label, path, Icon]) => (
               <Link
@@ -237,12 +231,17 @@ export const adminSections: Record<
   },
   topics: {
     title: "Topics",
-    description: "Curate the subjects people gather around.",
+    description: "Curate the subjects people gather around, inspired by an Explore Topics shelf.",
     icon: Hash,
     rows: [
-      ["Building in public", "842 notes", "Featured"],
-      ["Personal growth", "531 notes", "Active"],
-      ["Photography", "298 notes", "Active"],
+      ["Art", "Explore visual work, process, and perspective", "Featured"],
+      ["Creativity", "Ideas, practice, and making things", "Active"],
+      ["Culture", "People, places, and the stories between them", "Active"],
+      ["Design", "How we shape useful and beautiful things", "Active"],
+      ["Health", "Wellbeing, balance, and living better", "Active"],
+      ["Personal growth", "Learning, reflection, and becoming", "Active"],
+      ["Technology", "Tools, systems, and the future we build", "Active"],
+      ["Writing", "Words, craft, and the work of expression", "Active"],
     ],
   },
   tags: {
@@ -250,19 +249,10 @@ export const adminSections: Record<
     description: "Review tags created by the community.",
     icon: Tags,
     rows: [
+      ["#book-notes", "Created by Derrick", "Approved"],
       ["#slow-work", "Created by Derrick", "Approved"],
-      ["#tiny-habits", "Created by Maya", "Pending"],
       ["#street-notes", "Created by Jon", "Approved"],
-    ],
-  },
-  uploads: {
-    title: "Uploads",
-    description: "Review images and files added to Inktella.",
-    icon: Upload,
-    rows: [
-      ["derrick-portrait.jpg", "Derrick Mbabazi · 2.4 MB", "Approved"],
-      ["field-notes-cover.png", "Jon Bell · 1.1 MB", "Pending"],
-      ["street-study.jpg", "Maya Okafor · 4.8 MB", "Approved"],
+      ["#tiny-habits", "Created by Maya", "Pending"],
     ],
   },
 };
@@ -562,7 +552,10 @@ export function AdminSection({ section }: { section: string }) {
             <span />
           </div>
           {config.rows.map(([name, detail, status]) => (
-            <div key={name} className="border-b border-border last:border-0">
+            <div
+              key={name}
+              className={`border-b border-border last:border-0 ${section === "tags" ? "px-5 py-3" : ""}`}
+            >
               <div className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-center sm:gap-4">
                 <div className="font-medium">{name}</div>
                 <div className="text-sm text-muted-foreground">{detail}</div>
