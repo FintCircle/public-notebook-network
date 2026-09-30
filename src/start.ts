@@ -1,7 +1,6 @@
 import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
-import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -25,7 +24,14 @@ const csrfMiddleware = createCsrfMiddleware({
   filter: (ctx) => ctx.handlerType === "serverFn",
 });
 
+// Attaches the Clerk session token to every server function call (verified server-side).
+const attachClerkToken = createMiddleware({ type: "function" }).client(async ({ next }) => {
+  const clerk = (globalThis as { Clerk?: { session?: { getToken: () => Promise<string | null> } | null } }).Clerk;
+  const token = await clerk?.session?.getToken().catch(() => null);
+  return next({ headers: token ? { Authorization: `Bearer ${token}` } : {} });
+});
+
 export const startInstance = createStart(() => ({
-  functionMiddleware: [attachSupabaseAuth],
   requestMiddleware: [errorMiddleware, csrfMiddleware],
+  functionMiddleware: [attachClerkToken],
 }));
