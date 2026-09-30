@@ -1,59 +1,46 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import type { User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { ClerkProvider, useClerk, useUser } from "@clerk/clerk-react";
+import { getClerkPublishableKey } from "@/lib/inktella.functions";
 import { InktellaStoreProvider } from "@/lib/inktella-store";
 
-type AuthContextValue = {
-  isAuthenticated: boolean;
-  loading: boolean;
-  user: User | null;
-  displayName: string;
-  signOut: () => Promise<void>;
-};
-
-const AuthContext = createContext<AuthContextValue | null>(null);
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
+  const [key, setKey] = useState<string | null>(null);
   useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-    supabase.auth.getSession().then(({ data: s }) => {
-      setUser(s.session?.user ?? null);
-      setLoading(false);
-    });
-    return () => data.subscription.unsubscribe();
+    getClerkPublishableKey().then(setKey).catch(() => setKey(""));
   }, []);
 
-  const meta = user?.user_metadata as { full_name?: string; name?: string } | undefined;
-  const displayName = meta?.full_name ?? meta?.name ?? user?.email?.split("@")[0] ?? "";
-
+  if (key === null) {
+    return <div className="flex min-h-screen items-center justify-center"><p className="hand text-2xl opacity-50">opening the notebooks…</p></div>;
+  }
+  if (!key) {
+    return <div className="flex min-h-screen items-center justify-center px-5 text-center"><p>Sign-in isn&apos;t set up yet.</p></div>;
+  }
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated: !!user,
-        loading,
-        user,
-        displayName,
-        signOut: async () => {
-          await supabase.auth.signOut();
-        },
-      }}
-    >
-      <InktellaStoreProvider userId={user?.id ?? null}>{children}</InktellaStoreProvider>
-    </AuthContext.Provider>
+    <ClerkProvider publishableKey={key} signInUrl="/sign-in" signUpUrl="/sign-in" afterSignOutUrl="/">
+      <StoreWithUser>{children}</StoreWithUser>
+    </ClerkProvider>
   );
 }
 
+function StoreWithUser({ children }: { children: ReactNode }) {
+  const { user, isLoaded } = useUser();
+  if (!isLoaded) {
+    return <div className="flex min-h-screen items-center justify-center"><p className="hand text-2xl opacity-50">opening the notebooks…</p></div>;
+  }
+  return <InktellaStoreProvider userKey={user?.id ?? null}>{children}</InktellaStoreProvider>;
+}
+
 export function useAuth() {
-  const value = useContext(AuthContext);
-  if (!value) throw new Error("useAuth must be used inside AuthProvider");
-  return value;
+  const { user, isLoaded, isSignedIn } = useUser();
+  const clerk = useClerk();
+  return {
+    isAuthenticated: !!isSignedIn,
+    loading: !isLoaded,
+    user,
+    displayName: user?.fullName || user?.username || user?.primaryEmailAddress?.emailAddress.split("@")[0] || "",
+    signOut: () => clerk.signOut(),
+  };
 }
 
 export function AuthGate({ children, message = "This corner is for signed-in notebook people." }: { children: ReactNode; message?: string }) {
