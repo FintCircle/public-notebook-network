@@ -3,9 +3,7 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "inktella-db",
       "database_id": "0519136e-346c-4f11-9387-3c3ff15fc76d",
-      "migrations_dir": "migrations",
     },
   ],
 }
