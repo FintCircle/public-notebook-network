@@ -13,7 +13,6 @@ import {
   SlidersHorizontal,
   X,
 } from "lucide-react";
-import derrickPortrait from "@/assets/derrick-portrait.jpg";
 import { useAuth } from "@/lib/auth";
 import { useRandomizer } from "@/lib/randomizer";
 
@@ -66,11 +65,7 @@ export function SiteNav() {
                   title="Profile menu"
                   onClick={() => setIsMenuOpen(true)}
                 >
-                  <img
-                    src={derrickPortrait}
-                    alt="Derrick's profile"
-                    className="size-full object-cover"
-                  />
+                  <UserRound aria-hidden className="m-auto size-5 text-muted-foreground" />
                 </button>
               ) : (
                 <Link
@@ -135,11 +130,12 @@ export function SiteNav() {
               </button>
             </div>
             <div className="mt-8 flex items-center gap-3">
-              <img
-                src={derrickPortrait}
-                alt="Derrick's profile"
-                className="size-14 rounded-full object-cover ring-1 ring-border"
-              />
+              <div
+                className="flex size-14 items-center justify-center rounded-full bg-muted ring-1 ring-border"
+                aria-hidden
+              >
+                <UserRound className="size-7 text-muted-foreground" />
+              </div>
               <div>
                 <p className="font-medium">{isAuthenticated ? "Derrick" : "Just browsing"}</p>
                 <p className="text-sm text-muted-foreground">
