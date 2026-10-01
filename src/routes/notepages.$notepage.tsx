@@ -1,24 +1,32 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Download, ExternalLink, PenLine, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
-import { notepages, notesOf } from "@/data/inktella";
+import { notepages, notesOf, type Notepage } from "@/data/inktella";
 
 export const Route = createFileRoute("/notepages/$notepage")({
-  loader: ({ params }) => {
-    const notepage = notepages.find((item) => item.slug === params.notepage);
-    if (!notepage) throw notFound();
-    return { notepage };
-  },
-  head: ({ loaderData }) => ({
-    meta: [{ title: `Posts | ${loaderData?.notepage.name ?? "Notepage"}` }],
+  head: () => ({
+    meta: [
+      { title: "Manage notes | Inktella" },
+      { name: "description", content: "Manage the notes in your Notepage." },
+      { property: "og:title", content: "Manage notes | Inktella" },
+      { property: "og:description", content: "Manage the notes in your Notepage." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
   }),
-  component: PostsManagement,
+  component: PostsManagementRoute,
 });
 
-function PostsManagement() {
-  const { notepage } = Route.useLoaderData();
+function PostsManagementRoute() {
+  const params = Route.useParams();
+  const notepage = notepages.find((item) => item.slug === params.notepage);
+  if (!notepage) return <p className="p-10 text-center">This Notepage doesn&apos;t exist.</p>;
+  return <PostsManagement notepage={notepage} />;
+}
+
+function PostsManagement({ notepage }: { notepage: Notepage }) {
   const [removed, setRemoved] = useState(false);
   const notes = notesOf(notepage.slug);
 
