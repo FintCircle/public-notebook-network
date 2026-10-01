@@ -1,6 +1,10 @@
 import { Heart, MapPin, MessageCirclePlus, Send } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { Notepage } from "@/data/inktella";
+import { guestnotes, useInktellaStore } from "@/lib/inktella-store";
+import { addGuestnote } from "@/lib/inktella.functions";
+import { useAuth } from "@/lib/auth";
+import { useNavigate } from "@tanstack/react-router";
 
 type GuestbookEntry = {
   id: string;
@@ -11,31 +15,6 @@ type GuestbookEntry = {
   portrait?: string;
   reply?: string;
 };
-
-const initialEntries: GuestbookEntry[] = [
-  {
-    id: "reader-1",
-    name: "Matt Lanham",
-    country: "Canada",
-    countryCode: "CA",
-    message:
-      "Anything that takes the friction out of managing blogs gets my vote. Every time I think I should write more, I end up spending too much energy on the tech stack, and not enough on the words! Look forward to seeing if Inktella is the answer!",
-    portrait:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=160&q=80",
-    reply: "@mattlanham thanks so much Matt, really appreciate the kind words!",
-  },
-  {
-    id: "reader-2",
-    name: "Daniele Packard",
-    country: "Italy",
-    countryCode: "IT",
-    message: "Congrats! Works for Next.js website?",
-    portrait:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=160&q=80",
-    reply:
-      "@daniele_packard Hi, Inktella works great with Next.js! Let me know if you need any help setting it up.",
-  },
-];
 
 function Avatar({ entry, notepage }: { entry: GuestbookEntry; notepage: Notepage }) {
   return entry.portrait ? (
@@ -56,7 +35,13 @@ function Avatar({ entry, notepage }: { entry: GuestbookEntry; notepage: Notepage
 
 export function Guestnote({ notepage }: { notepage: Notepage }) {
   const [message, setMessage] = useState("");
-  const [entries, setEntries] = useState(initialEntries);
+  const entries: GuestbookEntry[] = guestnotes
+    .filter((g) => g.notepageId === notepage.id)
+    .map((g) => ({ id: g.id, name: g.name, country: "", countryCode: "", message: g.body, ...(g.portrait ? { portrait: g.portrait } : {}) }));
+  const { refresh } = useInktellaStore();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const [sendError, setSendError] = useState("");
   const [showComposer, setShowComposer] = useState(true);
   const lastScrollY = useRef(0);
 
@@ -71,21 +56,18 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  function submitMessage(event: FormEvent<HTMLFormElement>) {
+  async function submitMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmed = message.trim();
     if (!trimmed) return;
-    setEntries((current) => [
-      ...current,
-      {
-        id: `reader-${Date.now()}`,
-        name: "You",
-        country: "Your country",
-        countryCode: "",
-        message: trimmed,
-      },
-    ]);
-    setMessage("");
+    if (!isAuthenticated) { navigate({ to: "/sign-in" }); return; }
+    try {
+      await addGuestnote({ data: { notepageId: notepage.id, body: trimmed } });
+      setMessage("");
+      await refresh();
+    } catch {
+      setSendError("That guestnote didn't send. Try again.");
+    }
   }
 
   return (
@@ -105,7 +87,7 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
               <div className="min-w-0 pt-1">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
                   <strong className="text-base sm:text-lg">{entry.name}</strong>
-                  {entry.name === "You" && (
+                  {false && (
                     <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-xs text-white">
                       Inker
                     </span>

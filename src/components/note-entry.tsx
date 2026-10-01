@@ -21,7 +21,7 @@ export function NoteEntry({ note }: { note: Note }) {
       <p className="mt-3 max-w-[62ch] leading-relaxed opacity-80">{note.preview}</p>
       <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
         <NotetagList tags={note.notetags} notepage={note.notepage} />
-        <LikeButton count={note.likes} />
+        <LikeButton note={note} />
       </div>
     </article>
   );

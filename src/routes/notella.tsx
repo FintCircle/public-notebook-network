@@ -74,7 +74,7 @@ function Notella() {
                 </div>
 
                 <div className="mt-4 flex items-center justify-between">
-                  <LikeButton count={note.likes} />
+                  <LikeButton note={note} />
                   <Link
                     to="/$notepage/notepage/$noteId"
                     params={{ notepage: note.notepage, noteId: note.id }}

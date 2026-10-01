@@ -52,7 +52,7 @@ function NoteView() {
         </div>
 
         <div className="mt-6">
-          <LikeButton count={note.likes} />
+          <LikeButton note={note} />
         </div>
 
         <footer className="mt-16 text-right">
