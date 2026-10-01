@@ -30,6 +30,29 @@ function NewNotepage() {
   return <AuthOnly message="Creating a Notepage is a big step. The notebook would like to know who is holding the pen."><NewNotepageForm /></AuthOnly>;
 }
 
+const backgroundTokens = [
+  { bg: "oklch(0.975 0.012 90)", ink: "oklch(0.21 0.015 60)" },
+  { bg: "oklch(0.95 0.01 250)", ink: "oklch(0.25 0.02 250)" },
+  { bg: "oklch(0.93 0.035 145)", ink: "oklch(0.25 0.03 150)" },
+] as const;
+
+function fileToDataUrl(file: File, maxSide = 1600): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL("image/jpeg", 0.82));
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 function NewNotepageForm() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
@@ -37,19 +60,46 @@ function NewNotepageForm() {
   const [background, setBackground] = useState(0);
   const [type, setType] = useState<(typeof types)[number]>("Space Grotesk");
   const [coverUrl, setCoverUrl] = useState<string>();
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [createdSlug, setCreatedSlug] = useState("");
+  const { refresh } = useInktellaStore();
   const canContinue = name.trim().length > 1 && description.trim().length > 5;
   const selectedBackground = backgrounds[background] ?? backgrounds[0];
 
-  useEffect(() => {
-    return () => {
-      if (coverUrl) URL.revokeObjectURL(coverUrl);
-    };
-  }, [coverUrl]);
-
-  function chooseCover(file?: File) {
+  async function chooseCover(file?: File) {
     if (!file) return;
-    if (coverUrl) URL.revokeObjectURL(coverUrl);
-    setCoverUrl(URL.createObjectURL(file));
+    try {
+      setCoverUrl(await fileToDataUrl(file));
+    } catch {
+      setError("That image couldn't be read.");
+    }
+  }
+
+  async function create() {
+    setSaving(true);
+    setError("");
+    const tokens = backgroundTokens[background] ?? backgroundTokens[0];
+    try {
+      const res = await createNotepage({
+        data: {
+          name: name.trim(),
+          description: description.trim(),
+          slug: slugify(name) || "notepage",
+          bg: tokens.bg,
+          ink: tokens.ink,
+          headingFont: type,
+          ...(coverUrl ? { coverUrl } : {}),
+        },
+      });
+      setCreatedSlug(res.slug);
+      await refresh();
+      setStep(3);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "That didn't save. Try again.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (

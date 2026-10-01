@@ -166,6 +166,7 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
           Post <Send aria-hidden className="size-4" />
         </button>
       </form>
+      {sendError && <p role="alert" className="mt-3 text-sm opacity-80">{sendError}</p>}
       <div className={`fixed inset-x-4 top-4 z-20 transition-all duration-300 sm:hidden ${showComposer ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-5 opacity-0"}`}>
         <form
           onSubmit={submitMessage}
