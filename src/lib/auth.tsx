@@ -25,7 +25,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 function StoreWithUser({ children }: { children: ReactNode }) {
   const { user, isLoaded } = useUser();
-  if (!isLoaded) {
+  const [gaveUp, setGaveUp] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setGaveUp(true), 6000);
+    return () => clearTimeout(t);
+  }, []);
+  if (!isLoaded && !gaveUp) {
     return <div className="flex min-h-screen items-center justify-center"><p className="hand text-2xl opacity-50">opening the notebooks…</p></div>;
   }
   return <InktellaStoreProvider userKey={user?.id ?? null}>{children}</InktellaStoreProvider>;
