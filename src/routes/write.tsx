@@ -105,9 +105,11 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
     setSaving(true);
     try {
       const { id } = await saveNote({ data: { notepageSlug: notepage, title: firstLine.slice(0, 120), html, preview: text.slice(0, 220), notetags: tagList, publish } });
-      await refresh();
-      if (publish) navigate({ to: "/$notepage/notepage/$noteId", params: { notepage, noteId: id } });
-      else setStatus("Draft saved.");
+      if (publish) {
+        await navigate({ to: "/$notepage", params: { notepage } });
+        void refresh();
+        void id;
+      } else setStatus("Draft saved. It stays private until you publish.");
     } catch (e) {
       setStatus(e instanceof Error ? e.message : "That didn't save. Try again.");
     } finally {
