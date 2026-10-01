@@ -43,7 +43,7 @@ export function useAuth() {
   };
 }
 
-export function AuthGate({ children, message = "This corner is for signed-in notebook people." }: { children: ReactNode; message?: string }) {
+export function AuthGate({ children, message = "This corner is for signed-in notebook people." }: { children: ReactNode; message?: string | undefined }) {
   const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -65,6 +65,6 @@ export function AuthGate({ children, message = "This corner is for signed-in not
   );
 }
 
-export function AuthOnly({ children, message }: { children: ReactNode; message?: string }) {
+export function AuthOnly({ children, message }: { children: ReactNode; message?: string | undefined }) {
   return <AuthGate message={message}>{children}</AuthGate>;
 }
