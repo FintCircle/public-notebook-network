@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, Eye, Palette, PenLine, Plus } from "lucide-react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
-import { notepages, notesOf } from "@/data/inktella";
+import { notesOf } from "@/data/inktella";
+import { myNotepages } from "@/lib/inktella-store";
 import { AuthOnly } from "@/lib/auth";
 
 export const Route = createFileRoute("/notepages/")({
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/notepages/")({
 });
 
 function MyNotepages() {
-  const mine = notepages.slice(0, 2);
+  const mine = myNotepages();
 
   return (
     <AuthOnly message="Your notebooks are private until you tell us who you are. The public ones can wait outside.">
@@ -61,7 +62,7 @@ function MyNotepages() {
                         {np.description}
                       </p>
                       <p className="mt-3 text-xs opacity-45">
-                        {entries.length} notes · renews Sep 2027
+                        {entries.length} published notes
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
