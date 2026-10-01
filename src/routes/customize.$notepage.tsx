@@ -30,9 +30,6 @@ const fontPacks = [
 ] as const;
 
 export const Route = createFileRoute("/customize/$notepage")({
-  beforeLoad: ({ params }) => {
-    if (!getNotepage(params.notepage)) throw notFound();
-  },
   component: CustomizeNotepage,
 });
 
@@ -142,7 +139,7 @@ function CustomizeNotepage() {
                   <button
                     key={pack.id}
                     type="button"
-                    onClick={() => setFontPack(pack)}
+                    onClick={() => setFontPack(pack as typeof fontPack)}
                     className={`flex items-center justify-between rounded-xl border p-4 text-left transition-colors ${fontPack.id === pack.id ? "border-foreground bg-muted" : "border-border/70 hover:bg-muted/50"}`}
                   >
                     <span>

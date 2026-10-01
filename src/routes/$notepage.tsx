@@ -10,9 +10,6 @@ import { NotepageNetworkMenu } from "@/components/notepage-network-menu";
 import { getNotepage, notepages, themeStyle } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage")({
-  beforeLoad: ({ params }) => {
-    if (!getNotepage(params.notepage)) throw notFound();
-  },
   component: NotepageShell,
 });
 
@@ -35,7 +32,7 @@ function NotepageShell() {
     if (savedBackground) setCoverBackground(savedBackground);
     if (savedCustom) setCustomCover(savedCustom);
   }, [notepage]);
-  if (!np) return null;
+  if (!np) return <div className="flex min-h-screen items-center justify-center px-5 text-center"><div><p className="hand text-3xl opacity-60">nothing written here</p><p className="mt-3 text-sm opacity-70">This Notepage doesn&apos;t exist yet.</p><a href="/" className="mt-5 inline-block text-sm underline underline-offset-4">Back to Inktella</a></div></div>;
   const isCover = location.pathname === `/${notepage}`;
 
   function handleTouchStart(event: React.TouchEvent<HTMLDivElement>) {
@@ -44,7 +41,7 @@ function NotepageShell() {
 
   function handleTouchEnd(event: React.TouchEvent<HTMLDivElement>) {
     if (!isCover || touchStartX.current === null) return;
-    const distance = event.changedTouches[0]?.clientX - touchStartX.current;
+    const distance = (event.changedTouches[0]?.clientX ?? 0) - touchStartX.current;
     touchStartX.current = null;
     if (distance > 70) {
       const choices = notepages.filter((page) => page.slug !== notepage);

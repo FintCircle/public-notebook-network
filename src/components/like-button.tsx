@@ -1,24 +1,43 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
+import type { Note } from "@/data/inktella";
+import { toggleLike } from "@/lib/inktella.functions";
+import { currentUserId } from "@/lib/inktella-store";
 
-export function LikeButton({ count }: { count: number }) {
-  const [liked, setLiked] = useState(false);
+export function LikeButton({ note }: { note: Note }) {
+  const initiallyLiked = !!currentUserId && note.likedBy.includes(currentUserId);
+  const [liked, setLiked] = useState(initiallyLiked);
+  const [busy, setBusy] = useState(false);
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const count = note.likes - (initiallyLiked ? 1 : 0) + (liked ? 1 : 0);
+
+  async function onClick() {
+    if (!isAuthenticated) return navigate({ to: "/sign-in" });
+    setBusy(true);
+    setLiked((v) => !v);
+    try {
+      const res = await toggleLike({ data: { noteId: note.id } });
+      setLiked(res.liked);
+    } catch {
+      setLiked(initiallyLiked);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <button
       type="button"
       aria-pressed={liked}
+      disabled={busy}
       aria-label={isAuthenticated ? (liked ? "Unlike this note" : "Like this note") : "Sign in to like this note"}
-      onClick={() => isAuthenticated ? setLiked((v) => !v) : navigate({ to: "/sign-in" })}
+      onClick={() => void onClick()}
       className="inline-flex items-center gap-1.5 text-sm opacity-60 transition-opacity hover:opacity-100"
     >
-      <span aria-hidden className="text-base leading-none">
-        {liked ? "♥" : "♡"}
-      </span>
-      <span className="tabular-nums">{count + (liked ? 1 : 0)}</span>
+      <span aria-hidden className="text-base leading-none">{liked ? "♥" : "♡"}</span>
+      <span className="tabular-nums">{count}</span>
     </button>
   );
 }

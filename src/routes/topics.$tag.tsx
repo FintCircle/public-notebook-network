@@ -69,7 +69,7 @@ function GlobalTag() {
                 </h2>
                 <div className="mt-3 flex items-center justify-between">
                   <span className="text-xs opacity-50">{note.date}</span>
-                  <LikeButton count={note.likes} />
+                  <LikeButton note={note} />
                 </div>
               </li>
             );

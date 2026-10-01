@@ -25,7 +25,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 function StoreWithUser({ children }: { children: ReactNode }) {
   const { user, isLoaded } = useUser();
-  if (!isLoaded) {
+  const [gaveUp, setGaveUp] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setGaveUp(true), 6000);
+    return () => clearTimeout(t);
+  }, []);
+  if (!isLoaded && !gaveUp) {
     return <div className="flex min-h-screen items-center justify-center"><p className="hand text-2xl opacity-50">opening the notebooks…</p></div>;
   }
   return <InktellaStoreProvider userKey={user?.id ?? null}>{children}</InktellaStoreProvider>;
@@ -43,7 +48,7 @@ export function useAuth() {
   };
 }
 
-export function AuthGate({ children, message = "This corner is for signed-in notebook people." }: { children: ReactNode; message?: string }) {
+export function AuthGate({ children, message = "This corner is for signed-in notebook people." }: { children: ReactNode; message?: string | undefined }) {
   const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -65,6 +70,6 @@ export function AuthGate({ children, message = "This corner is for signed-in not
   );
 }
 
-export function AuthOnly({ children, message }: { children: ReactNode; message?: string }) {
+export function AuthOnly({ children, message }: { children: ReactNode; message?: string | undefined }) {
   return <AuthGate message={message}>{children}</AuthGate>;
 }

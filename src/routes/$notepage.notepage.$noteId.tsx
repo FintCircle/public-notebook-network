@@ -4,9 +4,6 @@ import { NotetagList } from "@/components/notetag-list";
 import { getNote, getNotepage } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage/notepage/$noteId")({
-  beforeLoad: ({ params }) => {
-    if (!getNote(params.notepage, params.noteId)) throw notFound();
-  },
   head: ({ params }) => {
     const note = getNote(params.notepage, params.noteId);
     const np = getNotepage(params.notepage);
@@ -52,7 +49,7 @@ function NoteView() {
         </div>
 
         <div className="mt-6">
-          <LikeButton count={note.likes} />
+          <LikeButton note={note} />
         </div>
 
         <footer className="mt-16 text-right">

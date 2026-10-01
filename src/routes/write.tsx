@@ -2,8 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
 import { SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
-import { getNotepage, interests, notepages } from "@/data/inktella";
+import { getNotepage, interests } from "@/data/inktella";
 import { AuthOnly } from "@/lib/auth";
+import { saveNote } from "@/lib/inktella.functions";
+import { myNotepages, useInktellaStore } from "@/lib/inktella-store";
+import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/write")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -37,7 +40,8 @@ export default function Write() {
 
 function WriteContent() {
   const { notepage } = Route.useSearch();
-  const selectedNotepage = notepage ? getNotepage(notepage) : undefined;
+  const found = notepage ? getNotepage(notepage) : undefined;
+  const selectedNotepage = found && myNotepages().includes(found) ? found : undefined;
 
   if (!selectedNotepage) return <NotepageChooser />;
 
@@ -45,7 +49,7 @@ function WriteContent() {
 }
 
 function NotepageChooser() {
-  const mine = notepages.slice(0, 2);
+  const mine = myNotepages();
 
   return (
     <div className="min-h-screen">
@@ -85,6 +89,33 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
   const [topics, setTopics] = useState<string[]>([]);
   const [status, setStatus] = useState<string | null>(null);
   const [isAddingImage, setIsAddingImage] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const { refresh } = useInktellaStore();
+  const navigate = useNavigate();
+
+  async function submit(publish: boolean) {
+    const html = bodyRef.current?.innerHTML.trim() ?? "";
+    const text = bodyRef.current?.innerText.trim() ?? "";
+    if (!text) { setStatus("Write something first — even one line counts."); return; }
+    const tagList = [...topics.map((t) => t.toLowerCase()), ...tags.split(/[\s,]+/)]
+      .map((t) => t.replace(/^#/, "").toLowerCase().replace(/[^a-z0-9-]/g, ""))
+      .filter(Boolean)
+      .slice(0, 12);
+    const firstLine = text.split("\n")[0] ?? "";
+    setSaving(true);
+    try {
+      const { id } = await saveNote({ data: { notepageSlug: notepage, title: firstLine.slice(0, 120), html, preview: text.slice(0, 220), notetags: tagList, publish } });
+      if (publish) {
+        await navigate({ to: "/$notepage", params: { notepage } });
+        void refresh();
+        void id;
+      } else setStatus("Draft saved. It stays private until you publish.");
+    } catch (e) {
+      setStatus(e instanceof Error ? e.message : "That didn't save. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   const updateToolbar = useCallback(() => {
     const selection = window.getSelection();
@@ -299,14 +330,16 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
         <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
           <button
             type="button"
-            onClick={() => setStatus("Draft saved.")}
+            disabled={saving}
+            onClick={() => void submit(false)}
             className="text-sm underline underline-offset-4 opacity-70 hover:opacity-100"
           >
             Save draft
           </button>
           <button
             type="button"
-            onClick={() => setStatus(topics.length ? "Published. Your note now has its own link." : "Choose a platform topic first — even notes need a little neighborhood.")}
+            disabled={saving}
+            onClick={() => (topics.length ? void submit(true) : setStatus("Choose a platform topic first — even notes need a little neighborhood."))}
             className="rounded-md bg-primary px-5 py-2.5 text-sm text-primary-foreground hover:opacity-90"
           >
             Publish
