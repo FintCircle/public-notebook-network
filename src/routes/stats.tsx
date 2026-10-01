@@ -37,7 +37,7 @@ function Stats() {
         </div>
 
         <section className="mt-14 grid grid-cols-3 divide-x divide-border rounded-2xl border border-border bg-muted/30 py-5">
-          {[["2,481", "Reads", Eye], ["186", "Likes", Heart], ["24", "Guestnotes", MessageCircle]].map(([value, label, Icon]) => (
+          {([["2,481", "Reads", Eye], ["186", "Likes", Heart], ["24", "Guestnotes", MessageCircle]] as const).map(([value, label, Icon]) => (
             <div key={String(label)} className="px-3 text-center sm:px-6">
               <Icon aria-hidden className="mx-auto mb-2 size-4 text-muted-foreground" />
               <p className="text-2xl tracking-tight sm:text-3xl">{value}</p>

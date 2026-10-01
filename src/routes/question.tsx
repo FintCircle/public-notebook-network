@@ -25,11 +25,11 @@ type Answer = {
   answer: string;
   likes: number;
   avatar: string;
-  bio: string;
+  bio?: string;
   country?: string;
   countryCode?: string;
-  answers: number;
-  joined: number;
+  answers?: number;
+  joined?: number;
   notepage?: { name: string; description: string; href: string };
 };
 
