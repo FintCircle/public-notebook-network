@@ -1,3 +1,4 @@
+import { goToSignIn } from "@/lib/account-portal";
 import { Heart, MapPin, MessageCirclePlus, Send } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { Notepage } from "@/data/inktella";
@@ -60,7 +61,7 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
     event.preventDefault();
     const trimmed = message.trim();
     if (!trimmed) return;
-    if (!isAuthenticated) { navigate({ to: "/sign-in" }); return; }
+    if (!isAuthenticated) { goToSignIn(); return; }
     try {
       await addGuestnote({ data: { notepageId: notepage.id, body: trimmed } });
       setMessage("");

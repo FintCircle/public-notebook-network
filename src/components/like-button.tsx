@@ -1,3 +1,4 @@
+import { goToSignIn } from "@/lib/account-portal";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
@@ -14,7 +15,7 @@ export function LikeButton({ note }: { note: Note }) {
   const count = note.likes - (initiallyLiked ? 1 : 0) + (liked ? 1 : 0);
 
   async function onClick() {
-    if (!isAuthenticated) return navigate({ to: "/sign-in" });
+    if (!isAuthenticated) return goToSignIn();
     setBusy(true);
     setLiked((v) => !v);
     try {

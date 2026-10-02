@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute }
+import { portalUrl } from "@/lib/account-portal"; from "@tanstack/react-router";
 
 export const Route = createFileRoute("/signed-out")({
   head: () => ({
@@ -16,12 +17,12 @@ function SignedOut() {
         <p className="mt-5 leading-relaxed text-muted-foreground">
           Your little corner is tucked away safely. Come back when another thought starts knocking.
         </p>
-        <Link
-          to="/sign-in"
+        <a
+          href={portalUrl("sign-in", "https://inktella.com/notepages")}
           className="mt-8 inline-flex rounded-md bg-primary px-5 py-3 text-sm text-primary-foreground transition-opacity hover:opacity-90"
         >
           Log in again
-        </Link>
+        </a>
       </section>
     </main>
   );

@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ClerkProvider, useClerk, useUser } from "@clerk/clerk-react";
 import { getClerkPublishableKey } from "@/lib/inktella.functions";
+import { portalUrl } from "@/lib/account-portal";
 import { InktellaStoreProvider } from "@/lib/inktella-store";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -17,7 +18,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return <div className="flex min-h-screen items-center justify-center px-5 text-center"><p>Sign-in isn&apos;t set up yet.</p></div>;
   }
   return (
-    <ClerkProvider publishableKey={key} signInUrl="/sign-in" signUpUrl="/sign-in" afterSignOutUrl="/">
+    <ClerkProvider publishableKey={key} signInUrl="https://accounts.inktella.com/sign-in" signUpUrl="https://accounts.inktella.com/sign-up" afterSignOutUrl="/">
       <StoreWithUser>{children}</StoreWithUser>
     </ClerkProvider>
   );
@@ -62,7 +63,7 @@ export function AuthGate({ children, message = "This corner is for signed-in not
         <h1 className="mt-4 font-heading text-3xl tracking-tight">You&apos;ll need an account for this bit.</h1>
         <p className="mt-4 leading-relaxed text-muted-foreground">{message}</p>
         <div className="mt-7 flex flex-wrap justify-center gap-4">
-          <Link to="/sign-in" className="rounded-md bg-primary px-5 py-3 text-sm text-primary-foreground">Join / Sign in</Link>
+          <a href={portalUrl("sign-in")} className="rounded-md bg-primary px-5 py-3 text-sm text-primary-foreground">Join / Sign in</a>
           <button type="button" onClick={() => navigate({ to: "/" })} className="px-5 py-3 text-sm underline underline-offset-4">Take me somewhere public</button>
         </div>
       </section>

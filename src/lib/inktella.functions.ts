@@ -17,8 +17,10 @@ export type RawData = {
 };
 
 export const loadInktella = createServerFn({ method: "GET" }).handler(async (): Promise<RawData> => {
-  const { d1, currentUserId } = await import("./d1.server");
+  const { d1, currentUserId, ensureProfile } = await import("./d1.server");
   const me = await currentUserId(getRequest());
+  // Verified Clerk user ID → find or create their D1 profile before loading data.
+  if (me) await ensureProfile(me).catch((e) => console.error("ensureProfile failed", e));
   const [notepages, notes, profiles, tags, likes, guestnotes] = await Promise.all([
     d1<Record<string, string | null>>("SELECT * FROM notepages ORDER BY created_at"),
     d1<Record<string, string | null>>(

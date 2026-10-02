@@ -1,3 +1,4 @@
+import { goToSignIn, portalUrl } from "@/lib/account-portal";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
@@ -68,13 +69,13 @@ export function SiteNav() {
                   <UserRound aria-hidden className="m-auto size-5 text-muted-foreground" />
                 </button>
               ) : (
-                <Link
-                  to="/sign-in"
+                <a
+                  href={portalUrl("sign-in")}
                   className="inline-flex items-center gap-2 rounded-full border border-primary px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/10"
                 >
                   <UserRound aria-hidden className="size-4" />
                   Join
-                </Link>
+                </a>
               )}
             </div>
           </div>
@@ -174,7 +175,7 @@ export function SiteNav() {
                   signOut();
                   navigate({ to: "/signed-out" });
                 } else {
-                  navigate({ to: "/sign-in" });
+                  goToSignIn();
                 }
                 setIsMenuOpen(false);
               }}
