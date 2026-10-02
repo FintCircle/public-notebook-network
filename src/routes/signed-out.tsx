@@ -1,5 +1,5 @@
-import { createFileRoute }
-import { portalUrl } from "@/lib/account-portal"; from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { portalUrl } from "@/lib/account-portal";
 
 export const Route = createFileRoute("/signed-out")({
   head: () => ({
