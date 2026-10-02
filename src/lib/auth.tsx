@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ClerkProvider, useClerk, useUser } from "@clerk/clerk-react";
 import { getClerkPublishableKey } from "@/lib/inktella.functions";
@@ -15,7 +15,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return <div className="flex min-h-screen items-center justify-center"><p className="hand text-2xl opacity-50">opening the notebooks…</p></div>;
   }
   if (!key) {
-    return <div className="flex min-h-screen items-center justify-center px-5 text-center"><p>Sign-in isn&apos;t set up yet.</p></div>;
+    // No sign-in available: keep the public site readable as a visitor.
+    return <InktellaStoreProvider userKey={null}>{children}</InktellaStoreProvider>;
   }
   return (
     <ClerkProvider publishableKey={key} signInUrl="https://accounts.inktella.com/sign-in" signUpUrl="https://accounts.inktella.com/sign-up" afterSignOutUrl="/">
@@ -34,10 +35,22 @@ function StoreWithUser({ children }: { children: ReactNode }) {
   if (!isLoaded && !gaveUp) {
     return <div className="flex min-h-screen items-center justify-center"><p className="hand text-2xl opacity-50">opening the notebooks…</p></div>;
   }
-  return <InktellaStoreProvider userKey={user?.id ?? null}>{children}</InktellaStoreProvider>;
+  return (
+    <ClerkReady.Provider value={true}>
+      <InktellaStoreProvider userKey={user?.id ?? null}>{children}</InktellaStoreProvider>
+    </ClerkReady.Provider>
+  );
 }
 
+const ClerkReady = createContext(false);
+
+const visitor = { isAuthenticated: false, loading: false, user: null, displayName: "", signOut: async () => {} };
+
 export function useAuth() {
+  return useContext(ClerkReady) ? useClerkAuth() : visitor; // context is fixed for the tree's lifetime
+}
+
+function useClerkAuth() {
   const { user, isLoaded, isSignedIn } = useUser();
   const clerk = useClerk();
   return {
