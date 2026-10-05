@@ -3,7 +3,9 @@ import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 export const getClerkPublishableKey = createServerFn({ method: "GET" }).handler(async () => {
-  return process.env["CLERK_PUBLISHABLE_KEY"] ?? "";
+  const { CLERK_PUBLISHABLE_KEY_FALLBACK } = await import("./clerk-config");
+  const fromEnv = process.env["CLERK_PUBLISHABLE_KEY"] ?? (globalThis as { __env__?: Record<string, unknown> }).__env__?.["CLERK_PUBLISHABLE_KEY"];
+  return typeof fromEnv === "string" && fromEnv ? fromEnv : CLERK_PUBLISHABLE_KEY_FALLBACK;
 });
 
 export type RawData = {
@@ -16,11 +18,18 @@ export type RawData = {
   me: string | null;
 };
 
-export const loadInktella = createServerFn({ method: "GET" }).handler(async (): Promise<RawData> => {
+export const loadInktella = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z.object({
+      name: z.string().max(120).optional(),
+      imageUrl: z.string().url().startsWith("https://img.clerk.com/").max(2000).optional(),
+    }).parse(d ?? {}),
+  )
+  .handler(async ({ data }): Promise<RawData> => {
   const { d1, currentUserId, ensureProfile } = await import("./d1.server");
   const me = await currentUserId(getRequest());
   // Verified Clerk user ID → find or create their D1 profile before loading data.
-  if (me) await ensureProfile(me).catch((e) => console.error("ensureProfile failed", e));
+  if (me) await ensureProfile(me, data).catch((e) => console.error("ensureProfile failed", e));
   const [notepages, notes, profiles, tags, likes, guestnotes] = await Promise.all([
     d1<Record<string, string | null>>("SELECT * FROM notepages ORDER BY created_at"),
     d1<Record<string, string | null>>(

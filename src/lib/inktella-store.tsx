@@ -15,7 +15,15 @@ function parseJson<T>(v: string | null | undefined, fallback: T): T {
 }
 
 export async function hydrateInktella() {
-  const raw = await loadInktella();
+  // The signed-in person's own name/photo, used to create their profile on first visit.
+  const clerkUser = (globalThis as { Clerk?: { user?: { fullName?: string | null; username?: string | null; imageUrl?: string; hasImage?: boolean } | null } }).Clerk?.user;
+  const hint = clerkUser
+    ? {
+        ...(clerkUser.fullName || clerkUser.username ? { name: (clerkUser.fullName || clerkUser.username) as string } : {}),
+        ...(clerkUser.hasImage && clerkUser.imageUrl?.startsWith("https://img.clerk.com/") ? { imageUrl: clerkUser.imageUrl } : {}),
+      }
+    : {};
+  const raw = await loadInktella({ data: hint });
   currentUserId = raw.me;
   const profileById = new Map(raw.profiles.map((p) => [s(p["id"]), p]));
   const slugById = new Map<string, string>();
