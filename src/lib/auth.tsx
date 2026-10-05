@@ -3,12 +3,15 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { ClerkProvider, useClerk, useUser } from "@clerk/clerk-react";
 import { getClerkPublishableKey } from "@/lib/inktella.functions";
 import { portalUrl } from "@/lib/account-portal";
+import { CLERK_PUBLISHABLE_KEY_FALLBACK } from "@/lib/clerk-config";
 import { InktellaStoreProvider } from "@/lib/inktella-store";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [key, setKey] = useState<string | null>(null);
   useEffect(() => {
-    getClerkPublishableKey().then(setKey).catch(() => setKey(""));
+    getClerkPublishableKey()
+      .then((k) => setKey(k || CLERK_PUBLISHABLE_KEY_FALLBACK))
+      .catch(() => setKey(CLERK_PUBLISHABLE_KEY_FALLBACK));
   }, []);
 
   if (key === null) {
