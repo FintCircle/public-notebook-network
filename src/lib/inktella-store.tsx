@@ -33,7 +33,7 @@ export async function hydrateInktella() {
     slugById.set(id, s(p["slug"]));
     const owner = profileById.get(s(p["owner_id"]));
     const ownerName = s(owner?.["display_name"]) || "Someone";
-    const cover = p["cover_url"] ?? undefined;
+    const cover = p["cover_path"] ?? p["cover_url"] ?? undefined;
     return {
       id,
       ownerId: s(p["owner_id"]),
