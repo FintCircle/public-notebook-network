@@ -1,4 +1,3 @@
-
 export const platformBackgroundColors = [
   { name: "Paper", value: "#f5f1e8" },
   { name: "Sky", value: "#dbeafe" },
@@ -112,7 +111,7 @@ export function getPopularDecayedNotes(limit = 6) {
   const scored = notes.map((note) => {
     const pubStr = note.publishedAt;
     const pub = new Date(
-      pubStr?.includes("T") ? pubStr : `${pubStr?.replace(" ", "T") || ""}Z`
+      pubStr?.includes("T") ? pubStr : `${pubStr?.replace(" ", "T") || ""}Z`,
     ).getTime();
     const ageInHours = isNaN(pub) ? 0 : Math.max(0, (now - pub) / (1000 * 60 * 60));
     const score = (note.likes + 1) / Math.pow(ageInHours + 2, 1.5);
@@ -136,9 +135,9 @@ export function notepageAppearance(np: Notepage): Notepage["appearance"] {
 export function themeStyle(np: Notepage): React.CSSProperties {
   const appearance = notepageAppearance(np);
   return {
-  ["--np-bg" as string]: np.theme.bg,
-  ["--np-ink" as string]: np.theme.ink,
-  ["--np-accent" as string]: np.theme.accent ?? "#c2410c",
+    ["--np-bg" as string]: np.theme.bg,
+    ["--np-ink" as string]: np.theme.ink,
+    ["--np-accent" as string]: np.theme.accent ?? "#c2410c",
     ["--np-heading" as string]: np.theme.heading,
     ["--np-body" as string]: np.theme.body,
     ["--np-hand" as string]: np.theme.hand,

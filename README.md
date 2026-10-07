@@ -349,7 +349,7 @@ Maybe rebuilding isn't starting over.
 Sometimes the first version only exists
 to show you what you actually wanted.
 
-#building  #thoughts
+#building #thoughts
 
 ♡ 12
 
@@ -362,10 +362,9 @@ Something I noticed today
 I think we've made personal websites
 far too serious.
 
-#web  #thingsinotice
+#web #thingsinotice
 
 ♡ 4
-
 
 No giant card grid.
 
@@ -501,7 +500,7 @@ Example:
 
 Notes from Derrick
 
-[DERRICK]   [TELLAVERSE]
+[DERRICK] [TELLAVERSE]
 ────────
 
 I rebuilt the homepage again
@@ -512,7 +511,6 @@ September 12
 
 Building something nobody asked for
 September 3
-
 
 The switcher allows:
 
@@ -528,8 +526,8 @@ Example:
 
 #building
 
-[DERRICK]   [TELLAVERSE]
-             ──────────
+[DERRICK] [TELLAVERSE]
+──────────
 
 Amara
 Building my first tiny game
@@ -539,7 +537,6 @@ What I learned rebuilding authentication
 
 Derrick
 I rebuilt the homepage again
-
 
 This mechanic is central to discovery.
 
@@ -595,9 +592,9 @@ I started walking before work this
 week. Something about watching the
 shops slowly open...
 
-#life  #thoughts
+#life #thoughts
 
-♡ 18                         Read →
+♡ 18 Read →
 
 ────────────────────────────
 
@@ -610,10 +607,9 @@ the first never could...
 
 #building
 
-♡ 7                          Read →
+♡ 7 Read →
 
 ────────────────────────────
-
 
 Each feed entry should primarily contain:
 
@@ -667,11 +663,9 @@ Example:
 
 ← entry from Derrick's Notepage (handwritten font)
 
-
 I KEEP REBUILDING THINGS
 
 17 September 2026
-
 
 Maybe rebuilding isn't starting over.
 
@@ -681,16 +675,13 @@ to show you what you actually wanted.
 I have done this with almost every
 project I've built...
 
-
-#building   #thoughts
-
+#building #thoughts
 
 ♡ 12
 
-
                          — Derrick
-(short bio) 
 
+(short bio)
 
 The owner's selected Notepage:
 
@@ -714,10 +705,8 @@ INKTELLA
 
 the public notebook network
 
-
 Not everything needs
 to be an article.
-
 
 Write what happened.
 
@@ -729,15 +718,12 @@ A story you don't want to lose.
 
 Something unfinished.
 
-
      it doesn't have to be impressive.
                   ↖ handwritten
-
 
 [ Start a Notepage — $10/year ]
 
 Wander around →
-
 
 Further down:
 
@@ -746,7 +732,6 @@ kept notebooks.
 
 We just made these
 ones public.
-
 
 Show actual public Notes beneath this rather than endless feature cards.
 
@@ -761,7 +746,6 @@ Your notes.
         make a mess if you want.
 
 $10 / year / Notepage
-
 
 19. Navigation
 
@@ -808,11 +792,10 @@ user.subscription = active
 Instead:
 
 notepage
-    owner_id
-    subscription_status
-    subscription_started_at
-    subscription_expires_at
-
+owner_id
+subscription_status
+subscription_started_at
+subscription_expires_at
 
 This allows one account to own multiple independently billed Notepages.
 

@@ -38,7 +38,14 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
   const [message, setMessage] = useState("");
   const entries: GuestbookEntry[] = guestnotes
     .filter((g) => g.notepageId === notepage.id)
-    .map((g) => ({ id: g.id, name: g.name, country: "", countryCode: "", message: g.body, ...(g.portrait ? { portrait: g.portrait } : {}) }));
+    .map((g) => ({
+      id: g.id,
+      name: g.name,
+      country: "",
+      countryCode: "",
+      message: g.body,
+      ...(g.portrait ? { portrait: g.portrait } : {}),
+    }));
   const { refresh } = useInktellaStore();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -49,7 +56,9 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      setShowComposer(currentScrollY < 24 || currentScrollY < lastScrollY.current || currentScrollY < 120);
+      setShowComposer(
+        currentScrollY < 24 || currentScrollY < lastScrollY.current || currentScrollY < 120,
+      );
       lastScrollY.current = currentScrollY;
     };
 
@@ -61,7 +70,10 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
     event.preventDefault();
     const trimmed = message.trim();
     if (!trimmed) return;
-    if (!isAuthenticated) { goToSignIn(); return; }
+    if (!isAuthenticated) {
+      goToSignIn();
+      return;
+    }
     try {
       await addGuestnote({ data: { notepageId: notepage.id, body: trimmed } });
       setMessage("");
@@ -72,7 +84,11 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
   }
 
   return (
-    <section id="guestnote" className="mt-12 pt-16 sm:mt-16 sm:pt-0" aria-labelledby="guestnote-heading">
+    <section
+      id="guestnote"
+      className="mt-12 pt-16 sm:mt-16 sm:pt-0"
+      aria-labelledby="guestnote-heading"
+    >
       <h2 id="guestnote-heading" className="sr-only">
         Guestnotes from visitors
       </h2>
@@ -167,8 +183,14 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
           Post <Send aria-hidden className="size-4" />
         </button>
       </form>
-      {sendError && <p role="alert" className="mt-3 text-sm opacity-80">{sendError}</p>}
-      <div className={`fixed inset-x-4 top-4 z-20 transition-all duration-300 sm:hidden ${showComposer ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-5 opacity-0"}`}>
+      {sendError && (
+        <p role="alert" className="mt-3 text-sm opacity-80">
+          {sendError}
+        </p>
+      )}
+      <div
+        className={`fixed inset-x-4 top-4 z-20 transition-all duration-300 sm:hidden ${showComposer ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-5 opacity-0"}`}
+      >
         <form
           onSubmit={submitMessage}
           className="flex items-center gap-3 rounded-full bg-[var(--np-ink)] p-2 pl-5 pr-3 text-[var(--np-bg)] shadow-xl shadow-black/15"

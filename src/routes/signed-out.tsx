@@ -12,7 +12,9 @@ function SignedOut() {
   return (
     <main className="flex min-h-[70vh] items-center justify-center px-5 py-16">
       <section className="max-w-md text-center">
-        <p className="hand text-3xl text-muted-foreground">the notebook is waving from the window</p>
+        <p className="hand text-3xl text-muted-foreground">
+          the notebook is waving from the window
+        </p>
         <h1 className="mt-4 font-heading text-4xl tracking-tight">See you soon.</h1>
         <p className="mt-5 leading-relaxed text-muted-foreground">
           Your little corner is tucked away safely. Come back when another thought starts knocking.

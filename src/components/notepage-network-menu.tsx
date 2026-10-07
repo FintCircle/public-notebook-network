@@ -13,7 +13,13 @@ const links = [
   { to: "/explore", label: "Find", note: "discover people", icon: Search },
 ] as const;
 
-export function NotepageNetworkMenu({ notepage, side = "right" }: { notepage: Notepage; side?: "left" | "right" }) {
+export function NotepageNetworkMenu({
+  notepage,
+  side = "right",
+}: {
+  notepage: Notepage;
+  side?: "left" | "right";
+}) {
   const [open, setOpen] = useState(false);
   const linkClassName =
     "flex size-10 items-center justify-center rounded-full border border-current/15 bg-[var(--np-bg)] text-[var(--np-ink)] shadow-sm transition-transform hover:scale-105";
@@ -24,32 +30,39 @@ export function NotepageNetworkMenu({ notepage, side = "right" }: { notepage: No
       style={themeStyle(notepage)}
     >
       {open && (
-        <nav aria-label="Inktella network" className={`flex flex-col gap-2 ${side === "left" ? "items-start" : "items-end"}`}>
+        <nav
+          aria-label="Inktella network"
+          className={`flex flex-col gap-2 ${side === "left" ? "items-start" : "items-end"}`}
+        >
           {links.map((item) => {
             const Icon = item.icon;
-            const link = item.to === "/write" ? (
-              <Link
-                to="/write"
-                search={{ notepage: undefined }}
-                className={linkClassName}
-                aria-label={item.label}
-                title={item.label}
-              >
-                <Icon aria-hidden />
-              </Link>
-            ) : (
-              <Link
-                to={item.to}
-                className={linkClassName}
-                aria-label={item.label}
-                title={item.label}
-              >
-                <Icon aria-hidden />
-              </Link>
-            );
+            const link =
+              item.to === "/write" ? (
+                <Link
+                  to="/write"
+                  search={{ notepage: undefined }}
+                  className={linkClassName}
+                  aria-label={item.label}
+                  title={item.label}
+                >
+                  <Icon aria-hidden />
+                </Link>
+              ) : (
+                <Link
+                  to={item.to}
+                  className={linkClassName}
+                  aria-label={item.label}
+                  title={item.label}
+                >
+                  <Icon aria-hidden />
+                </Link>
+              );
 
             return (
-              <div key={item.to} className={`flex items-center gap-2 ${side === "left" ? "flex-row-reverse" : ""}`}>
+              <div
+                key={item.to}
+                className={`flex items-center gap-2 ${side === "left" ? "flex-row-reverse" : ""}`}
+              >
                 <span className="hand rounded-full bg-[var(--np-bg)]/90 px-2.5 py-0.5 text-base leading-none shadow-sm backdrop-blur-sm">
                   {item.note}
                 </span>

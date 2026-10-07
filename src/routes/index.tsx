@@ -15,8 +15,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Inktella — the public notebook network" },
       {
         property: "og:description",
-        content:
-          "Not everything needs to be an article. Start a public notebook for $10 a year.",
+        content: "Not everything needs to be an article. Start a public notebook for $10 a year.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -35,7 +34,6 @@ function Home() {
       <main className="flex-1 mx-auto max-w-6xl w-full px-4 sm:px-6 py-8 sm:py-12">
         {/* Main Desktop Split / Mobile Stacked Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
-
           {/* Hero Section (Left side on Desktop, Top on Mobile) */}
           <section className="lg:col-span-7 flex flex-col relative rounded-2xl overflow-hidden border border-border shadow-sm min-h-[500px] lg:min-h-[600px] justify-between p-6 sm:p-10 text-white">
             {/* Hero Background Image with Overlay */}
@@ -57,16 +55,18 @@ function Home() {
                 <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight mt-4 text-white">
                   Inktella
                 </h1>
-                <p className="hand mt-2 text-2xl text-stone-300">
-                  the public notebook network
-                </p>
+                <p className="hand mt-2 text-2xl text-stone-300">the public notebook network</p>
               </div>
 
               <div className="space-y-4">
                 <p className="font-heading text-2xl sm:text-3xl leading-snug text-stone-100">
                   Not everything needs
                   <br />
-                  to be <span className="underline decoration-stone-400 underline-offset-4">an article</span>.
+                  to be{" "}
+                  <span className="underline decoration-stone-400 underline-offset-4">
+                    an article
+                  </span>
+                  .
                 </p>
 
                 <div className="space-y-1.5 text-base sm:text-lg text-stone-300 font-normal">
@@ -104,7 +104,6 @@ function Home() {
 
           {/* Right Hand Free Side (Founder Message + Menu entries) */}
           <section className="lg:col-span-5 flex flex-col justify-between space-y-8">
-
             {/* Founder Message Card */}
             <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
               <div className="flex items-center gap-4">
@@ -122,7 +121,8 @@ function Home() {
               </div>
 
               <blockquote className="mt-4 text-sm leading-relaxed text-muted-foreground border-l-2 border-primary/40 pl-3.5 italic">
-                "People have always kept notebooks — bits of thinking, half-finished pages, and things they didn't want to lose. We made these ones public, quiet, and personal."
+                "People have always kept notebooks — bits of thinking, half-finished pages, and
+                things they didn't want to lose. We made these ones public, quiet, and personal."
               </blockquote>
             </div>
 
@@ -145,12 +145,13 @@ function Home() {
                       <p className="text-sm font-medium group-hover:text-primary transition-colors">
                         Access Notella
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        The minimal discovery feed
-                      </p>
+                      <p className="text-xs text-muted-foreground">The minimal discovery feed</p>
                     </div>
                   </div>
-                  <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1" aria-hidden />
+                  <ArrowRight
+                    className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1"
+                    aria-hidden
+                  />
                 </Link>
 
                 <Link
@@ -170,7 +171,10 @@ function Home() {
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1" aria-hidden />
+                  <ArrowRight
+                    className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1"
+                    aria-hidden
+                  />
                 </Link>
 
                 <Link
@@ -190,7 +194,10 @@ function Home() {
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1" aria-hidden />
+                  <ArrowRight
+                    className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1"
+                    aria-hidden
+                  />
                 </Link>
 
                 <Link
@@ -210,13 +217,14 @@ function Home() {
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1" aria-hidden />
+                  <ArrowRight
+                    className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1"
+                    aria-hidden
+                  />
                 </Link>
               </nav>
             </div>
-
           </section>
-
         </div>
 
         {/* Divider */}
@@ -225,7 +233,8 @@ function Home() {
         {/* Host Count Message Section */}
         <section className="text-center max-w-2xl mx-auto py-4 px-4 space-y-4">
           <p className="text-2xl sm:text-3xl font-heading leading-relaxed">
-            Inktella hosts <span className="font-semibold text-primary">{count}</span> notepages as of today, start your notepage too and we'll count it.
+            Inktella hosts <span className="font-semibold text-primary">{count}</span> notepages as
+            of today, start your notepage too and we'll count it.
           </p>
           <div>
             <Link
@@ -246,20 +255,38 @@ function Home() {
             <h3 className="text-xs tracking-[0.2em] uppercase text-muted-foreground font-semibold mb-4">
               Other pages
             </h3>
-            <nav aria-label="Other pages" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
-              <Link to="/about" className="hover:underline underline-offset-4 text-foreground/80 hover:text-foreground">
+            <nav
+              aria-label="Other pages"
+              className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm"
+            >
+              <Link
+                to="/about"
+                className="hover:underline underline-offset-4 text-foreground/80 hover:text-foreground"
+              >
                 About
               </Link>
-              <Link to="/terms" className="hover:underline underline-offset-4 text-foreground/80 hover:text-foreground">
+              <Link
+                to="/terms"
+                className="hover:underline underline-offset-4 text-foreground/80 hover:text-foreground"
+              >
                 Terms
               </Link>
-              <Link to="/pricing" className="hover:underline underline-offset-4 text-foreground/80 hover:text-foreground">
+              <Link
+                to="/pricing"
+                className="hover:underline underline-offset-4 text-foreground/80 hover:text-foreground"
+              >
                 Pricing
               </Link>
-              <Link to="/guidelines" className="hover:underline underline-offset-4 text-foreground/80 hover:text-foreground">
+              <Link
+                to="/guidelines"
+                className="hover:underline underline-offset-4 text-foreground/80 hover:text-foreground"
+              >
                 Guidelines
               </Link>
-              <Link to="/privacy" className="hover:underline underline-offset-4 text-foreground/80 hover:text-foreground">
+              <Link
+                to="/privacy"
+                className="hover:underline underline-offset-4 text-foreground/80 hover:text-foreground"
+              >
                 Privacy
               </Link>
             </nav>
@@ -269,7 +296,6 @@ function Home() {
             © {new Date().getFullYear()} Inktella. All rights reserved.
           </p>
         </footer>
-
       </main>
     </div>
   );

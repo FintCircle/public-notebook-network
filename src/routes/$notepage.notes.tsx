@@ -16,16 +16,26 @@ function NotepageNotes() {
   return (
     <main className="note-list-page mx-auto max-w-3xl bg-white px-5 py-10 text-black sm:px-8 sm:py-16">
       <header className="border-b border-current/15 pb-10">
-        <Link to="/$notepage" params={{ notepage }} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] opacity-55 hover:opacity-100">
+        <Link
+          to="/$notepage"
+          params={{ notepage }}
+          className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] opacity-55 hover:opacity-100"
+        >
           <ArrowLeft aria-hidden className="size-4" /> {np.header.navLabel}
         </Link>
         <p className="hand mt-12 text-xl opacity-65">{np.header.eyebrow}</p>
-        <h1 className="mt-3 max-w-[14ch] font-heading text-4xl leading-[0.95] tracking-tight sm:text-6xl">{np.header.title}</h1>
-        <p className="mt-5 max-w-[42ch] text-base leading-relaxed opacity-65 sm:text-lg">{np.header.description}</p>
+        <h1 className="mt-3 max-w-[14ch] font-heading text-4xl leading-[0.95] tracking-tight sm:text-6xl">
+          {np.header.title}
+        </h1>
+        <p className="mt-5 max-w-[42ch] text-base leading-relaxed opacity-65 sm:text-lg">
+          {np.header.description}
+        </p>
       </header>
 
       <section aria-label={`${np.name} notes`} className="divide-y divide-current/10 px-0 sm:px-2">
-        {entries.map((note) => <NoteEntry key={note.id} note={note} />)}
+        {entries.map((note) => (
+          <NoteEntry key={note.id} note={note} />
+        ))}
       </section>
     </main>
   );
