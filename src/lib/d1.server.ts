@@ -5,7 +5,9 @@ import { CLERK_PUBLISHABLE_KEY_FALLBACK, frontendApiFromKey } from "./clerk-conf
 
 type D1Result<T> = { results: T[]; success: boolean };
 type D1Binding = {
-  prepare: (sql: string) => { bind: (...v: unknown[]) => { all: <T>() => Promise<{ results: T[] }> } };
+  prepare: (sql: string) => {
+    bind: (...v: unknown[]) => { all: <T>() => Promise<{ results: T[] }> };
+  };
 };
 
 function workerEnv(): Record<string, unknown> {
@@ -20,10 +22,16 @@ function envVar(name: string): string | undefined {
   return typeof v === "string" && v ? v : undefined;
 }
 
-export async function d1<T = Record<string, unknown>>(sql: string, params: unknown[] = []): Promise<T[]> {
+export async function d1<T = Record<string, unknown>>(
+  sql: string,
+  params: unknown[] = [],
+): Promise<T[]> {
   const binding = workerEnv()["DB"] as D1Binding | undefined;
   if (binding && typeof binding.prepare === "function") {
-    const { results } = await binding.prepare(sql).bind(...params).all<T>();
+    const { results } = await binding
+      .prepare(sql)
+      .bind(...params)
+      .all<T>();
     return results ?? [];
   }
 
@@ -36,9 +44,15 @@ export async function d1<T = Record<string, unknown>>(sql: string, params: unkno
   let url: string;
   let headers: Record<string, string>;
   if (account && lovableKey && cfConnectorKey) {
-    const base = (envVar("CONNECTOR_GATEWAY_BASE_URL") ?? "https://connector-gateway.lovable.dev").replace(/\/$/, "");
+    const base = (
+      envVar("CONNECTOR_GATEWAY_BASE_URL") ?? "https://connector-gateway.lovable.dev"
+    ).replace(/\/$/, "");
     url = `${base}/cloudflare/client/v4/accounts/${account}/d1/database/${db}/query`;
-    headers = { Authorization: `Bearer ${lovableKey}`, "X-Connection-Api-Key": cfConnectorKey, "Content-Type": "application/json" };
+    headers = {
+      Authorization: `Bearer ${lovableKey}`,
+      "X-Connection-Api-Key": cfConnectorKey,
+      "Content-Type": "application/json",
+    };
   } else if (account && cfToken) {
     url = `https://api.cloudflare.com/client/v4/accounts/${account}/d1/database/${db}/query`;
     headers = { Authorization: `Bearer ${cfToken}`, "Content-Type": "application/json" };
@@ -49,7 +63,11 @@ export async function d1<T = Record<string, unknown>>(sql: string, params: unkno
   const res = await fetch(url, { method: "POST", headers, body: JSON.stringify({ sql, params }) });
   const text = await res.text();
   if (!res.ok) throw new Error(`Database request failed [${res.status}]: ${text}`);
-  const json = JSON.parse(text) as { success: boolean; errors?: Array<{ message: string }>; result: D1Result<T>[] };
+  const json = JSON.parse(text) as {
+    success: boolean;
+    errors?: Array<{ message: string }>;
+    result: D1Result<T>[];
+  };
   if (!json.success) throw new Error(`Database error: ${json.errors?.[0]?.message ?? "unknown"}`);
   return json.result[0]?.results ?? [];
 }
@@ -57,7 +75,10 @@ export async function d1<T = Record<string, unknown>>(sql: string, params: unkno
 // ---------- Clerk session verification ----------
 
 function b64urlToBytes(s: string) {
-  const b64 = s.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(s.length / 4) * 4, "=");
+  const b64 = s
+    .replace(/-/g, "+")
+    .replace(/_/g, "/")
+    .padEnd(Math.ceil(s.length / 4) * 4, "=");
   return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
 }
 
@@ -66,8 +87,16 @@ let jwksCache: { at: number; keys: Array<JsonWebKey & { kid?: string }> } | null
 async function verifyWithJwks(token: string): Promise<string | null> {
   const [h, p, sig] = token.split(".");
   if (!h || !p || !sig) return null;
-  const header = JSON.parse(new TextDecoder().decode(b64urlToBytes(h))) as { kid?: string; alg?: string };
-  const claims = JSON.parse(new TextDecoder().decode(b64urlToBytes(p))) as { sub?: string; iss?: string; exp?: number; nbf?: number };
+  const header = JSON.parse(new TextDecoder().decode(b64urlToBytes(h))) as {
+    kid?: string;
+    alg?: string;
+  };
+  const claims = JSON.parse(new TextDecoder().decode(b64urlToBytes(p))) as {
+    sub?: string;
+    iss?: string;
+    exp?: number;
+    nbf?: number;
+  };
   if (header.alg !== "RS256") return null;
 
   const pk = envVar("CLERK_PUBLISHABLE_KEY") ?? CLERK_PUBLISHABLE_KEY_FALLBACK;
@@ -80,13 +109,27 @@ async function verifyWithJwks(token: string): Promise<string | null> {
   if (!jwksCache || Date.now() - jwksCache.at > 60 * 60 * 1000) {
     const res = await fetch(`${issuer}/.well-known/jwks.json`);
     if (!res.ok) return null;
-    jwksCache = { at: Date.now(), keys: ((await res.json()) as { keys: Array<JsonWebKey & { kid?: string }> }).keys };
+    jwksCache = {
+      at: Date.now(),
+      keys: ((await res.json()) as { keys: Array<JsonWebKey & { kid?: string }> }).keys,
+    };
   }
   const jwk = jwksCache.keys.find((k) => k.kid === header.kid);
   if (!jwk) return null;
-  const key = await crypto.subtle.importKey("jwk", jwk, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["verify"]);
-  const ok = await crypto.subtle.verify("RSASSA-PKCS1-v1_5", key, b64urlToBytes(sig), new TextEncoder().encode(`${h}.${p}`));
-  return ok ? claims.sub ?? null : null;
+  const key = await crypto.subtle.importKey(
+    "jwk",
+    jwk,
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+    false,
+    ["verify"],
+  );
+  const ok = await crypto.subtle.verify(
+    "RSASSA-PKCS1-v1_5",
+    key,
+    b64urlToBytes(sig),
+    new TextEncoder().encode(`${h}.${p}`),
+  );
+  return ok ? (claims.sub ?? null) : null;
 }
 
 export async function currentUserId(request: Request): Promise<string | null> {
@@ -120,7 +163,11 @@ export async function clerkUserInfo(userId: string, hint: ProfileHint = {}) {
     try {
       const { createClerkClient } = await import("@clerk/backend");
       const u = await createClerkClient({ secretKey }).users.getUser(userId);
-      const name = [u.firstName, u.lastName].filter(Boolean).join(" ") || u.username || u.primaryEmailAddress?.emailAddress.split("@")[0] || "Someone";
+      const name =
+        [u.firstName, u.lastName].filter(Boolean).join(" ") ||
+        u.username ||
+        u.primaryEmailAddress?.emailAddress.split("@")[0] ||
+        "Someone";
       return { name, imageUrl: u.hasImage ? u.imageUrl : null };
     } catch (e) {
       console.error("Clerk user lookup failed", e);
@@ -134,5 +181,9 @@ export async function ensureProfile(userId: string, hint: ProfileHint = {}) {
   const existing = await d1("SELECT id FROM profiles WHERE id = ?", [userId]);
   if (existing.length) return;
   const info = await clerkUserInfo(userId, hint);
-  await d1("INSERT OR IGNORE INTO profiles (id, display_name, portrait_url) VALUES (?, ?, ?)", [userId, info.name, info.imageUrl]);
+  await d1("INSERT OR IGNORE INTO profiles (id, display_name, portrait_url) VALUES (?, ?, ?)", [
+    userId,
+    info.name,
+    info.imageUrl,
+  ]);
 }

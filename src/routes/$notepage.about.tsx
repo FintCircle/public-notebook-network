@@ -18,7 +18,15 @@ import {
   X,
   Youtube,
 } from "lucide-react";
-import { useRef, useState, type ChangeEvent, type CSSProperties } from "react";
+import {
+  useRef,
+  useState,
+  type ChangeEvent,
+  type CSSProperties,
+  type Dispatch,
+  type RefObject,
+  type SetStateAction,
+} from "react";
 import { getNotepage } from "@/data/inktella";
 
 export const Route = createFileRoute("/$notepage/about")({
@@ -79,7 +87,7 @@ function NotepageAbout() {
     document.execCommand(
       "insertHTML",
       false,
-      `<figure><img src="${url}" alt="${file.name.replace(/\"/g, "&quot;")}" /><figcaption>${file.name}</figcaption></figure>`,
+      `<figure><img src="${url}" alt="${file.name.replace(/"/g, "&quot;")}" /><figcaption>${file.name}</figcaption></figure>`,
     );
     setBio(editorRef.current?.innerHTML ?? "");
   };
@@ -248,7 +256,27 @@ function Preview({
   );
 }
 
-function EditorPanel(props: any) {
+type EditorPanelProps = {
+  layout: Layout;
+  setLayout: Dispatch<SetStateAction<Layout>>;
+  title: string;
+  setTitle: Dispatch<SetStateAction<string>>;
+  subtitle: string;
+  setSubtitle: Dispatch<SetStateAction<string>>;
+  bio: string;
+  setBio: Dispatch<SetStateAction<string>>;
+  editorRef: RefObject<HTMLDivElement | null>;
+  imageInputRef: RefObject<HTMLInputElement | null>;
+  formatBio: (command: string, value?: string) => void;
+  addBioImage: (event: ChangeEvent<HTMLInputElement>) => void;
+  spotlights: Spotlight[];
+  updateSpotlight: (index: number, patch: Partial<Spotlight>) => void;
+  setSpotlights: Dispatch<SetStateAction<Spotlight[]>>;
+  socials: Social[];
+  setSocials: Dispatch<SetStateAction<Social[]>>;
+};
+
+function EditorPanel(props: EditorPanelProps) {
   const {
     layout,
     setLayout,
@@ -306,7 +334,7 @@ function EditorPanel(props: any) {
           Name
           <input
             value={title}
-            onChange={(event: any) => setTitle(event.target.value)}
+            onChange={(event) => setTitle(event.target.value)}
             className="rounded-lg border border-current/15 bg-transparent px-3 py-2 text-base outline-none focus:border-current/50"
           />
         </label>
@@ -314,7 +342,7 @@ function EditorPanel(props: any) {
           Tagline
           <textarea
             value={subtitle}
-            onChange={(event: any) => setSubtitle(event.target.value)}
+            onChange={(event) => setSubtitle(event.target.value)}
             rows={2}
             className="resize-none rounded-lg border border-current/15 bg-transparent px-3 py-2 text-base outline-none focus:border-current/50"
           />
@@ -397,7 +425,7 @@ function EditorPanel(props: any) {
           suppressContentEditableWarning
           role="textbox"
           aria-multiline="true"
-          onInput={(event: any) => setBio(event.currentTarget.innerHTML)}
+          onInput={(event) => setBio(event.currentTarget.innerHTML)}
           dangerouslySetInnerHTML={{ __html: bio }}
           className="prose-note min-h-40 rounded-b-lg border border-t-0 border-current/15 bg-transparent p-4 outline-none focus:border-current/50"
         />
@@ -421,16 +449,15 @@ function EditorPanel(props: any) {
         <div className="mt-3 grid gap-2">
           {spotlights.map((item: Spotlight, index: number) => (
             <div key={index} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
-              {" "}
               <input
                 value={item.label}
-                onChange={(event: any) => updateSpotlight(index, { label: event.target.value })}
+                onChange={(event) => updateSpotlight(index, { label: event.target.value })}
                 aria-label={`Button ${index + 1} text`}
                 className="rounded-lg border border-current/15 bg-transparent px-3 py-2"
               />
               <input
                 value={item.href}
-                onChange={(event: any) => updateSpotlight(index, { href: event.target.value })}
+                onChange={(event) => updateSpotlight(index, { href: event.target.value })}
                 aria-label={`Button ${index + 1} link`}
                 className="rounded-lg border border-current/15 bg-transparent px-3 py-2"
               />
@@ -473,7 +500,7 @@ function EditorPanel(props: any) {
             <div key={index} className="grid gap-2 sm:grid-cols-[150px_1fr_auto]">
               <select
                 value={item.network}
-                onChange={(event: any) =>
+                onChange={(event) =>
                   setSocials((items: Social[]) =>
                     items.map((social, socialIndex) =>
                       socialIndex === index ? { ...social, network: event.target.value } : social,
@@ -490,7 +517,7 @@ function EditorPanel(props: any) {
               </select>
               <input
                 value={item.href}
-                onChange={(event: any) =>
+                onChange={(event) =>
                   setSocials((items: Social[]) =>
                     items.map((social, socialIndex) =>
                       socialIndex === index ? { ...social, href: event.target.value } : social,

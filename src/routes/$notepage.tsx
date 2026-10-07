@@ -32,7 +32,18 @@ function NotepageShell() {
     if (savedBackground) setCoverBackground(savedBackground);
     if (savedCustom) setCustomCover(savedCustom);
   }, [notepage]);
-  if (!np) return <div className="flex min-h-screen items-center justify-center px-5 text-center"><div><p className="hand text-3xl opacity-60">nothing written here</p><p className="mt-3 text-sm opacity-70">This Notepage doesn&apos;t exist yet.</p><a href="/" className="mt-5 inline-block text-sm underline underline-offset-4">Back to Inktella</a></div></div>;
+  if (!np)
+    return (
+      <div className="flex min-h-screen items-center justify-center px-5 text-center">
+        <div>
+          <p className="hand text-3xl opacity-60">nothing written here</p>
+          <p className="mt-3 text-sm opacity-70">This Notepage doesn&apos;t exist yet.</p>
+          <a href="/" className="mt-5 inline-block text-sm underline underline-offset-4">
+            Back to Inktella
+          </a>
+        </div>
+      </div>
+    );
   const isCover = location.pathname === `/${notepage}`;
 
   function handleTouchStart(event: React.TouchEvent<HTMLDivElement>) {

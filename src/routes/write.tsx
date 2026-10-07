@@ -17,8 +17,7 @@ export const Route = createFileRoute("/write")({
       { title: "Write a Note | Inktella" },
       {
         name: "description",
-        content:
-          "An empty sheet of paper. Write a note — short, long, unfinished, whatever it is.",
+        content: "An empty sheet of paper. Write a note — short, long, unfinished, whatever it is.",
       },
       { property: "og:title", content: "Write a Note on Inktella" },
       {
@@ -35,7 +34,11 @@ export const Route = createFileRoute("/write")({
 type ToolbarState = { top: number; left: number } | null;
 
 export default function Write() {
-  return <AuthOnly message="The blank page is waiting, but it prefers introductions first."><WriteContent /></AuthOnly>;
+  return (
+    <AuthOnly message="The blank page is waiting, but it prefers introductions first.">
+      <WriteContent />
+    </AuthOnly>
+  );
 }
 
 function WriteContent() {
@@ -69,7 +72,9 @@ function NotepageChooser() {
                 <span className="block text-lg group-hover:underline">{np.name}</span>
                 <span className="mt-1 block text-sm opacity-55">{np.description}</span>
               </span>
-              <span aria-hidden className="shrink-0 opacity-45">→</span>
+              <span aria-hidden className="shrink-0 opacity-45">
+                →
+              </span>
             </Link>
           ))}
         </div>
@@ -96,15 +101,32 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
   async function submit(publish: boolean) {
     const html = bodyRef.current?.innerHTML.trim() ?? "";
     const text = bodyRef.current?.innerText.trim() ?? "";
-    if (!text) { setStatus("Write something first — even one line counts."); return; }
+    if (!text) {
+      setStatus("Write something first — even one line counts.");
+      return;
+    }
     const tagList = [...topics.map((t) => t.toLowerCase()), ...tags.split(/[\s,]+/)]
-      .map((t) => t.replace(/^#/, "").toLowerCase().replace(/[^a-z0-9-]/g, ""))
+      .map((t) =>
+        t
+          .replace(/^#/, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9-]/g, ""),
+      )
       .filter(Boolean)
       .slice(0, 12);
     const firstLine = text.split("\n")[0] ?? "";
     setSaving(true);
     try {
-      const { id } = await saveNote({ data: { notepageSlug: notepage, title: firstLine.slice(0, 120), html, preview: text.slice(0, 220), notetags: tagList, publish } });
+      const { id } = await saveNote({
+        data: {
+          notepageSlug: notepage,
+          title: firstLine.slice(0, 120),
+          html,
+          preview: text.slice(0, 220),
+          notetags: tagList,
+          publish,
+        },
+      });
       if (publish) {
         await navigate({ to: "/$notepage", params: { notepage } });
         void refresh();
@@ -163,7 +185,9 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
     const imageUrl = URL.createObjectURL(file);
     const image = new Image();
     image.onload = () => {
-      insertBlock(`<figure><img src="${imageUrl}" alt="${file.name.replace(/"/g, "&quot;")}" /><figcaption>${file.name}</figcaption></figure>`);
+      insertBlock(
+        `<figure><img src="${imageUrl}" alt="${file.name.replace(/"/g, "&quot;")}" /><figcaption>${file.name}</figcaption></figure>`,
+      );
       setIsAddingImage(false);
     };
     image.onerror = () => {
@@ -214,7 +238,11 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
           >
             {name}
           </Link>
-          <Link to="/write" search={{ notepage: undefined }} className="text-xs opacity-45 hover:opacity-100">
+          <Link
+            to="/write"
+            search={{ notepage: undefined }}
+            className="text-xs opacity-45 hover:opacity-100"
+          >
             change
           </Link>
         </div>
@@ -282,11 +310,7 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
           >
             + code block
           </button>
-          <button
-            type="button"
-            className="hover:opacity-100"
-            onClick={() => insertBlock("<hr />")}
-          >
+          <button type="button" className="hover:opacity-100" onClick={() => insertBlock("<hr />")}>
             + separator
           </button>
         </div>
@@ -298,7 +322,9 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
             <label className="hand text-lg opacity-70">topic (choose at least one)</label>
             <span className="text-xs opacity-50">platform topics</span>
           </div>
-          <p className="mt-1 text-sm opacity-55">Your note will appear under the topics you select.</p>
+          <p className="mt-1 text-sm opacity-55">
+            Your note will appear under the topics you select.
+          </p>
           <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Platform topics">
             {interests.map((topic) => {
               const selected = topics.includes(topic);
@@ -307,7 +333,11 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
                   key={topic}
                   type="button"
                   aria-pressed={selected}
-                  onClick={() => setTopics((current) => selected ? current.filter((item) => item !== topic) : [...current, topic])}
+                  onClick={() =>
+                    setTopics((current) =>
+                      selected ? current.filter((item) => item !== topic) : [...current, topic],
+                    )
+                  }
                   className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border/70 hover:border-foreground"}`}
                 >
                   {topic}
@@ -339,7 +369,13 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
           <button
             type="button"
             disabled={saving}
-            onClick={() => (topics.length ? void submit(true) : setStatus("Choose a platform topic first — even notes need a little neighborhood."))}
+            onClick={() =>
+              topics.length
+                ? void submit(true)
+                : setStatus(
+                    "Choose a platform topic first — even notes need a little neighborhood.",
+                  )
+            }
             className="rounded-md bg-primary px-5 py-2.5 text-sm text-primary-foreground hover:opacity-90"
           >
             Publish

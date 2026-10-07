@@ -145,7 +145,9 @@ export function SiteNav() {
                 <UserRound className="size-7 text-muted-foreground" />
               </div>
               <div>
-                <p className="font-medium">{isAuthenticated ? displayName || "Signed in" : "Just browsing"}</p>
+                <p className="font-medium">
+                  {isAuthenticated ? displayName || "Signed in" : "Just browsing"}
+                </p>
                 <p className="text-sm text-muted-foreground">
                   {isAuthenticated ? "Signed in" : "Not signed in"}
                 </p>
