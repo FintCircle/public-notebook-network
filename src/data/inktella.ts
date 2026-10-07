@@ -107,6 +107,22 @@ export function allNotetags() {
   return [...counts.entries()].sort((a, b) => b[1] - a[1]);
 }
 
+export function getPopularDecayedNotes(limit = 6) {
+  const now = Date.now();
+  const scored = notes.map((note) => {
+    const pubStr = note.publishedAt;
+    const pub = new Date(
+      pubStr?.includes("T") ? pubStr : `${pubStr?.replace(" ", "T") || ""}Z`
+    ).getTime();
+    const ageInHours = isNaN(pub) ? 0 : Math.max(0, (now - pub) / (1000 * 60 * 60));
+    const score = (note.likes + 1) / Math.pow(ageInHours + 2, 1.5);
+    return { note, score };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, limit).map((s) => s.note);
+}
+
 export function notepageAppearance(np: Notepage): Notepage["appearance"] {
   return {
     backgroundType: np.appearance?.backgroundType ?? "color",
