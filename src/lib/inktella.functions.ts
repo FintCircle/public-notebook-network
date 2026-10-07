@@ -94,8 +94,9 @@ export const createNotepage = createServerFn({ method: "POST" })
       slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
     }
     const id = crypto.randomUUID();
+    const now = new Date().toISOString();
     await d1(
-      "INSERT INTO notepages (id, owner_id, slug, name, description, cover_path, bg, ink, heading_font) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO notepages (id, owner_id, slug, name, description, cover_path, bg, ink, heading_font, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         id,
         userId,
@@ -106,6 +107,7 @@ export const createNotepage = createServerFn({ method: "POST" })
         data.bg,
         data.ink,
         data.headingFont,
+        now,
       ],
     );
     return { id, slug };
