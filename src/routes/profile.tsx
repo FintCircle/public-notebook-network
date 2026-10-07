@@ -52,17 +52,11 @@ function Profile() {
         </p>
 
         <section className="mt-14">
-          <h2 className="text-xs tracking-[0.2em] uppercase opacity-50">
-            Your Notepages
-          </h2>
+          <h2 className="text-xs tracking-[0.2em] uppercase opacity-50">Your Notepages</h2>
           <ul className="mt-5 divide-y divide-border/70">
             {mine.map((np) => (
               <li key={np.slug} className="flex flex-wrap items-baseline gap-x-4 py-4">
-                <Link
-                  to="/$notepage"
-                  params={{ notepage: np.slug }}
-                  className="hover:underline"
-                >
+                <Link to="/$notepage" params={{ notepage: np.slug }} className="hover:underline">
                   {np.name}
                 </Link>
                 <span className="text-xs opacity-50">
@@ -80,9 +74,7 @@ function Profile() {
         </section>
 
         <section className="mt-14">
-          <h2 className="text-xs tracking-[0.2em] uppercase opacity-50">
-            Your interests
-          </h2>
+          <h2 className="text-xs tracking-[0.2em] uppercase opacity-50">Your interests</h2>
           <p className="hand mt-2 text-lg opacity-60">these shape Notella</p>
           <div className="mt-5 flex flex-wrap gap-2">
             {interests.map((name) => {

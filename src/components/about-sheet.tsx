@@ -69,9 +69,7 @@ export function AboutSheet({ notepage }: { notepage: Notepage }) {
               />
               <div>
                 <p className="text-lg font-medium">{notepage.owner}</p>
-                <p className="mt-1 text-sm opacity-55">
-                  noting down from {notepage.countryCode}
-                </p>
+                <p className="mt-1 text-sm opacity-55">noting down from {notepage.countryCode}</p>
               </div>
             </div>
 

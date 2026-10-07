@@ -26,7 +26,9 @@ const csrfMiddleware = createCsrfMiddleware({
 
 // Attaches the Clerk session token to every server function call (verified server-side).
 const attachClerkToken = createMiddleware({ type: "function" }).client(async ({ next }) => {
-  const clerk = (globalThis as { Clerk?: { session?: { getToken: () => Promise<string | null> } | null } }).Clerk;
+  const clerk = (
+    globalThis as { Clerk?: { session?: { getToken: () => Promise<string | null> } | null } }
+  ).Clerk;
   const token = await clerk?.session?.getToken().catch(() => null);
   return next({ headers: token ? { Authorization: `Bearer ${token}` } : {} });
 });

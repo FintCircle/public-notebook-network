@@ -93,7 +93,8 @@ function QuestionPage() {
 
   const visibleAnswers = useMemo(() => {
     if (tab === "new") return [...answers].reverse();
-    if (tab === "random") return [answers[1], answers[2], answers[0]].filter((a): a is Answer => !!a);
+    if (tab === "random")
+      return [answers[1], answers[2], answers[0]].filter((a): a is Answer => !!a);
     return answers;
   }, [tab]);
 

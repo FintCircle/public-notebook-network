@@ -33,11 +33,19 @@ export function LikeButton({ note }: { note: Note }) {
       type="button"
       aria-pressed={liked}
       disabled={busy}
-      aria-label={isAuthenticated ? (liked ? "Unlike this note" : "Like this note") : "Sign in to like this note"}
+      aria-label={
+        isAuthenticated
+          ? liked
+            ? "Unlike this note"
+            : "Like this note"
+          : "Sign in to like this note"
+      }
       onClick={() => void onClick()}
       className="inline-flex items-center gap-1.5 text-sm opacity-60 transition-opacity hover:opacity-100"
     >
-      <span aria-hidden className="text-base leading-none">{liked ? "♥" : "♡"}</span>
+      <span aria-hidden className="text-base leading-none">
+        {liked ? "♥" : "♡"}
+      </span>
       <span className="tabular-nums">{count}</span>
     </button>
   );

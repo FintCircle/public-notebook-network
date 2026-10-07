@@ -28,82 +28,80 @@ function MyNotepages() {
 
   return (
     <AuthOnly message="Your notebooks are private until you tell us who you are. The public ones can wait outside.">
-    <div className="min-h-screen">
-      <SiteNav />
-      <main className="mx-auto max-w-4xl px-5 py-12 sm:py-16">
-        <div className="flex flex-wrap items-end justify-between gap-5">
-          <div>
-            <h1 className="text-3xl sm:text-4xl">My Notepages</h1>
-            <p className="hand mt-2 text-xl opacity-60">your notebooks, all in one place</p>
+      <div className="min-h-screen">
+        <SiteNav />
+        <main className="mx-auto max-w-4xl px-5 py-12 sm:py-16">
+          <div className="flex flex-wrap items-end justify-between gap-5">
+            <div>
+              <h1 className="text-3xl sm:text-4xl">My Notepages</h1>
+              <p className="hand mt-2 text-xl opacity-60">your notebooks, all in one place</p>
+            </div>
+            <Button asChild>
+              <Link to="/notepages/new">
+                <Plus aria-hidden />
+                New Notepage
+              </Link>
+            </Button>
           </div>
-          <Button asChild>
-            <Link to="/notepages/new">
-              <Plus aria-hidden />
-              New Notepage
-            </Link>
-          </Button>
-        </div>
-        <div className="mt-10 flex flex-col gap-8">
-          {mine.map((np) => {
-            const entries = notesOf(np.slug);
-            return (
-              <article
-                key={np.slug}
-                className="overflow-hidden rounded-2xl border border-border/70 bg-card"
-              >
-                <div className="border-b border-border/70 p-5 sm:p-7">
-                  <div className="flex flex-wrap items-start justify-between gap-5">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <BookOpen aria-hidden className="size-4 opacity-45" />
-                        <h2 className="text-xl sm:text-2xl">{np.name}</h2>
+          <div className="mt-10 flex flex-col gap-8">
+            {mine.map((np) => {
+              const entries = notesOf(np.slug);
+              return (
+                <article
+                  key={np.slug}
+                  className="overflow-hidden rounded-2xl border border-border/70 bg-card"
+                >
+                  <div className="border-b border-border/70 p-5 sm:p-7">
+                    <div className="flex flex-wrap items-start justify-between gap-5">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <BookOpen aria-hidden className="size-4 opacity-45" />
+                          <h2 className="text-xl sm:text-2xl">{np.name}</h2>
+                        </div>
+                        <p className="mt-2 max-w-[52ch] text-sm leading-relaxed opacity-65">
+                          {np.description}
+                        </p>
+                        <p className="mt-3 text-xs opacity-45">{entries.length} published notes</p>
                       </div>
-                      <p className="mt-2 max-w-[52ch] text-sm leading-relaxed opacity-65">
-                        {np.description}
-                      </p>
-                      <p className="mt-3 text-xs opacity-45">
-                        {entries.length} published notes
-                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <Button variant="outline" asChild>
+                          <Link to="/$notepage" params={{ notepage: np.slug }}>
+                            <Eye aria-hidden />
+                            View
+                          </Link>
+                        </Button>
+                        <Button asChild>
+                          <Link to="/write" search={{ notepage: np.slug }}>
+                            <PenLine aria-hidden />
+                            New note
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      <Button variant="outline" asChild>
-                        <Link to="/$notepage" params={{ notepage: np.slug }}>
-                          <Eye aria-hidden />
-                          View
-                        </Link>
-                      </Button>
-                      <Button asChild>
-                        <Link to="/write" search={{ notepage: np.slug }}>
-                          <PenLine aria-hidden />
-                          New note
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="mt-7">
-                    <div className="flex flex-wrap gap-2">
-                      <Button variant="outline" asChild>
-                        <Link to="/notepages/$notepage" params={{ notepage: np.slug }}>
-                          <PenLine aria-hidden />
-                          Notes <span className="opacity-50">{entries.length}</span>
-                        </Link>
-                      </Button>
-                      <Button variant="outline" asChild>
-                        <a href={`/customize/${np.slug}`}>
-                          <Palette aria-hidden />
-                          Customize
-                        </a>
-                      </Button>
+                    <div className="mt-7">
+                      <div className="flex flex-wrap gap-2">
+                        <Button variant="outline" asChild>
+                          <Link to="/notepages/$notepage" params={{ notepage: np.slug }}>
+                            <PenLine aria-hidden />
+                            Notes <span className="opacity-50">{entries.length}</span>
+                          </Link>
+                        </Button>
+                        <Button variant="outline" asChild>
+                          <a href={`/customize/${np.slug}`}>
+                            <Palette aria-hidden />
+                            Customize
+                          </a>
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </main>
-      <SiteFooter />
-    </div>
+                </article>
+              );
+            })}
+          </div>
+        </main>
+        <SiteFooter />
+      </div>
     </AuthOnly>
   );
 }

@@ -77,9 +77,7 @@ export function HomepagePopularSwitcher() {
                 }`}
                 title={`Read "${title}" by ${np?.name || note.notepage}`}
               >
-                <span className="truncate max-w-[160px] lg:max-w-[200px]">
-                  {title}
-                </span>
+                <span className="truncate max-w-[160px] lg:max-w-[200px]">{title}</span>
                 {np && (
                   <span className="text-[10px] text-muted-foreground/70 group-hover:text-muted-foreground transition-colors">
                     · {np.name}
@@ -113,7 +111,9 @@ export function HomepagePopularSwitcher() {
                 className="inline-flex items-center justify-center gap-1.5 max-w-full text-xs font-medium text-foreground hover:text-primary transition-colors py-0.5"
               >
                 <span className="truncate">
-                  {currentMobileNote.title.trim() || currentMobileNote.preview.slice(0, 30) || "Untitled Note"}
+                  {currentMobileNote.title.trim() ||
+                    currentMobileNote.preview.slice(0, 30) ||
+                    "Untitled Note"}
                 </span>
                 {mobileNotepage && (
                   <span className="text-[10px] text-muted-foreground shrink-0">
@@ -145,7 +145,9 @@ export function HomepagePopularSwitcher() {
                 type="button"
                 onClick={() => setCurrentIndex(idx)}
                 className={`size-1.5 rounded-full transition-all ${
-                  idx === currentIndex ? "bg-primary w-3" : "bg-muted-foreground/30 hover:bg-muted-foreground/60"
+                  idx === currentIndex
+                    ? "bg-primary w-3"
+                    : "bg-muted-foreground/30 hover:bg-muted-foreground/60"
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />

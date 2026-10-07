@@ -39,10 +39,15 @@ function NoteView() {
       </Link>
 
       <article className="measure mt-16">
-        <h1 className="font-body text-[2.25rem] font-medium leading-[1.08] tracking-[-0.03em] sm:text-5xl">{note.title}</h1>
+        <h1 className="font-body text-[2.25rem] font-medium leading-[1.08] tracking-[-0.03em] sm:text-5xl">
+          {note.title}
+        </h1>
         <p className="mt-5 text-sm tracking-[0.12em] text-black/55 uppercase">{note.date}</p>
 
-        <div className="note-detail-copy prose-note mt-12" dangerouslySetInnerHTML={{ __html: note.html }} />
+        <div
+          className="note-detail-copy prose-note mt-12"
+          dangerouslySetInnerHTML={{ __html: note.html }}
+        />
 
         <div className="mt-12">
           <NotetagList tags={note.notetags} notepage={notepage} />

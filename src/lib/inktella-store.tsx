@@ -2,25 +2,55 @@ import { createContext, useCallback, useContext, useEffect, useState, type React
 import { notepages, notes, type Note, type Notepage } from "@/data/inktella";
 import { loadInktella } from "@/lib/inktella.functions";
 
-export type Guestnote = { id: string; notepageId: string; authorId: string; name: string; portrait?: string; body: string; createdAt: string };
+export type Guestnote = {
+  id: string;
+  notepageId: string;
+  authorId: string;
+  name: string;
+  portrait?: string;
+  body: string;
+  createdAt: string;
+};
 export const guestnotes: Guestnote[] = [];
 export let currentUserId: string | null = null;
 
 function formatDate(iso: string) {
-  return new Date(iso.includes("T") ? iso : `${iso.replace(" ", "T")}Z`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  return new Date(iso.includes("T") ? iso : `${iso.replace(" ", "T")}Z`).toLocaleDateString(
+    "en-GB",
+    { day: "numeric", month: "long", year: "numeric" },
+  );
 }
 const s = (v: string | null | undefined) => v ?? "";
 function parseJson<T>(v: string | null | undefined, fallback: T): T {
-  try { return v ? (JSON.parse(v) as T) : fallback; } catch { return fallback; }
+  try {
+    return v ? (JSON.parse(v) as T) : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
 export async function hydrateInktella() {
   // The signed-in person's own name/photo, used to create their profile on first visit.
-  const clerkUser = (globalThis as { Clerk?: { user?: { fullName?: string | null; username?: string | null; imageUrl?: string; hasImage?: boolean } | null } }).Clerk?.user;
+  const clerkUser = (
+    globalThis as {
+      Clerk?: {
+        user?: {
+          fullName?: string | null;
+          username?: string | null;
+          imageUrl?: string;
+          hasImage?: boolean;
+        } | null;
+      };
+    }
+  ).Clerk?.user;
   const hint = clerkUser
     ? {
-        ...(clerkUser.fullName || clerkUser.username ? { name: (clerkUser.fullName || clerkUser.username) as string } : {}),
-        ...(clerkUser.hasImage && clerkUser.imageUrl?.startsWith("https://img.clerk.com/") ? { imageUrl: clerkUser.imageUrl } : {}),
+        ...(clerkUser.fullName || clerkUser.username
+          ? { name: (clerkUser.fullName || clerkUser.username) as string }
+          : {}),
+        ...(clerkUser.hasImage && clerkUser.imageUrl?.startsWith("https://img.clerk.com/")
+          ? { imageUrl: clerkUser.imageUrl }
+          : {}),
       }
     : {};
   const raw = await loadInktella({ data: hint });
@@ -48,7 +78,14 @@ export async function hydrateInktella() {
       countryCode: s(owner?.["country_code"]),
       interests: parseJson<string[]>(owner?.["interests"], []),
       links: parseJson<Array<{ label: string; href: string }>>(owner?.["links"], []),
-      theme: { bg: s(p["bg"]), ink: s(p["ink"]), accent: s(p["accent"]), heading: s(p["heading_font"]), body: s(p["body_font"]), hand: s(p["hand_font"]) },
+      theme: {
+        bg: s(p["bg"]),
+        ink: s(p["ink"]),
+        accent: s(p["accent"]),
+        heading: s(p["heading_font"]),
+        body: s(p["body_font"]),
+        hand: s(p["hand_font"]),
+      },
       appearance: {
         backgroundType: cover ? "image" : "color",
         ...(cover ? { backgroundImage: cover } : {}),
@@ -56,14 +93,21 @@ export async function hydrateInktella() {
         backgroundPosition: "center",
         overlayOpacity: 0.28,
       },
-      header: { navLabel: s(p["name"]), eyebrow: ownerName, title: s(p["name"]), description: s(p["description"]) },
+      header: {
+        navLabel: s(p["name"]),
+        eyebrow: ownerName,
+        title: s(p["name"]),
+        description: s(p["description"]),
+      },
     };
   });
 
   const tagsByNote = new Map<string, string[]>();
-  for (const t of raw.tags) tagsByNote.set(t.note_id, [...(tagsByNote.get(t.note_id) ?? []), t.name]);
+  for (const t of raw.tags)
+    tagsByNote.set(t.note_id, [...(tagsByNote.get(t.note_id) ?? []), t.name]);
   const likesByNote = new Map<string, string[]>();
-  for (const l of raw.likes) likesByNote.set(l.note_id, [...(likesByNote.get(l.note_id) ?? []), l.user_id]);
+  for (const l of raw.likes)
+    likesByNote.set(l.note_id, [...(likesByNote.get(l.note_id) ?? []), l.user_id]);
 
   const mappedNotes: Note[] = raw.notes.map((n) => {
     const when = s(n["published_at"]) || s(n["created_at"]);
@@ -110,9 +154,19 @@ export function myNotepages() {
 }
 
 type StoreValue = { ready: boolean; version: number; refresh: () => Promise<void> };
-const StoreContext = createContext<StoreValue>({ ready: false, version: 0, refresh: async () => {} });
+const StoreContext = createContext<StoreValue>({
+  ready: false,
+  version: 0,
+  refresh: async () => {},
+});
 
-export function InktellaStoreProvider({ children, userKey }: { children: ReactNode; userKey: string | null }) {
+export function InktellaStoreProvider({
+  children,
+  userKey,
+}: {
+  children: ReactNode;
+  userKey: string | null;
+}) {
   const [ready, setReady] = useState(false);
   const [version, setVersion] = useState(0);
   const [error, setError] = useState("");
@@ -138,7 +192,14 @@ export function InktellaStoreProvider({ children, userKey }: { children: ReactNo
     <StoreContext.Provider value={{ ready, version, refresh }}>
       {ready ? (
         <div key={version} className="contents">
-          {error && <p role="alert" className="bg-destructive px-4 py-2 text-center text-sm text-destructive-foreground">{error}</p>}
+          {error && (
+            <p
+              role="alert"
+              className="bg-destructive px-4 py-2 text-center text-sm text-destructive-foreground"
+            >
+              {error}
+            </p>
+          )}
           {children}
         </div>
       ) : (
@@ -155,5 +216,10 @@ export function useInktellaStore() {
 }
 
 export function slugify(value: string) {
-  return value.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+  return value
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
 }

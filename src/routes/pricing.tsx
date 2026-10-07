@@ -24,13 +24,28 @@ export const Route = createFileRoute("/pricing")({
 
 const features = [
   { title: "Unlimited notes", detail: "No monthly quota, no minimum length, no maximum." },
-  { title: "Your own look", detail: "Pick your background and your type. The page should feel like you." },
-  { title: "A Notepage cover", detail: "Set an image, name, description and type for the entrance to your notebook." },
+  {
+    title: "Your own look",
+    detail: "Pick your background and your type. The page should feel like you.",
+  },
+  {
+    title: "A Notepage cover",
+    detail: "Set an image, name, description and type for the entrance to your notebook.",
+  },
   { title: "A WYSIWYG editor", detail: "Write and format as you go. No Markdown to remember." },
-  { title: "Your own address", detail: "Your notebook lives at its own place and can be shared anywhere." },
-  { title: "Notetags & Tellaverse", detail: "Tag a note and it joins everything else written on that subject." },
+  {
+    title: "Your own address",
+    detail: "Your notebook lives at its own place and can be shared anywhere.",
+  },
+  {
+    title: "Notetags & Tellaverse",
+    detail: "Tag a note and it joins everything else written on that subject.",
+  },
   { title: "Notella", detail: "Appear in a feed shaped by interests, not by follower counts." },
-  { title: "An About page", detail: "Portrait, bio, where you're noting down from, interests and links." },
+  {
+    title: "An About page",
+    detail: "Portrait, bio, where you're noting down from, interests and links.",
+  },
   { title: "Images in notes", detail: "Add pictures where they belong inside the writing." },
   { title: "Quiet likes", detail: "One per reader, per note. Encouragement without a scoreboard." },
   { title: "No ads, ever", detail: "You pay for the notebook, so nothing else has to be sold." },
@@ -38,8 +53,14 @@ const features = [
 
 const more = [
   { q: "Do readers pay?", a: "No. Reading Inktella is free for everyone." },
-  { q: "Can I have more than one notebook?", a: "Yes. One account can keep several, each at $10 a year." },
-  { q: "What if I stop paying?", a: "Your writing isn't deleted. The notebook goes quiet until you pick it up again." },
+  {
+    q: "Can I have more than one notebook?",
+    a: "Yes. One account can keep several, each at $10 a year.",
+  },
+  {
+    q: "What if I stop paying?",
+    a: "Your writing isn't deleted. The notebook goes quiet until you pick it up again.",
+  },
   { q: "Can I take my writing with me?", a: "Yes. Your notes are yours and can be exported." },
 ];
 
@@ -60,8 +81,8 @@ function Pricing() {
             <p className="mt-4 font-heading text-5xl leading-none">$10</p>
             <p className="mt-2 opacity-70">per year, per notebook</p>
             <p className="mt-6 leading-relaxed opacity-75">
-              Everything below is included. There is no free tier with the good parts
-              removed, and no upgrade waiting further down the page.
+              Everything below is included. There is no free tier with the good parts removed, and
+              no upgrade waiting further down the page.
             </p>
             <Link
               to="/notepages/new"

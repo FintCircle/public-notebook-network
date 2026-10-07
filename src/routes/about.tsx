@@ -23,9 +23,18 @@ export const Route = createFileRoute("/about")({
 });
 
 const words = [
-  { term: "Notepage", meaning: "Your personal public notebook. Your background, your type, your notes." },
-  { term: "Note", meaning: "One piece of writing. Short, long, finished or not — there is no minimum." },
-  { term: "Notetag", meaning: "A word shared across the whole network, so a note can be found by subject." },
+  {
+    term: "Notepage",
+    meaning: "Your personal public notebook. Your background, your type, your notes.",
+  },
+  {
+    term: "Note",
+    meaning: "One piece of writing. Short, long, finished or not — there is no minimum.",
+  },
+  {
+    term: "Notetag",
+    meaning: "A word shared across the whole network, so a note can be found by subject.",
+  },
   { term: "Tellaverse", meaning: "Everything written under one Notetag, across every notebook." },
   { term: "Notella", meaning: "A quiet feed built around interests instead of popularity." },
 ];
@@ -51,12 +60,12 @@ function About() {
 
           <div className="mt-10 space-y-5 text-lg leading-relaxed opacity-80">
             <p>
-              People have always kept notebooks. Bits of thinking, half-finished pages,
-              things they didn't want to forget. Almost none of it was written to perform.
+              People have always kept notebooks. Bits of thinking, half-finished pages, things they
+              didn't want to forget. Almost none of it was written to perform.
             </p>
             <p>
-              Inktella is that, in public. You keep a notebook, anyone can read it, and
-              nothing pushes you to make it bigger than it is.
+              Inktella is that, in public. You keep a notebook, anyone can read it, and nothing
+              pushes you to make it bigger than it is.
             </p>
           </div>
 
@@ -86,7 +95,9 @@ function About() {
           <ul className="mt-8 space-y-3 text-lg opacity-75">
             {notFor.map((item) => (
               <li key={item} className="flex gap-3">
-                <span aria-hidden className="opacity-40">—</span>
+                <span aria-hidden className="opacity-40">
+                  —
+                </span>
                 <span>{item}</span>
               </li>
             ))}

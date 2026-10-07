@@ -5,9 +5,7 @@ import { getNotepage, notesByTag } from "@/data/inktella";
 export const Route = createFileRoute("/$notepage/notetags/$tag")({
   head: ({ params }) => {
     const np = getNotepage(params.notepage);
-    const title = np
-      ? `#${params.tag} in ${np.name}`
-      : `#${params.tag} | Inktella`;
+    const title = np ? `#${params.tag} in ${np.name}` : `#${params.tag} | Inktella`;
     const description = np
       ? `Notes tagged #${params.tag} from ${np.name}, and the same thread across the Tellaverse.`
       : `Notes tagged #${params.tag}.`;
@@ -49,13 +47,15 @@ function LocalTag() {
 
       <h1 className="mt-10 text-3xl">#{tag}</h1>
       <p className="mt-2 text-sm opacity-60">
-        {scope === "local"
-          ? `Notes from ${np.owner}`
-          : "Notes from across Inktella"}
+        {scope === "local" ? `Notes from ${np.owner}` : "Notes from across Inktella"}
       </p>
 
       <div className="mt-8 flex gap-7">
-        <button type="button" onClick={() => setScope("local")} className={tabClass(scope === "local")}>
+        <button
+          type="button"
+          onClick={() => setScope("local")}
+          className={tabClass(scope === "local")}
+        >
           {np.owner}
         </button>
         <button
@@ -72,9 +72,7 @@ function LocalTag() {
           const owner = getNotepage(note.notepage);
           return (
             <li key={note.id} className="py-5">
-              {scope === "tellaverse" && (
-                <p className="text-sm opacity-55">{owner?.owner}</p>
-              )}
+              {scope === "tellaverse" && <p className="text-sm opacity-55">{owner?.owner}</p>}
               <h2 className="mt-1 text-lg">
                 <Link
                   to="/$notepage/notepage/$noteId"

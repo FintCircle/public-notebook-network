@@ -6,9 +6,7 @@ import { NotetagList } from "./notetag-list";
 export function NoteEntry({ note }: { note: Note }) {
   return (
     <article className="py-9">
-      <p className="text-xs tracking-[0.18em] uppercase opacity-50">
-        {note.date}
-      </p>
+      <p className="text-xs tracking-[0.18em] uppercase opacity-50">{note.date}</p>
       <h2 className="mt-3 text-2xl leading-snug">
         <Link
           to="/$notepage/notepage/$noteId"

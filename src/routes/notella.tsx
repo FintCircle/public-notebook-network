@@ -33,9 +33,7 @@ function Notella() {
       <SiteNav />
       <main className="mx-auto max-w-2xl px-5 py-14">
         <h1 className="text-xs tracking-[0.24em] uppercase opacity-50">Notella</h1>
-        <p className="hand mt-2 text-2xl opacity-70">
-          notes around things you care about
-        </p>
+        <p className="hand mt-2 text-2xl opacity-70">notes around things you care about</p>
 
         <div className="mt-10 divide-y divide-border/70">
           {feed.map((note) => {
