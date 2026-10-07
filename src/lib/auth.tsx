@@ -95,8 +95,34 @@ function StoreWithUser({ children }: { children: ReactNode }) {
   );
 }
 
+const ClerkReady = createContext(false);
+
+const visitor = {
+  isAuthenticated: false,
+  loading: false,
+  user: null,
+  displayName: "",
+  signOut: async () => {},
+};
+
 export function useAuth() {
-  return useContext(AuthContext);
+  return useContext(ClerkReady) ? useClerkAuth() : visitor; // context is fixed for the tree's lifetime
+}
+
+function useClerkAuth() {
+  const { user, isLoaded, isSignedIn } = useUser();
+  const clerk = useClerk();
+  return {
+    isAuthenticated: !!isSignedIn,
+    loading: !isLoaded,
+    user,
+    displayName:
+      user?.fullName ||
+      user?.username ||
+      user?.primaryEmailAddress?.emailAddress.split("@")[0] ||
+      "",
+    signOut: () => clerk.signOut(),
+  };
 }
 
 export function AuthGate({

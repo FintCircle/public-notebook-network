@@ -1,5 +1,3 @@
-import { seedNotepages, seedNotes } from "./seedData";
-
 export const platformBackgroundColors = [
   { name: "Paper", value: "#f5f1e8" },
   { name: "Sky", value: "#dbeafe" },

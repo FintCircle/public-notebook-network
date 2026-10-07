@@ -185,36 +185,24 @@ export const loadInktella = createServerFn({ method: "POST" })
       .parse(d ?? {}),
   )
   .handler(async ({ data }): Promise<RawData> => {
-    try {
-      const { d1, currentUserId, ensureProfile } = await import("./d1.server");
-      const me = await currentUserId(getRequest());
-      if (me) await ensureProfile(me, data).catch((e) => console.error("ensureProfile failed", e));
-
-      await autoSeedD1();
-
-      const [notepages, notes, profiles, tags, likes, guestnotes] = await Promise.all([
-        d1<Record<string, string | null>>("SELECT * FROM notepages ORDER BY created_at"),
-        d1<Record<string, string | null>>(
-          "SELECT * FROM notes WHERE status = 'published' OR author_id = ? ORDER BY COALESCE(published_at, created_at) DESC",
-          [me ?? ""],
-        ),
-        d1<Record<string, string | null>>("SELECT * FROM profiles"),
-        d1<{ note_id: string; name: string }>(
-          "SELECT nn.note_id, t.name FROM note_notetags nn JOIN notetags t ON t.id = nn.notetag_id",
-        ),
-        d1<{ note_id: string; user_id: string }>("SELECT note_id, user_id FROM likes"),
-        d1<Record<string, string | null>>("SELECT * FROM guestnotes ORDER BY created_at"),
-      ]);
-
-      if (!notepages.length) {
-        return getRawSeedData(me);
-      }
-
-      return { notepages, notes, profiles, tags, likes, guestnotes, me };
-    } catch (e) {
-      console.warn("loadInktella database query failed, falling back to seed data:", e);
-      return getRawSeedData(null);
-    }
+    const { d1, currentUserId, ensureProfile } = await import("./d1.server");
+    const me = await currentUserId(getRequest());
+    // Verified Clerk user ID → find or create their D1 profile before loading data.
+    if (me) await ensureProfile(me, data).catch((e) => console.error("ensureProfile failed", e));
+    const [notepages, notes, profiles, tags, likes, guestnotes] = await Promise.all([
+      d1<Record<string, string | null>>("SELECT * FROM notepages ORDER BY created_at"),
+      d1<Record<string, string | null>>(
+        "SELECT * FROM notes WHERE status = 'published' OR author_id = ? ORDER BY COALESCE(published_at, created_at) DESC",
+        [me ?? ""],
+      ),
+      d1<Record<string, string | null>>("SELECT * FROM profiles"),
+      d1<{ note_id: string; name: string }>(
+        "SELECT nn.note_id, t.name FROM note_notetags nn JOIN notetags t ON t.id = nn.notetag_id",
+      ),
+      d1<{ note_id: string; user_id: string }>("SELECT note_id, user_id FROM likes"),
+      d1<Record<string, string | null>>("SELECT * FROM guestnotes ORDER BY created_at"),
+    ]);
+    return { notepages, notes, profiles, tags, likes, guestnotes, me };
   });
 
 const fonts = ["Space Grotesk", "Instrument Serif", "Lora"] as const;
@@ -261,8 +249,9 @@ export const createNotepage = createServerFn({ method: "POST" })
       slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
     }
     const id = crypto.randomUUID();
+    const now = new Date().toISOString();
     await d1(
-      "INSERT INTO notepages (id, owner_id, slug, name, description, cover_path, bg, ink, heading_font) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO notepages (id, owner_id, slug, name, description, cover_path, bg, ink, heading_font, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         id,
         userId,
@@ -273,6 +262,7 @@ export const createNotepage = createServerFn({ method: "POST" })
         data.bg,
         data.ink,
         data.headingFont,
+        now,
       ],
     );
     return { id, slug };
