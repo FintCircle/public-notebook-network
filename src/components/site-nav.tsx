@@ -1,6 +1,7 @@
 import { goToSignIn, portalUrl } from "@/lib/account-portal";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
+import { HomepagePopularSwitcher } from "@/components/homepage-popular-switcher";
 import {
   Bell,
   CircleHelp,
@@ -36,6 +37,8 @@ export function SiteNav() {
   const { isAuthenticated, signOut, displayName } = useAuth();
   const { randomize } = useRandomizer();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHomepage = location.pathname === "/";
 
   return (
     <>
@@ -79,29 +82,33 @@ export function SiteNav() {
               )}
             </div>
           </div>
-          <nav
-            className="grid grid-cols-6 border-t border-border/60 px-2"
-            aria-label="Primary navigation"
-          >
-            {[...items, { to: "/topics", label: "Topics", icon: Tags }].map((item, index) => {
-              const Icon = item.icon;
-              const href = item.to === "/write" ? "/write" : item.to;
-              return (
-                <Link
-                  key={`${item.label}-${index}`}
-                  to={href}
-                  {...(item.to === "/write" ? { search: { notepage: undefined } } : {})}
-                  activeProps={{ className: "text-primary" }}
-                  className={iconLinkClass}
-                  aria-label={item.label}
-                  title={item.label}
-                >
-                  <Icon aria-hidden />
-                  <span className="sr-only">{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
+          {isHomepage ? (
+            <HomepagePopularSwitcher />
+          ) : (
+            <nav
+              className="grid grid-cols-6 border-t border-border/60 px-2"
+              aria-label="Primary navigation"
+            >
+              {[...items, { to: "/topics", label: "Topics", icon: Tags }].map((item, index) => {
+                const Icon = item.icon;
+                const href = item.to === "/write" ? "/write" : item.to;
+                return (
+                  <Link
+                    key={`${item.label}-${index}`}
+                    to={href}
+                    {...(item.to === "/write" ? { search: { notepage: undefined } } : {})}
+                    activeProps={{ className: "text-primary" }}
+                    className={iconLinkClass}
+                    aria-label={item.label}
+                    title={item.label}
+                  >
+                    <Icon aria-hidden />
+                    <span className="sr-only">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
         </div>
       </header>
 
