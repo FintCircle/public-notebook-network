@@ -58,9 +58,9 @@ export type Note = {
   status: "draft" | "published";
 };
 
-// Live data: filled from Lovable Cloud by hydrateInktella() (src/lib/inktella-store.ts).
-export const notepages: Notepage[] = [];
-export const notes: Note[] = [];
+// Initial state seeded with two fully complete Notepages; hydrateInktella() syncs with Cloudflare D1.
+export const notepages: Notepage[] = [...seedNotepages];
+export const notes: Note[] = [...seedNotes];
 
 export const interests = [
   "Technology",

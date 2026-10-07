@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { seedGuestnotes, seedNotes, seedNotepages, seedProfiles } from "@/data/seedData";
 
 export const getClerkPublishableKey = createServerFn({ method: "GET" }).handler(async () => {
   const { CLERK_PUBLISHABLE_KEY_FALLBACK } = await import("./clerk-config");
@@ -19,6 +20,160 @@ export type RawData = {
   guestnotes: Array<Record<string, string | null>>;
   me: string | null;
 };
+
+function getRawSeedData(me: string | null): RawData {
+  const profiles = seedProfiles.map((p) => ({
+    id: p.id,
+    display_name: p.display_name,
+    bio: p.bio,
+    country: p.country,
+    country_code: p.country_code,
+    portrait_url: p.portrait_url,
+    interests_json: p.interests_json,
+    links_json: p.links_json,
+    created_at: p.created_at,
+  }));
+
+  const notepages = seedNotepages.map((np) => ({
+    id: np.id,
+    owner_id: np.ownerId,
+    slug: np.slug,
+    name: np.name,
+    description: np.description,
+    cover_path: np.appearance.backgroundImage ?? null,
+    bg: np.theme.bg,
+    ink: np.theme.ink,
+    accent: np.theme.accent ?? "#c2410c",
+    heading_font: np.theme.heading,
+    body_font: np.theme.body,
+    hand_font: np.theme.hand,
+    paid_until: "2030-01-01 00:00:00",
+  }));
+
+  const notes = seedNotes.map((n) => {
+    const np = seedNotepages.find((p) => p.slug === n.notepage);
+    return {
+      id: n.id,
+      notepage_id: np?.id ?? "",
+      author_id: np?.ownerId ?? "",
+      title: n.title,
+      html: n.html,
+      preview: n.preview,
+      status: n.status,
+      published_at: n.publishedAt,
+      created_at: n.publishedAt,
+      updated_at: n.publishedAt,
+    };
+  });
+
+  const tags: Array<{ note_id: string; name: string }> = [];
+  for (const n of seedNotes) {
+    for (const tag of n.notetags) {
+      tags.push({ note_id: n.id, name: tag });
+    }
+  }
+
+  const likes: Array<{ note_id: string; user_id: string }> = [];
+  for (const n of seedNotes) {
+    for (const uid of n.likedBy) {
+      likes.push({ note_id: n.id, user_id: uid });
+    }
+  }
+
+  const guestnotes = seedGuestnotes.map((g) => ({
+    id: g.id,
+    notepage_id: g.notepageId,
+    author_id: g.authorId,
+    author_name: g.name,
+    body: g.body,
+    created_at: g.createdAt,
+  }));
+
+  return { notepages, notes, profiles, tags, likes, guestnotes, me };
+}
+
+async function autoSeedD1() {
+  const { d1 } = await import("./d1.server");
+  const existing = await d1<{ id: string }>("SELECT id FROM notepages LIMIT 1").catch(() => []);
+  if (existing.length > 0) return;
+
+  try {
+    for (const p of seedProfiles) {
+      await d1(
+        "INSERT OR IGNORE INTO profiles (id, display_name, bio, country, country_code, portrait_url, interests_json, links_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          p.id,
+          p.display_name,
+          p.bio,
+          p.country,
+          p.country_code,
+          p.portrait_url,
+          p.interests_json,
+          p.links_json,
+          p.created_at,
+        ],
+      );
+    }
+    for (const np of seedNotepages) {
+      await d1(
+        "INSERT OR IGNORE INTO notepages (id, owner_id, slug, name, description, cover_path, bg, ink, accent, heading_font, body_font, hand_font, paid_until) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          np.id,
+          np.ownerId,
+          np.slug,
+          np.name,
+          np.description,
+          np.appearance.backgroundImage ?? null,
+          np.theme.bg,
+          np.theme.ink,
+          np.theme.accent ?? "#c2410c",
+          np.theme.heading,
+          np.theme.body,
+          np.theme.hand,
+          "2030-01-01 00:00:00",
+        ],
+      );
+    }
+    for (const note of seedNotes) {
+      const np = seedNotepages.find((p) => p.slug === note.notepage);
+      if (!np) continue;
+      await d1(
+        "INSERT OR IGNORE INTO notes (id, notepage_id, author_id, title, html, preview, status, published_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          note.id,
+          np.id,
+          np.ownerId,
+          note.title,
+          note.html,
+          note.preview,
+          note.status,
+          note.publishedAt,
+          note.publishedAt,
+          note.publishedAt,
+        ],
+      );
+      for (const tag of note.notetags) {
+        const tagId = `tag_${tag}`;
+        await d1("INSERT OR IGNORE INTO notetags (id, name) VALUES (?, ?)", [tagId, tag]);
+        await d1(
+          "INSERT OR IGNORE INTO note_notetags (note_id, notetag_id) SELECT ?, id FROM notetags WHERE name = ?",
+          [note.id, tag],
+        );
+      }
+      for (const uid of note.likedBy) {
+        await d1("INSERT OR IGNORE INTO likes (user_id, note_id) VALUES (?, ?)", [uid, note.id]);
+      }
+    }
+    for (const gn of seedGuestnotes) {
+      await d1(
+        "INSERT OR IGNORE INTO guestnotes (id, notepage_id, author_id, author_name, body, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+        [gn.id, gn.notepageId, gn.authorId, gn.name, gn.body, gn.createdAt],
+      );
+    }
+  } catch (e) {
+    console.error("autoSeedD1 error:", e);
+  }
+}
 
 export const loadInktella = createServerFn({ method: "POST" })
   .inputValidator((d) =>

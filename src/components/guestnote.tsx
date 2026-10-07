@@ -5,7 +5,6 @@ import type { Notepage } from "@/data/inktella";
 import { guestnotes, useInktellaStore } from "@/lib/inktella-store";
 import { addGuestnote } from "@/lib/inktella.functions";
 import { useAuth } from "@/lib/auth";
-import { useNavigate } from "@tanstack/react-router";
 
 type GuestbookEntry = {
   id: string;
@@ -48,7 +47,6 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
     }));
   const { refresh } = useInktellaStore();
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
   const [sendError, setSendError] = useState("");
   const [showComposer, setShowComposer] = useState(true);
   const lastScrollY = useRef(0);
@@ -104,16 +102,13 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
               <div className="min-w-0 pt-1">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
                   <strong className="text-base sm:text-lg">{entry.name}</strong>
-                  {false && (
-                    <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-xs text-white">
-                      Inker
+                  {entry.country && (
+                    <span className="inline-flex items-center gap-1 opacity-60">
+                      <MapPin aria-hidden className="size-3.5" />
+                      {entry.country}
                     </span>
                   )}
-                  <span className="inline-flex items-center gap-1 opacity-60">
-                    <MapPin aria-hidden className="size-3.5" />
-                    {entry.country}
-                  </span>
-                  <span className="opacity-55">8mo ago</span>
+                  <span className="opacity-55">recently</span>
                 </div>
                 <p className="mt-2 max-w-3xl text-[1.05rem] leading-7 sm:text-xl sm:leading-8">
                   {entry.message}
@@ -123,7 +118,7 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
                   className="mt-3 inline-flex items-center gap-2 text-sm opacity-60 hover:opacity-100"
                   aria-label={`Like ${entry.name}'s guestnote`}
                 >
-                  <Heart aria-hidden className="size-5" /> {entry.id === "reader-1" ? 4 : 1}
+                  <Heart aria-hidden className="size-5" /> 1
                 </button>
                 {entry.reply && (
                   <div className="relative mt-9 ml-[-1rem] border-l border-b border-current/35 pb-2 pl-5 sm:ml-[-2rem] sm:pl-8">
@@ -137,15 +132,12 @@ export function Guestnote({ notepage }: { notepage: Notepage }) {
                         notepage={notepage}
                       />
                       <strong className="text-base sm:text-lg">{notepage.owner}</strong>
-                      <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-xs text-white">
-                        Inker
-                      </span>
                     </div>
                     <p className="mt-2 pl-1 text-[1.05rem] leading-7 sm:text-lg sm:leading-8">
                       {entry.reply}
                     </p>
                     <span className="mt-2 inline-flex items-center gap-2 text-sm opacity-60">
-                      <Heart aria-hidden className="size-5" /> 2
+                      <Heart aria-hidden className="size-5" /> 1
                     </span>
                   </div>
                 )}

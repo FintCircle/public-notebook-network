@@ -1,10 +1,28 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { ClerkProvider, useClerk, useUser } from "@clerk/clerk-react";
 import { getClerkPublishableKey } from "@/lib/inktella.functions";
 import { portalUrl } from "@/lib/account-portal";
 import { CLERK_PUBLISHABLE_KEY_FALLBACK } from "@/lib/clerk-config";
 import { InktellaStoreProvider } from "@/lib/inktella-store";
+
+export type AuthContextValue = {
+  isAuthenticated: boolean;
+  loading: boolean;
+  user: ReturnType<typeof useUser>["user"];
+  displayName: string;
+  signOut: () => Promise<void>;
+};
+
+const visitor: AuthContextValue = {
+  isAuthenticated: false,
+  loading: false,
+  user: null,
+  displayName: "",
+  signOut: async () => {},
+};
+
+const AuthContext = createContext<AuthContextValue>(visitor);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [key, setKey] = useState<string | null>(null);
@@ -23,7 +41,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
   if (!key) {
     // No sign-in available: keep the public site readable as a visitor.
-    return <InktellaStoreProvider userKey={null}>{children}</InktellaStoreProvider>;
+    return (
+      <AuthContext.Provider value={visitor}>
+        <InktellaStoreProvider userKey={null}>{children}</InktellaStoreProvider>
+      </AuthContext.Provider>
+    );
   }
   return (
     <ClerkProvider
@@ -38,12 +60,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 function StoreWithUser({ children }: { children: ReactNode }) {
-  const { user, isLoaded } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
+  const clerk = useClerk();
   const [gaveUp, setGaveUp] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setGaveUp(true), 6000);
     return () => clearTimeout(t);
   }, []);
+
   if (!isLoaded && !gaveUp) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -51,10 +75,23 @@ function StoreWithUser({ children }: { children: ReactNode }) {
       </div>
     );
   }
+
+  const authValue: AuthContextValue = {
+    isAuthenticated: !!isSignedIn,
+    loading: !isLoaded,
+    user: user ?? null,
+    displayName:
+      user?.fullName ||
+      user?.username ||
+      user?.primaryEmailAddress?.emailAddress.split("@")[0] ||
+      "",
+    signOut: () => clerk.signOut(),
+  };
+
   return (
-    <ClerkReady.Provider value={true}>
+    <AuthContext.Provider value={authValue}>
       <InktellaStoreProvider userKey={user?.id ?? null}>{children}</InktellaStoreProvider>
-    </ClerkReady.Provider>
+    </AuthContext.Provider>
   );
 }
 
