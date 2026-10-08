@@ -97,14 +97,6 @@ function StoreWithUser({ children }: { children: ReactNode }) {
 
 const ClerkReady = createContext(false);
 
-const visitor = {
-  isAuthenticated: false,
-  loading: false,
-  user: null,
-  displayName: "",
-  signOut: async () => {},
-};
-
 export function useAuth() {
   return useContext(ClerkReady) ? useClerkAuth() : visitor; // context is fixed for the tree's lifetime
 }
