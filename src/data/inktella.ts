@@ -58,9 +58,9 @@ export type Note = {
   status: "draft" | "published";
 };
 
-// Initial state seeded with two fully complete Notepages; hydrateInktella() syncs with Cloudflare D1.
-export const notepages: Notepage[] = [...seedNotepages];
-export const notes: Note[] = [...seedNotes];
+// Filled at startup by hydrateInktella() from Cloudflare D1.
+export const notepages: Notepage[] = [];
+export const notes: Note[] = [];
 
 export const interests = [
   "Technology",
