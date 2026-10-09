@@ -307,9 +307,10 @@ export const saveNote = createServerFn({ method: "POST" })
       ],
     );
     for (const name of [...new Set(data.notetags)]) {
-      await d1("INSERT OR IGNORE INTO notetags (id, name) VALUES (?, ?)", [
+      await d1("INSERT OR IGNORE INTO notetags (id, name, created_at) VALUES (?, ?, ?)", [
         crypto.randomUUID(),
         name,
+        now,
       ]);
       await d1(
         "INSERT OR IGNORE INTO note_notetags (note_id, notetag_id) SELECT ?, id FROM notetags WHERE name = ?",
@@ -332,8 +333,8 @@ export const toggleLike = createServerFn({ method: "POST" })
       await d1("DELETE FROM likes WHERE user_id = ? AND note_id = ?", [userId, data.noteId]);
     else
       await d1(
-        "INSERT INTO likes (user_id, note_id) SELECT ?, id FROM notes WHERE id = ? AND status = 'published'",
-        [userId, data.noteId],
+        "INSERT INTO likes (user_id, note_id, created_at) SELECT ?, id, ? FROM notes WHERE id = ? AND status = 'published'",
+        [userId, new Date().toISOString(), data.noteId],
       );
     return { liked: !existing.length };
   });
@@ -349,8 +350,8 @@ export const addGuestnote = createServerFn({ method: "POST" })
     const info = await clerkUserInfo(userId);
     const id = crypto.randomUUID();
     await d1(
-      "INSERT INTO guestnotes (id, notepage_id, author_id, author_name, body) SELECT ?, id, ?, ?, ? FROM notepages WHERE id = ?",
-      [id, userId, info.name, data.body, data.notepageId],
+      "INSERT INTO guestnotes (id, notepage_id, author_id, author_name, body, created_at) SELECT ?, id, ?, ?, ?, ? FROM notepages WHERE id = ?",
+      [id, userId, info.name, data.body, new Date().toISOString(), data.notepageId],
     );
     return { id };
   });
