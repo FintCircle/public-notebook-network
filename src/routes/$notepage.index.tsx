@@ -80,6 +80,15 @@ function NotepageHome() {
             </div>
           </div>
 
+          {np.appearance?.backgroundType === "image" && np.appearance.backgroundImage && (
+            <figure className="mt-8 w-full">
+              <img
+                src={np.appearance.backgroundImage}
+                alt={`Cover of ${np.name}`}
+                className="mx-auto block h-auto max-h-[70vh] w-auto max-w-full object-contain"
+              />
+            </figure>
+          )}
           <div className="mt-auto grid gap-7 sm:grid-cols-[1fr_auto] sm:items-end sm:gap-16">
             <div className="sm:mx-0 sm:p-0">
               <img

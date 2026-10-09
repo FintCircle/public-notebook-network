@@ -207,21 +207,15 @@ function NewNotepageForm() {
                 ))}
               </div>
             </div>
-            <div
-              className={`relative mt-9 flex aspect-[3/4] items-end overflow-hidden p-6 ${selectedBackground.className}`}
-            >
+            <div className={`relative mt-9 overflow-hidden ${selectedBackground.className}`}>
               {coverUrl && (
                 <img
                   src={coverUrl}
                   alt="Your selected cover preview"
-                  className="absolute inset-0 size-full object-cover"
+                  className="mx-auto block h-auto max-h-[70vh] w-auto max-w-full object-contain"
                 />
               )}
-              <div
-                aria-hidden
-                className={coverUrl ? "notepage-cover-shade absolute inset-0" : "hidden"}
-              />
-              <div className={`relative z-10 ${coverUrl ? "text-[var(--np-cover-ink)]" : ""}`}>
+              <div className="relative z-10 p-6">
                 <p className="text-xs uppercase opacity-60">Cover preview</p>
                 <h2
                   className="mt-5 max-w-[10ch] text-4xl leading-none"
