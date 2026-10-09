@@ -292,7 +292,7 @@ export const saveNote = createServerFn({ method: "POST" })
     const id = crypto.randomUUID();
     const now = new Date().toISOString();
     await d1(
-      "INSERT INTO notes (id, notepage_id, author_id, title, html, preview, status, published_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO notes (id, notepage_id, author_id, title, html, preview, status, published_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         id,
         page.id,
@@ -302,6 +302,8 @@ export const saveNote = createServerFn({ method: "POST" })
         data.preview,
         data.publish ? "published" : "draft",
         data.publish ? now : null,
+        now,
+        now,
       ],
     );
     for (const name of [...new Set(data.notetags)]) {
