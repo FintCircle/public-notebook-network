@@ -181,9 +181,8 @@ export async function ensureProfile(userId: string, hint: ProfileHint = {}) {
   const existing = await d1("SELECT id FROM profiles WHERE id = ?", [userId]);
   if (existing.length) return;
   const info = await clerkUserInfo(userId, hint);
-  await d1("INSERT OR IGNORE INTO profiles (id, display_name, portrait_url) VALUES (?, ?, ?)", [
-    userId,
-    info.name,
-    info.imageUrl,
-  ]);
+  await d1(
+    "INSERT INTO profiles (id, display_name, bio, country, country_code, portrait_url, interests_json, links_json, created_at) VALUES (?, ?, '', '', '', ?, '[]', '[]', ?) ON CONFLICT(id) DO NOTHING",
+    [userId, info.name, info.imageUrl, new Date().toISOString()],
+  );
 }
