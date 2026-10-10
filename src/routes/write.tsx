@@ -51,13 +51,25 @@ export default function Write() {
 }
 
 function WriteContent() {
-  const { notepage } = Route.useSearch();
+  const { notepage, edit } = Route.useSearch();
   const found = notepage ? getNotepage(notepage) : undefined;
   const selectedNotepage = found && myNotepages().includes(found) ? found : undefined;
 
   if (!selectedNotepage) return <NotepageChooser />;
+  const existing = edit
+    ? [...publishedNotes, ...drafts].find(
+        (n) => n.id === edit && n.notepage === selectedNotepage.slug,
+      )
+    : undefined;
 
-  return <NoteEditor notepage={selectedNotepage.slug} name={selectedNotepage.name} />;
+  return (
+    <NoteEditor
+      key={existing?.id ?? "new"}
+      notepage={selectedNotepage.slug}
+      name={selectedNotepage.name}
+      existing={existing}
+    />
+  );
 }
 
 function NotepageChooser() {
