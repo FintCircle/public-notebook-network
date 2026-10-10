@@ -58,7 +58,8 @@ export function normalizeEditorHtml(root: HTMLElement) {
     const isPlainBlock =
       !isText && (el.tagName === "DIV" || el.tagName === "P") && !el.querySelector("img,figure,pre,ul,ol,h2,h3");
     if (!isText && !isPlainBlock) continue;
-    const text = isText ? (node.textContent ?? "") : el.innerText || el.textContent || "";
+    if (!isText) el.querySelectorAll("br").forEach((b) => b.replaceWith("\n"));
+    const text = node.textContent ?? "";
     if (!/(^|\n)\s*(#{1,6}\s|[-*+]\s|\d+[.)]\s|>\s?|---)|\*\*|`|\]\(/.test(text)) continue;
     const tpl = document.createElement("template");
     tpl.innerHTML = markdownToHtml(text);

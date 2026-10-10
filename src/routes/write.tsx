@@ -1,16 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type ClipboardEvent,
+} from "react";
 import { SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
-import { getNotepage, interests } from "@/data/inktella";
+import { getNotepage, interests, notes as publishedNotes, type Note } from "@/data/inktella";
 import { AuthOnly } from "@/lib/auth";
-import { saveNote } from "@/lib/inktella.functions";
-import { myNotepages, useInktellaStore } from "@/lib/inktella-store";
+import { saveNote, updateNote } from "@/lib/inktella.functions";
+import { drafts, myNotepages, useInktellaStore } from "@/lib/inktella-store";
+import { markdownToHtml, normalizeEditorHtml } from "@/lib/note-format";
 import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/write")({
   validateSearch: (search: Record<string, unknown>) => ({
     notepage: typeof search["notepage"] === "string" ? search["notepage"] : undefined,
+    edit: typeof search["edit"] === "string" ? search["edit"] : undefined,
   }),
   head: () => ({
     meta: [
