@@ -320,6 +320,56 @@ export const saveNote = createServerFn({ method: "POST" })
     return { id };
   });
 
+export const updateNote = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({
+        noteId: z.string(),
+        title: z.string().max(200),
+        html: z.string().max(2_000_000),
+        preview: z.string().max(400),
+        notetags: z.array(z.string().regex(/^[a-z0-9-]{1,40}$/)).max(12),
+        publish: z.boolean(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { d1, requireUserId } = await import("./d1.server");
+    const userId = await requireUserId(getRequest());
+    const [note] = await d1<{ id: string; author_id: string; published_at: string | null }>(
+      "SELECT id, author_id, published_at FROM notes WHERE id = ?",
+      [data.noteId],
+    );
+    if (!note || note.author_id !== userId) throw new Error("That note isn't yours.");
+    const now = new Date().toISOString();
+    await d1(
+      "UPDATE notes SET title = ?, html = ?, preview = ?, status = ?, published_at = ?, updated_at = ? WHERE id = ?",
+      [
+        data.title,
+        data.html,
+        data.preview,
+        data.publish ? "published" : "draft",
+        data.publish ? (note.published_at ?? now) : note.published_at,
+        now,
+        note.id,
+      ],
+    );
+    await d1("DELETE FROM note_notetags WHERE note_id = ?", [note.id]);
+    for (const name of [...new Set(data.notetags)]) {
+      await d1("INSERT OR IGNORE INTO notetags (id, name, created_at) VALUES (?, ?, ?)", [
+        crypto.randomUUID(),
+        name,
+        now,
+      ]);
+      await d1(
+        "INSERT OR IGNORE INTO note_notetags (note_id, notetag_id) SELECT ?, id FROM notetags WHERE name = ?",
+        [note.id, name],
+      );
+    }
+    return { id: note.id };
+  });
+
+
 export const toggleLike = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ noteId: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
