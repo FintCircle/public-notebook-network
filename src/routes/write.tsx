@@ -240,9 +240,16 @@ function NoteEditor({
     const imageUrl = URL.createObjectURL(file);
     const image = new Image();
     image.onload = () => {
-      insertBlock(
-        `<figure><img src="${imageUrl}" alt="${file.name.replace(/"/g, "&quot;")}" /><figcaption>${file.name}</figcaption></figure>`,
-      );
+      // Shrink and embed the picture so it's saved with the note (not a temporary link).
+      const scale = Math.min(1, 1400 / Math.max(image.width, image.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(image.width * scale);
+      canvas.height = Math.round(image.height * scale);
+      canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+      URL.revokeObjectURL(imageUrl);
+      const alt = file.name.replace(/\.[^.]+$/, "").replace(/["<>&]/g, "");
+      insertBlock(`<figure><img src="${dataUrl}" alt="${alt}" /></figure><p><br></p>`);
       setIsAddingImage(false);
     };
     image.onerror = () => {
