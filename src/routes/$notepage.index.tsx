@@ -85,7 +85,7 @@ function NotepageHome() {
               <img
                 src={np.appearance.backgroundImage}
                 alt={`Cover of ${np.name}`}
-                className="mx-auto block h-auto max-h-[70vh] w-auto max-w-full object-contain"
+                className="mx-auto block h-auto max-h-[70vh] w-auto max-w-full object-fill"
               />
             </figure>
           )}
