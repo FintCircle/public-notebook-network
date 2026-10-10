@@ -107,22 +107,46 @@ function NotepageChooser() {
   );
 }
 
-function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
+function NoteEditor({
+  notepage,
+  name,
+  existing,
+}: {
+  notepage: string;
+  name: string;
+  existing?: Note | undefined;
+}) {
   const bodyRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [toolbar, setToolbar] = useState<ToolbarState>(null);
-  const [tags, setTags] = useState("");
-  const [topics, setTopics] = useState<string[]>([]);
+  const existingTopics = existing
+    ? interests.filter((t) => existing.notetags.includes(t.toLowerCase()))
+    : [];
+  const [tags, setTags] = useState(
+    existing
+      ? existing.notetags
+          .filter((t) => !existingTopics.some((x) => x.toLowerCase() === t))
+          .map((t) => `#${t}`)
+          .join(" ")
+      : "",
+  );
+  const [topics, setTopics] = useState<string[]>(existingTopics);
   const [status, setStatus] = useState<string | null>(null);
   const [isAddingImage, setIsAddingImage] = useState(false);
   const [saving, setSaving] = useState(false);
   const { refresh } = useInktellaStore();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (existing && bodyRef.current) bodyRef.current.innerHTML = existing.html;
+  }, [existing]);
+
   async function submit(publish: boolean) {
-    const html = bodyRef.current?.innerHTML.trim() ?? "";
-    const text = bodyRef.current?.innerText.trim() ?? "";
-    if (!text) {
+    const surface = bodyRef.current;
+    const html = surface ? normalizeEditorHtml(surface) : "";
+    const text = surface?.innerText.trim() ?? "";
+    if (!text && !html.includes("<img")) {
       setStatus("Write something first — even one line counts.");
       return;
     }
@@ -135,30 +159,40 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
       )
       .filter(Boolean)
       .slice(0, 12);
-    const firstLine = text.split("\n")[0] ?? "";
+    const typedTitle = titleRef.current?.innerText.trim() ?? "";
+    const firstLine = (text.split("\n")[0] ?? "").replace(/^#+\s*/, "");
+    const title = (typedTitle || existing?.title || firstLine || "Untitled").slice(0, 120);
+    const preview = text.replace(/^#+\s*/gm, "").replace(/\*\*/g, "").slice(0, 220);
     setSaving(true);
     try {
-      const { id } = await saveNote({
-        data: {
-          notepageSlug: notepage,
-          title: firstLine.slice(0, 120),
-          html,
-          preview: text.slice(0, 220),
-          notetags: tagList,
-          publish,
-        },
-      });
+      const payload = { title, html, preview, notetags: tagList, publish };
+      const { id } = existing
+        ? await updateNote({ data: { ...payload, noteId: existing.id } })
+        : await saveNote({ data: { ...payload, notepageSlug: notepage } });
       if (publish) {
-        await navigate({ to: "/$notepage", params: { notepage } });
+        await refresh();
+        await navigate({
+          to: "/$notepage/notepage/$noteId",
+          params: { notepage, noteId: id },
+        });
+      } else {
+        setStatus("Draft saved. It stays private until you publish.");
         void refresh();
-        void id;
-      } else setStatus("Draft saved. It stays private until you publish.");
+      }
     } catch (e) {
       setStatus(e instanceof Error ? e.message : "That didn't save. Try again.");
     } finally {
       setSaving(false);
     }
   }
+
+  const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
+    const html = e.clipboardData.getData("text/html");
+    const text = e.clipboardData.getData("text/plain");
+    if (html || !text) return;
+    e.preventDefault();
+    document.execCommand("insertHTML", false, markdownToHtml(text));
+  };
 
   const updateToolbar = useCallback(() => {
     const selection = window.getSelection();
