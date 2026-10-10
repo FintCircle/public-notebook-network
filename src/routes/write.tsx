@@ -17,7 +17,9 @@ import { markdownToHtml, normalizeEditorHtml } from "@/lib/note-format";
 import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/write")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { notepage?: string | undefined; edit?: string | undefined } => ({
     notepage: typeof search["notepage"] === "string" ? search["notepage"] : undefined,
     edit: typeof search["edit"] === "string" ? search["edit"] : undefined,
   }),
