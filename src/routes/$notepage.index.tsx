@@ -81,11 +81,11 @@ function NotepageHome() {
           </div>
 
           {np.appearance?.backgroundType === "image" && np.appearance.backgroundImage && (
-            <figure className="mt-8 w-full">
+            <figure className="-mx-7 mt-8 sm:-mx-16">
               <img
                 src={np.appearance.backgroundImage}
                 alt={`Cover of ${np.name}`}
-                className="mx-auto block h-auto max-h-[70vh] w-auto max-w-full object-fill"
+                className="notepage-cover-image"
               />
             </figure>
           )}
