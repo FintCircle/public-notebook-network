@@ -212,7 +212,7 @@ function NewNotepageForm() {
                 <img
                   src={coverUrl}
                   alt="Your selected cover preview"
-                  className="mx-auto block h-auto max-h-[70vh] w-auto max-w-full object-fill"
+                  className="notepage-cover-image"
                 />
               )}
               <div className="relative z-10 p-6">
