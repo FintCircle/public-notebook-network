@@ -1,16 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type ClipboardEvent,
+} from "react";
 import { SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
-import { getNotepage, interests } from "@/data/inktella";
+import { getNotepage, interests, notes as publishedNotes, type Note } from "@/data/inktella";
 import { AuthOnly } from "@/lib/auth";
-import { saveNote } from "@/lib/inktella.functions";
-import { myNotepages, useInktellaStore } from "@/lib/inktella-store";
+import { saveNote, updateNote } from "@/lib/inktella.functions";
+import { drafts, myNotepages, useInktellaStore } from "@/lib/inktella-store";
+import { markdownToHtml, normalizeEditorHtml } from "@/lib/note-format";
 import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/write")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { notepage?: string | undefined; edit?: string | undefined } => ({
     notepage: typeof search["notepage"] === "string" ? search["notepage"] : undefined,
+    edit: typeof search["edit"] === "string" ? search["edit"] : undefined,
   }),
   head: () => ({
     meta: [
@@ -42,13 +53,25 @@ export default function Write() {
 }
 
 function WriteContent() {
-  const { notepage } = Route.useSearch();
+  const { notepage, edit } = Route.useSearch();
   const found = notepage ? getNotepage(notepage) : undefined;
   const selectedNotepage = found && myNotepages().includes(found) ? found : undefined;
 
   if (!selectedNotepage) return <NotepageChooser />;
+  const existing = edit
+    ? [...publishedNotes, ...drafts].find(
+        (n) => n.id === edit && n.notepage === selectedNotepage.slug,
+      )
+    : undefined;
 
-  return <NoteEditor notepage={selectedNotepage.slug} name={selectedNotepage.name} />;
+  return (
+    <NoteEditor
+      key={existing?.id ?? "new"}
+      notepage={selectedNotepage.slug}
+      name={selectedNotepage.name}
+      existing={existing}
+    />
+  );
 }
 
 function NotepageChooser() {
@@ -65,7 +88,7 @@ function NotepageChooser() {
             <Link
               key={np.slug}
               to="/write"
-              search={{ notepage: np.slug }}
+              search={{ notepage: np.slug, edit: undefined }}
               className="group flex items-center justify-between gap-5 py-5"
             >
               <span>
@@ -86,22 +109,46 @@ function NotepageChooser() {
   );
 }
 
-function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
+function NoteEditor({
+  notepage,
+  name,
+  existing,
+}: {
+  notepage: string;
+  name: string;
+  existing?: Note | undefined;
+}) {
   const bodyRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [toolbar, setToolbar] = useState<ToolbarState>(null);
-  const [tags, setTags] = useState("");
-  const [topics, setTopics] = useState<string[]>([]);
+  const existingTopics = existing
+    ? interests.filter((t) => existing.notetags.includes(t.toLowerCase()))
+    : [];
+  const [tags, setTags] = useState(
+    existing
+      ? existing.notetags
+          .filter((t) => !existingTopics.some((x) => x.toLowerCase() === t))
+          .map((t) => `#${t}`)
+          .join(" ")
+      : "",
+  );
+  const [topics, setTopics] = useState<string[]>(existingTopics);
   const [status, setStatus] = useState<string | null>(null);
   const [isAddingImage, setIsAddingImage] = useState(false);
   const [saving, setSaving] = useState(false);
   const { refresh } = useInktellaStore();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (existing && bodyRef.current) bodyRef.current.innerHTML = existing.html;
+  }, [existing]);
+
   async function submit(publish: boolean) {
-    const html = bodyRef.current?.innerHTML.trim() ?? "";
-    const text = bodyRef.current?.innerText.trim() ?? "";
-    if (!text) {
+    const surface = bodyRef.current;
+    const html = surface ? normalizeEditorHtml(surface) : "";
+    const text = surface?.innerText.trim() ?? "";
+    if (!text && !html.includes("<img")) {
       setStatus("Write something first — even one line counts.");
       return;
     }
@@ -114,30 +161,40 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
       )
       .filter(Boolean)
       .slice(0, 12);
-    const firstLine = text.split("\n")[0] ?? "";
+    const typedTitle = titleRef.current?.innerText.trim() ?? "";
+    const firstLine = (text.split("\n")[0] ?? "").replace(/^#+\s*/, "");
+    const title = (typedTitle || existing?.title || firstLine || "Untitled").slice(0, 120);
+    const preview = text.replace(/^#+\s*/gm, "").replace(/\*\*/g, "").slice(0, 220);
     setSaving(true);
     try {
-      const { id } = await saveNote({
-        data: {
-          notepageSlug: notepage,
-          title: firstLine.slice(0, 120),
-          html,
-          preview: text.slice(0, 220),
-          notetags: tagList,
-          publish,
-        },
-      });
+      const payload = { title, html, preview, notetags: tagList, publish };
+      const { id } = existing
+        ? await updateNote({ data: { ...payload, noteId: existing.id } })
+        : await saveNote({ data: { ...payload, notepageSlug: notepage } });
       if (publish) {
-        await navigate({ to: "/$notepage", params: { notepage } });
+        await refresh();
+        await navigate({
+          to: "/$notepage/notepage/$noteId",
+          params: { notepage, noteId: id },
+        });
+      } else {
+        setStatus("Draft saved. It stays private until you publish.");
         void refresh();
-        void id;
-      } else setStatus("Draft saved. It stays private until you publish.");
+      }
     } catch (e) {
       setStatus(e instanceof Error ? e.message : "That didn't save. Try again.");
     } finally {
       setSaving(false);
     }
   }
+
+  const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
+    const html = e.clipboardData.getData("text/html");
+    const text = e.clipboardData.getData("text/plain");
+    if (html || !text) return;
+    e.preventDefault();
+    document.execCommand("insertHTML", false, markdownToHtml(text));
+  };
 
   const updateToolbar = useCallback(() => {
     const selection = window.getSelection();
@@ -185,9 +242,16 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
     const imageUrl = URL.createObjectURL(file);
     const image = new Image();
     image.onload = () => {
-      insertBlock(
-        `<figure><img src="${imageUrl}" alt="${file.name.replace(/"/g, "&quot;")}" /><figcaption>${file.name}</figcaption></figure>`,
-      );
+      // Shrink and embed the picture so it's saved with the note (not a temporary link).
+      const scale = Math.min(1, 1400 / Math.max(image.width, image.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(image.width * scale);
+      canvas.height = Math.round(image.height * scale);
+      canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+      URL.revokeObjectURL(imageUrl);
+      const alt = file.name.replace(/\.[^.]+$/, "").replace(/["<>&]/g, "");
+      insertBlock(`<figure><img src="${dataUrl}" alt="${alt}" /></figure><p><br></p>`);
       setIsAddingImage(false);
     };
     image.onerror = () => {
@@ -240,13 +304,14 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
           </Link>
           <Link
             to="/write"
-            search={{ notepage: undefined }}
+            search={{ notepage: undefined, edit: undefined }}
             className="text-xs opacity-45 hover:opacity-100"
           >
             change
           </Link>
         </div>
         <h1
+          ref={titleRef}
           contentEditable
           suppressContentEditableWarning
           data-placeholder="Untitled"
@@ -279,6 +344,7 @@ function NoteEditor({ notepage, name }: { notepage: string; name: string }) {
 
           <div
             ref={bodyRef}
+            onPaste={handlePaste}
             contentEditable
             suppressContentEditableWarning
             aria-label="Note body"

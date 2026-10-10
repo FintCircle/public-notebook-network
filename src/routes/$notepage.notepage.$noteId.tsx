@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { LikeButton } from "@/components/like-button";
 import { NotetagList } from "@/components/notetag-list";
 import { getNote, getNotepage } from "@/data/inktella";
+import { currentUserId } from "@/lib/inktella-store";
 
 export const Route = createFileRoute("/$notepage/notepage/$noteId")({
   head: ({ params }) => {
@@ -37,6 +38,15 @@ function NoteView() {
       >
         ← entry from {np.name}
       </Link>
+      {currentUserId && currentUserId === np.ownerId && (
+        <Link
+          to="/write"
+          search={{ notepage, edit: note.id }}
+          className="float-right text-sm font-medium text-black/60 underline underline-offset-4 hover:text-black"
+        >
+          Edit note
+        </Link>
+      )}
 
       <article className="measure mt-16">
         <h1 className="font-body text-[2.25rem] font-medium leading-[1.08] tracking-[-0.03em] sm:text-5xl">
