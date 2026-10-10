@@ -86,7 +86,7 @@ function NotepageChooser() {
             <Link
               key={np.slug}
               to="/write"
-              search={{ notepage: np.slug }}
+              search={{ notepage: np.slug, edit: undefined }}
               className="group flex items-center justify-between gap-5 py-5"
             >
               <span>
@@ -302,13 +302,14 @@ function NoteEditor({
           </Link>
           <Link
             to="/write"
-            search={{ notepage: undefined }}
+            search={{ notepage: undefined, edit: undefined }}
             className="text-xs opacity-45 hover:opacity-100"
           >
             change
           </Link>
         </div>
         <h1
+          ref={titleRef}
           contentEditable
           suppressContentEditableWarning
           data-placeholder="Untitled"
@@ -341,6 +342,7 @@ function NoteEditor({
 
           <div
             ref={bodyRef}
+            onPaste={handlePaste}
             contentEditable
             suppressContentEditableWarning
             aria-label="Note body"
