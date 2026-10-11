@@ -185,24 +185,28 @@ export const loadInktella = createServerFn({ method: "POST" })
       .parse(d ?? {}),
   )
   .handler(async ({ data }): Promise<RawData> => {
-    const { d1, currentUserId, ensureProfile } = await import("./d1.server");
-    const me = await currentUserId(getRequest());
-    // Verified Clerk user ID → find or create their D1 profile before loading data.
-    if (me) await ensureProfile(me, data).catch((e) => console.error("ensureProfile failed", e));
-    const [notepages, notes, profiles, tags, likes, guestnotes] = await Promise.all([
-      d1<Record<string, string | null>>("SELECT * FROM notepages ORDER BY created_at"),
-      d1<Record<string, string | null>>(
-        "SELECT * FROM notes WHERE status = 'published' OR author_id = ? ORDER BY COALESCE(published_at, created_at) DESC",
-        [me ?? ""],
-      ),
-      d1<Record<string, string | null>>("SELECT * FROM profiles"),
-      d1<{ note_id: string; name: string }>(
-        "SELECT nn.note_id, t.name FROM note_notetags nn JOIN notetags t ON t.id = nn.notetag_id",
-      ),
-      d1<{ note_id: string; user_id: string }>("SELECT note_id, user_id FROM likes"),
-      d1<Record<string, string | null>>("SELECT * FROM guestnotes ORDER BY created_at"),
-    ]);
-    return { notepages, notes, profiles, tags, likes, guestnotes, me };
+    try {
+      const { d1, currentUserId, ensureProfile } = await import("./d1.server");
+      const me = await currentUserId(getRequest()).catch(() => null);
+      if (me) await ensureProfile(me, data).catch((e) => console.error("ensureProfile failed", e));
+      const [notepages, notes, profiles, tags, likes, guestnotes] = await Promise.all([
+        d1<Record<string, string | null>>("SELECT * FROM notepages ORDER BY created_at"),
+        d1<Record<string, string | null>>(
+          "SELECT * FROM notes WHERE status = 'published' OR author_id = ? ORDER BY COALESCE(published_at, created_at) DESC",
+          [me ?? ""],
+        ),
+        d1<Record<string, string | null>>("SELECT * FROM profiles"),
+        d1<{ note_id: string; name: string }>(
+          "SELECT nn.note_id, t.name FROM note_notetags nn JOIN notetags t ON t.id = nn.notetag_id",
+        ),
+        d1<{ note_id: string; user_id: string }>("SELECT note_id, user_id FROM likes"),
+        d1<Record<string, string | null>>("SELECT * FROM guestnotes ORDER BY created_at"),
+      ]);
+      return { notepages, notes, profiles, tags, likes, guestnotes, me };
+    } catch (e) {
+      console.warn("D1 query failed, using seed data fallback:", e);
+      return getRawSeedData(null);
+    }
   });
 
 const fonts = ["Space Grotesk", "Instrument Serif", "Lora"] as const;

@@ -52,98 +52,115 @@ function NotepageHome() {
     }
   };
 
+  const hasCoverImage =
+    (np.appearance?.backgroundType ?? (np.appearance?.backgroundImage ? "image" : "color")) === "image" &&
+    Boolean(np.appearance?.backgroundImage);
+  const isLightText =
+    np.appearance?.textColor === "light" ||
+    (!np.appearance?.textColor && hasCoverImage);
+
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-transparent">
-      <section className="notepage-cover relative flex min-h-[100dvh] w-full overflow-x-hidden px-7 pb-9 pt-8 text-[var(--np-cover-ink)] sm:px-16 sm:pb-12 sm:pt-10">
-        <div className="relative z-10 flex w-full flex-col">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="font-heading text-3xl tracking-[-0.04em] sm:text-5xl">Inktella</p>
-              <p className="mt-1 text-[0.6rem] uppercase tracking-[0.42em] opacity-75 sm:text-xs">
+      <section
+        className={`notepage-cover relative flex min-h-[100svh] w-full flex-col justify-between overflow-hidden px-6 py-8 text-[var(--np-cover-ink)] sm:px-14 sm:py-12 ${
+          hasCoverImage ? "" : "notepage-cover-fallback"
+        }`}
+      >
+        {hasCoverImage && (
+          <>
+            <img
+              src={np.appearance.backgroundImage}
+              alt={`Cover background of ${np.name}`}
+              className="notepage-cover-image"
+            />
+            <div className={isLightText ? "cover-overlay" : "cover-overlay cover-overlay-light"} />
+          </>
+        )}
+
+        {/* Top Bar: Branding & Share */}
+        <header className="relative z-10 flex items-start justify-between gap-4">
+          <div>
+            <Link to="/" className="group block focus:outline-none focus:ring-2 focus:ring-current/40 rounded-sm">
+              <p className="font-heading text-2xl font-bold tracking-tight sm:text-4xl drop-shadow-sm">
+                Inktella
+              </p>
+              <p className="mt-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.38em] opacity-80 sm:text-xs">
                 Notepages
               </p>
-            </div>
-            <div className="absolute right-0 top-0 flex items-center gap-2">
-              <button
-                type="button"
-                aria-label="Share this Notepage"
-                onClick={shareNotepage}
-                className="grid size-14 place-items-center rounded-full border border-black/15 bg-white/70 transition-colors hover:bg-white"
-              >
-                <Share2 aria-hidden className="size-6" />
-              </button>
-              {shareStatus && (
-                <span role="status" className="text-[0.65rem] opacity-80">
-                  {shareStatus}
-                </span>
-              )}
-            </div>
+            </Link>
           </div>
 
-          {np.appearance?.backgroundType === "image" && np.appearance.backgroundImage && (
-            <figure className="-mx-7 mt-8 sm:-mx-16">
-              <img
-                src={np.appearance.backgroundImage}
-                alt={`Cover of ${np.name}`}
-                className="notepage-cover-image"
-              />
-            </figure>
-          )}
-          <div className="mt-auto grid gap-7 sm:grid-cols-[1fr_auto] sm:items-end sm:gap-16">
-            <div className="sm:mx-0 sm:p-0">
-              <img
-                src={np.portrait}
-                alt={`${np.owner}, owner of ${np.name}`}
-                className="notepage-owner-image mt-7 mb-3 h-auto w-[min(42vw,9.5rem)] sm:mt-3 sm:mb-3 sm:w-[min(18vw,10rem)]"
-              />
-              <div className="mb-3 flex items-center gap-2 text-[0.65rem] uppercase tracking-[0.16em] opacity-85 sm:mb-5 sm:gap-3 sm:text-sm sm:tracking-[0.2em]">
-                <span>{np.owner}</span>
-                <span className="h-px w-7 bg-current/70" />
-                <span className="normal-case tracking-normal">{np.country}</span>
-              </div>
-              <h1 className="max-w-[13ch] font-heading text-3xl leading-[0.98] tracking-[-0.035em] sm:text-6xl">
-                {np.name}
-              </h1>
-              <p className="mt-3 max-w-[35ch] text-xs leading-relaxed opacity-85 sm:mt-4 sm:text-lg">
-                {np.description}
-              </p>
-              <Link
-                to="/$notepage/notes"
-                params={{ notepage: np.slug }}
-                className="mt-5 inline-flex items-center gap-5 rounded-full bg-[var(--np-accent)] px-5 py-3 text-xs font-medium text-white transition-transform hover:scale-[1.02] sm:mt-6 sm:gap-6 sm:px-6 sm:py-3.5 sm:text-sm"
-              >
-                Start reading <ArrowRight aria-hidden />
-              </Link>
-            </div>
-
-            <nav
-              className="flex items-center gap-6 border-t border-black/15 pt-3 text-xs sm:gap-7 sm:border-t-0 sm:border-l sm:border-black/15 sm:pl-8 sm:pt-4 sm:text-sm"
-              aria-label="Notepage"
+          <div className="flex items-center gap-2">
+            {shareStatus && (
+              <span role="status" className="text-xs font-medium backdrop-blur-md bg-black/20 text-white px-2.5 py-1 rounded-full animate-fade-in">
+                {shareStatus}
+              </span>
+            )}
+            <button
+              type="button"
+              aria-label="Share this Notepage"
+              onClick={shareNotepage}
+              className="grid min-h-[44px] min-w-[44px] size-11 place-items-center rounded-full border border-current/20 bg-black/20 text-white backdrop-blur-md transition-all hover:bg-black/30 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white"
             >
-              <Link
-                to="/$notepage/about"
-                params={{ notepage: np.slug }}
-                className="flex items-center gap-2 opacity-90 hover:opacity-100"
-              >
-                <UserRound aria-hidden className="size-5" /> About
-              </Link>
-              <Link
-                to="/$notepage/guestnote"
-                params={{ notepage: np.slug }}
-                className="flex items-center gap-2 opacity-90 hover:opacity-100"
-              >
-                <MessageCircle aria-hidden className="size-5" /> Guestnotes
-              </Link>
-            </nav>
+              <Share2 aria-hidden className="size-5" />
+            </button>
+          </div>
+        </header>
+
+        {/* Main Lower Area: Title, Description, CTA */}
+        <div className="relative z-10 my-auto pt-16 pb-12 sm:pt-20 sm:pb-16 max-w-2xl">
+          <div className="mb-3 inline-block rounded-full bg-current/10 backdrop-blur-sm px-3.5 py-1 text-[0.68rem] font-medium uppercase tracking-[0.2em] opacity-90 sm:text-xs">
+            A Notepage by {np.owner}
           </div>
 
-          <div className="mt-10 flex items-center justify-between text-[0.6rem] uppercase tracking-[0.32em] opacity-70 sm:mt-12 sm:text-xs">
-            <span>a more human internet</span>
-            <span>
-              01 <span className="ml-3 inline-block w-10 align-middle border-t border-current/70" />
-            </span>
+          <h1 className="font-heading text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl sm:leading-[1.02] drop-shadow-md">
+            {np.name}
+          </h1>
+
+          <p className="mt-4 max-w-xl text-base leading-relaxed opacity-90 sm:text-xl sm:leading-relaxed drop-shadow">
+            {np.description}
+          </p>
+
+          <div className="mt-7 sm:mt-8">
+            <Link
+              to="/$notepage/notes"
+              params={{ notepage: np.slug }}
+              className="inline-flex min-h-[48px] items-center gap-3 rounded-full bg-[var(--np-accent)] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-black/20 transition-all hover:scale-[1.03] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-white"
+            >
+              Start reading <ArrowRight aria-hidden className="size-4" />
+            </Link>
           </div>
         </div>
+
+        {/* Bottom Navigation & Status */}
+        <footer className="relative z-10 flex flex-col gap-4 border-t border-current/15 pt-5 sm:flex-row sm:items-center sm:justify-between sm:pt-6">
+          <nav
+            className="flex items-center gap-6 text-sm font-medium"
+            aria-label="Notepage sections"
+          >
+            <Link
+              to="/$notepage/about"
+              params={{ notepage: np.slug }}
+              className="inline-flex min-h-[44px] items-center gap-2 opacity-85 transition-opacity hover:opacity-100 focus:outline-none focus:underline"
+            >
+              <UserRound aria-hidden className="size-4" /> About
+            </Link>
+            <Link
+              to="/$notepage/guestnote"
+              params={{ notepage: np.slug }}
+              className="inline-flex min-h-[44px] items-center gap-2 opacity-85 transition-opacity hover:opacity-100 focus:outline-none focus:underline"
+            >
+              <MessageCircle aria-hidden className="size-4" /> Guestnotes
+            </Link>
+          </nav>
+
+          <div className="flex items-center justify-between gap-4 text-xs font-semibold uppercase tracking-[0.25em] opacity-75 sm:justify-end">
+            <span className="hidden sm:inline">a more human internet</span>
+            <span className="inline-flex items-center gap-2">
+              01 <span className="h-px w-8 bg-current/60" />
+            </span>
+          </div>
+        </footer>
       </section>
     </main>
   );
