@@ -476,13 +476,16 @@
     font-size: 0.85em;
     opacity: 0.6;
   }
-  & strong, & b {
+  & strong,
+  & b {
     font-weight: 700;
   }
-  & em, & i {
+  & em,
+  & i {
     font-style: italic;
   }
-  & h2, & h3 {
+  & h2,
+  & h3 {
     font-weight: 600;
     line-height: 1.25;
   }

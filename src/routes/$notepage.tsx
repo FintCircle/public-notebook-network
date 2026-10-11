@@ -24,9 +24,15 @@ function NotepageShell() {
   const [customCover, setCustomCover] = useState("");
 
   const [focalDesktop, setFocalDesktop] = useState(np?.appearance?.backgroundPosition ?? "50% 35%");
-  const [focalMobile, setFocalMobile] = useState(np?.appearance?.mobileBackgroundPosition ?? np?.appearance?.backgroundPosition ?? "50% 35%");
-  const [textColor, setTextColor] = useState<"light" | "dark" | "auto">(np?.appearance?.textColor ?? "auto");
-  const [overlayOpacity, setOverlayOpacity] = useState<number>(np?.appearance?.overlayOpacity ?? 0.45);
+  const [focalMobile, setFocalMobile] = useState(
+    np?.appearance?.mobileBackgroundPosition ?? np?.appearance?.backgroundPosition ?? "50% 35%",
+  );
+  const [textColor, setTextColor] = useState<"light" | "dark" | "auto">(
+    np?.appearance?.textColor ?? "auto",
+  );
+  const [overlayOpacity, setOverlayOpacity] = useState<number>(
+    np?.appearance?.overlayOpacity ?? 0.45,
+  );
 
   useEffect(() => {
     const saved = window.localStorage.getItem(`notepage-accent:${notepage}`);
@@ -41,7 +47,8 @@ function NotepageShell() {
     if (savedFocalDesk) setFocalDesktop(savedFocalDesk);
     const savedFocalMob = window.localStorage.getItem(`notepage-focal-mobile:${notepage}`);
     if (savedFocalMob) setFocalMobile(savedFocalMob);
-    const savedTextColor = window.localStorage.getItem(`notepage-text-color:${notepage}`) as "light" | "dark" | "auto" | null;
+    const savedTextColor = window.localStorage.getItem(`notepage-text-color:${notepage}`) as
+      "light" | "dark" | "auto" | null;
     if (savedTextColor) setTextColor(savedTextColor);
     const savedOverlayOpacity = window.localStorage.getItem(`notepage-overlay-opacity:${notepage}`);
     if (savedOverlayOpacity) setOverlayOpacity(parseFloat(savedOverlayOpacity));

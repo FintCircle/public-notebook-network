@@ -1,5 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Check, ImagePlus, Move, Palette, Sliders, Smartphone, Type } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  ImagePlus,
+  Move,
+  Palette,
+  Sliders,
+  Smartphone,
+  Type,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
@@ -59,8 +68,12 @@ function CustomizeNotepage() {
   );
 
   const [activeFocalTab, setActiveFocalTab] = useState<"desktop" | "mobile">("desktop");
-  const [textColor, setTextColor] = useState<"light" | "dark" | "auto">(np?.appearance?.textColor ?? "auto");
-  const [overlayOpacity, setOverlayOpacity] = useState<number>(np?.appearance?.overlayOpacity ?? 0.45);
+  const [textColor, setTextColor] = useState<"light" | "dark" | "auto">(
+    np?.appearance?.textColor ?? "auto",
+  );
+  const [overlayOpacity, setOverlayOpacity] = useState<number>(
+    np?.appearance?.overlayOpacity ?? 0.45,
+  );
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   const [header, setHeader] = useState(
@@ -87,7 +100,8 @@ function CustomizeNotepage() {
       const y = parts[1] ? parseInt(parts[1], 10) : NaN;
       if (!isNaN(x) && !isNaN(y)) setFocalMob([x, y]);
     }
-    const savedTextColor = window.localStorage.getItem(`notepage-text-color:${slug}`) as "light" | "dark" | "auto" | null;
+    const savedTextColor = window.localStorage.getItem(`notepage-text-color:${slug}`) as
+      "light" | "dark" | "auto" | null;
     if (savedTextColor) setTextColor(savedTextColor);
     const savedOpacity = window.localStorage.getItem(`notepage-overlay-opacity:${slug}`);
     if (savedOpacity) setOverlayOpacity(parseFloat(savedOpacity));
@@ -138,18 +152,32 @@ function CustomizeNotepage() {
           </div>
           <div className="flex items-center gap-3">
             {saveMessage && (
-              <span className="text-sm font-medium text-green-700 animate-fade-in">{saveMessage}</span>
+              <span className="text-sm font-medium text-green-700 animate-fade-in">
+                {saveMessage}
+              </span>
             )}
             <Button
               onClick={() => {
                 window.localStorage.setItem(`notepage-accent:${slug}`, accent);
                 window.localStorage.setItem(`notepage-background:${slug}`, background);
                 if (customBackground)
-                  window.localStorage.setItem(`notepage-custom-background:${slug}`, customBackground);
-                window.localStorage.setItem(`notepage-focal-desktop:${slug}`, `${focalDesk[0]}% ${focalDesk[1]}%`);
-                window.localStorage.setItem(`notepage-focal-mobile:${slug}`, `${focalMob[0]}% ${focalMob[1]}%`);
+                  window.localStorage.setItem(
+                    `notepage-custom-background:${slug}`,
+                    customBackground,
+                  );
+                window.localStorage.setItem(
+                  `notepage-focal-desktop:${slug}`,
+                  `${focalDesk[0]}% ${focalDesk[1]}%`,
+                );
+                window.localStorage.setItem(
+                  `notepage-focal-mobile:${slug}`,
+                  `${focalMob[0]}% ${focalMob[1]}%`,
+                );
                 window.localStorage.setItem(`notepage-text-color:${slug}`, textColor);
-                window.localStorage.setItem(`notepage-overlay-opacity:${slug}`, String(overlayOpacity));
+                window.localStorage.setItem(
+                  `notepage-overlay-opacity:${slug}`,
+                  String(overlayOpacity),
+                );
                 if (coverPhoto)
                   window.localStorage.setItem(`notepage-cover-photo:${slug}`, coverPhoto);
 
@@ -239,7 +267,8 @@ function CustomizeNotepage() {
                 <h2 className="text-lg font-semibold">Cover photograph & positioning</h2>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">
-                Upload a full-screen cover photo and click/drag to set image focal points separately for desktop and mobile screens.
+                Upload a full-screen cover photo and click/drag to set image focal points separately
+                for desktop and mobile screens.
               </p>
 
               <div className="mt-4">
@@ -281,13 +310,16 @@ function CustomizeNotepage() {
                   </div>
 
                   <p className="mt-2 text-xs text-muted-foreground">
-                    Click anywhere on the photo preview below to place the center point ({currentFocal[0]}%, {currentFocal[1]}%).
+                    Click anywhere on the photo preview below to place the center point (
+                    {currentFocal[0]}%, {currentFocal[1]}%).
                   </p>
 
                   <div
                     onClick={handleImageClickOrDrag}
                     className={`relative mt-3 cursor-crosshair overflow-hidden rounded-xl border border-border select-none transition-all ${
-                      activeFocalTab === "mobile" ? "max-w-[260px] mx-auto aspect-[9/16]" : "aspect-[16/9] w-full"
+                      activeFocalTab === "mobile"
+                        ? "max-w-[260px] mx-auto aspect-[9/16]"
+                        : "aspect-[16/9] w-full"
                     }`}
                   >
                     <img
@@ -330,7 +362,9 @@ function CustomizeNotepage() {
                             type="button"
                             onClick={() => setTextColor(mode)}
                             className={`px-3 py-2 rounded-xl border font-medium capitalize ${
-                              textColor === mode ? "border-foreground bg-muted" : "border-border/70 hover:bg-muted/50"
+                              textColor === mode
+                                ? "border-foreground bg-muted"
+                                : "border-border/70 hover:bg-muted/50"
                             }`}
                           >
                             {mode} text
@@ -376,14 +410,20 @@ function CustomizeNotepage() {
               <div className="flex items-center justify-between border-b border-border/60 pb-3">
                 <h2 className="text-sm font-semibold">Live Cover Preview</h2>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  {activeFocalTab === "mobile" ? <Smartphone className="size-4" /> : <Move className="size-4" />}
+                  {activeFocalTab === "mobile" ? (
+                    <Smartphone className="size-4" />
+                  ) : (
+                    <Move className="size-4" />
+                  )}
                   <span className="capitalize">{activeFocalTab} view</span>
                 </div>
               </div>
 
               <div
                 className={`relative mt-4 overflow-hidden rounded-2xl border border-border/80 shadow-md ${
-                  activeFocalTab === "mobile" ? "max-w-[280px] mx-auto aspect-[9/16]" : "aspect-[16/10] w-full"
+                  activeFocalTab === "mobile"
+                    ? "max-w-[280px] mx-auto aspect-[9/16]"
+                    : "aspect-[16/10] w-full"
                 }`}
                 style={
                   {
@@ -413,26 +453,43 @@ function CustomizeNotepage() {
                         alt="Preview cover"
                         className="notepage-cover-image"
                         style={{
-                          objectPosition: activeFocalTab === "mobile" ? `${focalMob[0]}% ${focalMob[1]}%` : `${focalDesk[0]}% ${focalDesk[1]}%`,
+                          objectPosition:
+                            activeFocalTab === "mobile"
+                              ? `${focalMob[0]}% ${focalMob[1]}%`
+                              : `${focalDesk[0]}% ${focalDesk[1]}%`,
                         }}
                       />
-                      <div className={textColor === "light" || (textColor === "auto" && coverPhoto) ? "cover-overlay" : "cover-overlay cover-overlay-light"} />
+                      <div
+                        className={
+                          textColor === "light" || (textColor === "auto" && coverPhoto)
+                            ? "cover-overlay"
+                            : "cover-overlay cover-overlay-light"
+                        }
+                      />
                     </>
                   )}
 
                   <div className="relative z-10 flex justify-between items-start">
                     <span className="font-heading font-bold text-lg">Inktella</span>
-                    <span className="text-[0.6rem] uppercase tracking-widest opacity-80 font-mono">Notepage</span>
+                    <span className="text-[0.6rem] uppercase tracking-widest opacity-80 font-mono">
+                      Notepage
+                    </span>
                   </div>
 
                   <div className="relative z-10 my-auto py-4">
                     <p className="text-[0.65rem] font-semibold uppercase tracking-wider opacity-85">
                       A Notepage by {np.owner}
                     </p>
-                    <h3 className="font-heading text-xl font-extrabold leading-snug mt-1" style={{ fontFamily: fontPack.heading }}>
+                    <h3
+                      className="font-heading text-xl font-extrabold leading-snug mt-1"
+                      style={{ fontFamily: fontPack.heading }}
+                    >
                       {header.title || np.name}
                     </h3>
-                    <p className="text-xs opacity-90 mt-1 line-clamp-2" style={{ fontFamily: fontPack.body }}>
+                    <p
+                      className="text-xs opacity-90 mt-1 line-clamp-2"
+                      style={{ fontFamily: fontPack.body }}
+                    >
                       {header.description || np.description}
                     </p>
                     <div className="mt-3 inline-block rounded-full bg-[var(--np-accent)] px-3 py-1.5 text-[0.65rem] font-semibold text-white">

@@ -373,7 +373,6 @@ export const updateNote = createServerFn({ method: "POST" })
     return { id: note.id };
   });
 
-
 export const toggleLike = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ noteId: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {

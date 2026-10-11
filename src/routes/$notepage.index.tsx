@@ -53,11 +53,10 @@ function NotepageHome() {
   };
 
   const hasCoverImage =
-    (np.appearance?.backgroundType ?? (np.appearance?.backgroundImage ? "image" : "color")) === "image" &&
-    Boolean(np.appearance?.backgroundImage);
+    (np.appearance?.backgroundType ?? (np.appearance?.backgroundImage ? "image" : "color")) ===
+      "image" && Boolean(np.appearance?.backgroundImage);
   const isLightText =
-    np.appearance?.textColor === "light" ||
-    (!np.appearance?.textColor && hasCoverImage);
+    np.appearance?.textColor === "light" || (!np.appearance?.textColor && hasCoverImage);
 
   return (
     <main className="min-h-screen w-full overflow-x-hidden bg-transparent">
@@ -80,7 +79,10 @@ function NotepageHome() {
         {/* Top Bar: Branding & Share */}
         <header className="relative z-10 flex items-start justify-between gap-4">
           <div>
-            <Link to="/" className="group block focus:outline-none focus:ring-2 focus:ring-current/40 rounded-sm">
+            <Link
+              to="/"
+              className="group block focus:outline-none focus:ring-2 focus:ring-current/40 rounded-sm"
+            >
               <p className="font-heading text-2xl font-bold tracking-tight sm:text-4xl drop-shadow-sm">
                 Inktella
               </p>
@@ -92,7 +94,10 @@ function NotepageHome() {
 
           <div className="flex items-center gap-2">
             {shareStatus && (
-              <span role="status" className="text-xs font-medium backdrop-blur-md bg-black/20 text-white px-2.5 py-1 rounded-full animate-fade-in">
+              <span
+                role="status"
+                className="text-xs font-medium backdrop-blur-md bg-black/20 text-white px-2.5 py-1 rounded-full animate-fade-in"
+              >
                 {shareStatus}
               </span>
             )}
