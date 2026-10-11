@@ -4,6 +4,8 @@ import { useState } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
 import { notepages, notesOf, type Notepage } from "@/data/inktella";
+import { useInktellaStore } from "@/lib/inktella-store";
+import { deleteNotepage as deleteNotepageFn } from "@/lib/inktella.functions";
 
 export const Route = createFileRoute("/notepages/$notepage")({
   head: () => ({
@@ -29,6 +31,7 @@ function PostsManagementRoute() {
 function PostsManagement({ notepage }: { notepage: Notepage }) {
   const [removed, setRemoved] = useState(false);
   const notes = notesOf(notepage.slug);
+  const { refresh } = useInktellaStore();
 
   function exportNotes() {
     const url = URL.createObjectURL(
@@ -41,13 +44,21 @@ function PostsManagement({ notepage }: { notepage: Notepage }) {
     URL.revokeObjectURL(url);
   }
 
-  function deleteNotepage() {
+  async function handleDeleteNotepage() {
     if (
       window.confirm(
         `Delete ${notepage.name} forever? All notes will be removed and this cannot be undone.`,
       )
-    )
-      setRemoved(true);
+    ) {
+      try {
+        await deleteNotepageFn({ data: { slug: notepage.slug } });
+        await refresh();
+        setRemoved(true);
+      } catch (err) {
+        console.error("Failed to delete notepage", err);
+        alert(err instanceof Error ? err.message : "Failed to delete Notepage.");
+      }
+    }
   }
 
   if (removed)
@@ -130,7 +141,7 @@ function PostsManagement({ notepage }: { notepage: Notepage }) {
                   className="text-destructive hover:text-destructive"
                   aria-label="Delete Notepage"
                   title="Delete Notepage"
-                  onClick={deleteNotepage}
+                  onClick={handleDeleteNotepage}
                 >
                   <Trash2 aria-hidden />
                 </Button>
