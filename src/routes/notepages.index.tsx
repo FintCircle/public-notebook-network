@@ -30,9 +30,7 @@ function MyNotepages() {
 
   async function handleDelete(slug: string, name: string) {
     if (
-      window.confirm(
-        `Delete ${name} forever? All notes will be removed and this cannot be undone.`,
-      )
+      window.confirm(`Delete ${name} forever? All notes will be removed and this cannot be undone.`)
     ) {
       try {
         await deleteNotepage({ data: { slug } });
@@ -82,7 +80,13 @@ function MyNotepages() {
                         <p className="mt-3 text-xs opacity-45">{entries.length} published notes</p>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" size="icon" asChild aria-label="View Notepage" title="View Notepage">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          asChild
+                          aria-label="View Notepage"
+                          title="View Notepage"
+                        >
                           <Link to="/$notepage" params={{ notepage: np.slug }}>
                             <Eye aria-hidden />
                           </Link>
@@ -92,12 +96,24 @@ function MyNotepages() {
                             <PenLine aria-hidden />
                           </Link>
                         </Button>
-                        <Button variant="outline" size="icon" asChild aria-label={`Notes (${entries.length})`} title={`Notes (${entries.length})`}>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          asChild
+                          aria-label={`Notes (${entries.length})`}
+                          title={`Notes (${entries.length})`}
+                        >
                           <Link to="/notepages/$notepage" params={{ notepage: np.slug }}>
                             <BookOpen aria-hidden />
                           </Link>
                         </Button>
-                        <Button variant="outline" size="icon" asChild aria-label="Customize Notepage" title="Customize Notepage">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          asChild
+                          aria-label="Customize Notepage"
+                          title="Customize Notepage"
+                        >
                           <a href={`/customize/${np.slug}`}>
                             <Palette aria-hidden />
                           </a>

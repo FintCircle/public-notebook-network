@@ -50,13 +50,17 @@ export function markdownToHtml(text: string) {
 /** Normalise editor HTML: convert leftover Markdown in text-only blocks. Browser only. */
 export function normalizeEditorHtml(root: HTMLElement) {
   const clone = root.cloneNode(true) as HTMLElement;
-  clone.querySelectorAll("img[src^='blob:']").forEach((img) => img.closest("figure")?.remove() ?? img.remove());
+  clone
+    .querySelectorAll("img[src^='blob:']")
+    .forEach((img) => img.closest("figure")?.remove() ?? img.remove());
   const nodes = Array.from(clone.childNodes);
   for (const node of nodes) {
     const isText = node.nodeType === Node.TEXT_NODE;
     const el = node as HTMLElement;
     const isPlainBlock =
-      !isText && (el.tagName === "DIV" || el.tagName === "P") && !el.querySelector("img,figure,pre,ul,ol,h2,h3");
+      !isText &&
+      (el.tagName === "DIV" || el.tagName === "P") &&
+      !el.querySelector("img,figure,pre,ul,ol,h2,h3");
     if (!isText && !isPlainBlock) continue;
     if (!isText) el.querySelectorAll("br").forEach((b) => b.replaceWith("\n"));
     const text = node.textContent ?? "";
