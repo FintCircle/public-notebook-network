@@ -164,7 +164,10 @@ function NoteEditor({
     const typedTitle = titleRef.current?.innerText.trim() ?? "";
     const firstLine = (text.split("\n")[0] ?? "").replace(/^#+\s*/, "");
     const title = (typedTitle || existing?.title || firstLine || "Untitled").slice(0, 120);
-    const preview = text.replace(/^#+\s*/gm, "").replace(/\*\*/g, "").slice(0, 220);
+    const preview = text
+      .replace(/^#+\s*/gm, "")
+      .replace(/\*\*/g, "")
+      .slice(0, 220);
     setSaving(true);
     try {
       const payload = { title, html, preview, notetags: tagList, publish };

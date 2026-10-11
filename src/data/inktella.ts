@@ -31,10 +31,13 @@ export type Notepage = {
   };
   appearance: {
     backgroundType: "image" | "color";
-    backgroundImage?: string;
+    backgroundImage?: string | undefined;
     backgroundColor: string;
     backgroundPosition: string;
+    mobileBackgroundPosition?: string | undefined;
     overlayOpacity: number;
+    textColor?: "light" | "dark" | "auto" | undefined;
+    overlayGradient?: boolean | undefined;
   };
   header: {
     navLabel: string;
@@ -123,17 +126,26 @@ export function getPopularDecayedNotes(limit = 6) {
 }
 
 export function notepageAppearance(np: Notepage): Notepage["appearance"] {
+  const bgType =
+    np.appearance?.backgroundType ?? (np.appearance?.backgroundImage ? "image" : "color");
   return {
-    backgroundType: np.appearance?.backgroundType ?? "color",
-    backgroundImage: np.appearance?.backgroundImage ?? np.portrait,
+    backgroundType: bgType,
+    backgroundImage: np.appearance?.backgroundImage,
     backgroundColor: np.appearance?.backgroundColor ?? np.theme.bg,
-    backgroundPosition: np.appearance?.backgroundPosition ?? "center",
-    overlayOpacity: np.appearance?.overlayOpacity ?? 0.28,
+    backgroundPosition: np.appearance?.backgroundPosition ?? "50% 35%",
+    mobileBackgroundPosition:
+      np.appearance?.mobileBackgroundPosition ?? np.appearance?.backgroundPosition ?? "50% 35%",
+    overlayOpacity: np.appearance?.overlayOpacity ?? 0.45,
+    textColor: np.appearance?.textColor ?? (bgType === "image" ? "light" : "dark"),
+    overlayGradient: np.appearance?.overlayGradient ?? true,
   };
 }
 
 export function themeStyle(np: Notepage): React.CSSProperties {
   const appearance = notepageAppearance(np);
+  const isLightText =
+    appearance.textColor === "light" ||
+    (appearance.textColor !== "dark" && appearance.backgroundType === "image");
   return {
     ["--np-bg" as string]: np.theme.bg,
     ["--np-ink" as string]: np.theme.ink,
@@ -143,6 +155,9 @@ export function themeStyle(np: Notepage): React.CSSProperties {
     ["--np-hand" as string]: np.theme.hand,
     ["--np-background-color" as string]: appearance.backgroundColor,
     ["--np-background-position" as string]: appearance.backgroundPosition,
+    ["--np-mobile-background-position" as string]:
+      appearance.mobileBackgroundPosition || appearance.backgroundPosition,
     ["--np-overlay-opacity" as string]: appearance.overlayOpacity,
+    ["--np-cover-ink" as string]: isLightText ? "#ffffff" : "#111111",
   };
 }

@@ -23,6 +23,17 @@ function NotepageShell() {
   const [coverBackground, setCoverBackground] = useState<"ruled" | "white" | "custom">("ruled");
   const [customCover, setCustomCover] = useState("");
 
+  const [focalDesktop, setFocalDesktop] = useState(np?.appearance?.backgroundPosition ?? "50% 35%");
+  const [focalMobile, setFocalMobile] = useState(
+    np?.appearance?.mobileBackgroundPosition ?? np?.appearance?.backgroundPosition ?? "50% 35%",
+  );
+  const [textColor, setTextColor] = useState<"light" | "dark" | "auto">(
+    np?.appearance?.textColor ?? "auto",
+  );
+  const [overlayOpacity, setOverlayOpacity] = useState<number>(
+    np?.appearance?.overlayOpacity ?? 0.45,
+  );
+
   useEffect(() => {
     const saved = window.localStorage.getItem(`notepage-accent:${notepage}`);
     if (saved) setAccent(saved);
@@ -31,6 +42,16 @@ function NotepageShell() {
     const savedCustom = window.localStorage.getItem(`notepage-custom-background:${notepage}`);
     if (savedBackground) setCoverBackground(savedBackground);
     if (savedCustom) setCustomCover(savedCustom);
+
+    const savedFocalDesk = window.localStorage.getItem(`notepage-focal-desktop:${notepage}`);
+    if (savedFocalDesk) setFocalDesktop(savedFocalDesk);
+    const savedFocalMob = window.localStorage.getItem(`notepage-focal-mobile:${notepage}`);
+    if (savedFocalMob) setFocalMobile(savedFocalMob);
+    const savedTextColor = window.localStorage.getItem(`notepage-text-color:${notepage}`) as
+      "light" | "dark" | "auto" | null;
+    if (savedTextColor) setTextColor(savedTextColor);
+    const savedOverlayOpacity = window.localStorage.getItem(`notepage-overlay-opacity:${notepage}`);
+    if (savedOverlayOpacity) setOverlayOpacity(parseFloat(savedOverlayOpacity));
   }, [notepage]);
   if (!np)
     return (
@@ -66,7 +87,16 @@ function NotepageShell() {
       className={`notepage-theme relative min-h-screen ${isCover ? "notepage-cover-page" : "notepage-content-page"}`}
       style={
         {
-          ...themeStyle(np),
+          ...themeStyle({
+            ...np,
+            appearance: {
+              ...np.appearance,
+              backgroundPosition: focalDesktop,
+              mobileBackgroundPosition: focalMobile,
+              textColor: textColor,
+              overlayOpacity: overlayOpacity,
+            },
+          }),
           "--np-accent": accent,
           "--np-cover-background-image":
             coverBackground === "custom" && customCover

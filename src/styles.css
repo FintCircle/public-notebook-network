@@ -169,10 +169,15 @@
 }
 
 .notepage-cover {
+  position: relative;
+  min-height: 100svh;
+  width: 100%;
+  overflow: hidden;
   background-color: var(--np-background-color, var(--np-bg, var(--paper)));
-  background-size: contain;
-  background-position: center top;
-  background-repeat: no-repeat;
+  color: var(--np-cover-ink, #111111);
+}
+
+.notepage-cover-fallback {
   background-image: var(
     --np-cover-background-image,
     repeating-linear-gradient(
@@ -190,18 +195,49 @@
       transparent 1.05rem
     )
   );
-  color: #111;
-  --notepage-cover-ink: #111;
 }
 
-/* Preserve the entire uploaded photo, including wide images on narrow screens. */
+/* Edge-to-edge full screen photo cover with focal point positioning */
 .notepage-cover-image {
-  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
-  max-height: 70svh;
-  object-fit: contain;
-  object-position: center;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--np-mobile-background-position, 50% 35%);
+  z-index: 0;
+}
+
+@media (min-width: 640px) {
+  .notepage-cover-image {
+    object-position: var(--np-background-position, 50% 35%);
+  }
+}
+
+/* Legibility & text protection gradient overlay over photographs */
+.cover-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, calc(0.45 * var(--np-overlay-opacity, 0.45) * 2)) 0%,
+    rgba(0, 0, 0, calc(0.15 * var(--np-overlay-opacity, 0.45) * 2)) 30%,
+    rgba(0, 0, 0, calc(0.35 * var(--np-overlay-opacity, 0.45) * 2)) 60%,
+    rgba(0, 0, 0, calc(0.85 * var(--np-overlay-opacity, 0.45) * 2)) 100%
+  );
+}
+
+/* Optional light-mode overlay if text treatment is explicitly set to dark on photo cover */
+.cover-overlay-light {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0.2) 30%,
+    rgba(255, 255, 255, 0.4) 60%,
+    rgba(255, 255, 255, 0.92) 100%
+  );
 }
 
 @media (max-width: 639px) {
@@ -440,13 +476,16 @@
     font-size: 0.85em;
     opacity: 0.6;
   }
-  & strong, & b {
+  & strong,
+  & b {
     font-weight: 700;
   }
-  & em, & i {
+  & em,
+  & i {
     font-style: italic;
   }
-  & h2, & h3 {
+  & h2,
+  & h3 {
     font-weight: 600;
     line-height: 1.25;
   }
