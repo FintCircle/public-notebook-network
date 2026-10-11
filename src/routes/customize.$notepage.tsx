@@ -43,16 +43,20 @@ function CustomizeNotepage() {
   const [coverPhoto, setCoverPhoto] = useState<string>(np?.appearance?.backgroundImage ?? "");
 
   // Focal positions stored as percentages [x, y]
-  const [focalDesk, setFocalDesk] = useState<[number, number]>(() => {
-    const pos = np?.appearance?.backgroundPosition ?? "50% 35%";
-    const [x, y] = pos.split(" ").map((v) => parseInt(v, 10));
-    return [isNaN(x) ? 50 : x, isNaN(y) ? 35 : y];
-  });
-  const [focalMob, setFocalMob] = useState<[number, number]>(() => {
-    const pos = np?.appearance?.mobileBackgroundPosition ?? np?.appearance?.backgroundPosition ?? "50% 35%";
-    const [x, y] = pos.split(" ").map((v) => parseInt(v, 10));
-    return [isNaN(x) ? 50 : x, isNaN(y) ? 35 : y];
-  });
+  const parsePos = (posStr: string | undefined, defaultY = 35): [number, number] => {
+    if (!posStr) return [50, defaultY];
+    const parts = posStr.split(" ");
+    const px = parts[0] ? parseInt(parts[0], 10) : 50;
+    const py = parts[1] ? parseInt(parts[1], 10) : defaultY;
+    return [isNaN(px) ? 50 : px, isNaN(py) ? defaultY : py];
+  };
+
+  const [focalDesk, setFocalDesk] = useState<[number, number]>(() =>
+    parsePos(np?.appearance?.backgroundPosition, 35),
+  );
+  const [focalMob, setFocalMob] = useState<[number, number]>(() =>
+    parsePos(np?.appearance?.mobileBackgroundPosition ?? np?.appearance?.backgroundPosition, 35),
+  );
 
   const [activeFocalTab, setActiveFocalTab] = useState<"desktop" | "mobile">("desktop");
   const [textColor, setTextColor] = useState<"light" | "dark" | "auto">(np?.appearance?.textColor ?? "auto");
@@ -71,12 +75,16 @@ function CustomizeNotepage() {
   useEffect(() => {
     const savedFocalDesk = window.localStorage.getItem(`notepage-focal-desktop:${slug}`);
     if (savedFocalDesk) {
-      const [x, y] = savedFocalDesk.split(" ").map((v) => parseInt(v, 10));
+      const parts = savedFocalDesk.split(" ");
+      const x = parts[0] ? parseInt(parts[0], 10) : NaN;
+      const y = parts[1] ? parseInt(parts[1], 10) : NaN;
       if (!isNaN(x) && !isNaN(y)) setFocalDesk([x, y]);
     }
     const savedFocalMob = window.localStorage.getItem(`notepage-focal-mobile:${slug}`);
     if (savedFocalMob) {
-      const [x, y] = savedFocalMob.split(" ").map((v) => parseInt(v, 10));
+      const parts = savedFocalMob.split(" ");
+      const x = parts[0] ? parseInt(parts[0], 10) : NaN;
+      const y = parts[1] ? parseInt(parts[1], 10) : NaN;
       if (!isNaN(x) && !isNaN(y)) setFocalMob([x, y]);
     }
     const savedTextColor = window.localStorage.getItem(`notepage-text-color:${slug}`) as "light" | "dark" | "auto" | null;

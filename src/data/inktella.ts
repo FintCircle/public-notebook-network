@@ -31,13 +31,13 @@ export type Notepage = {
   };
   appearance: {
     backgroundType: "image" | "color";
-    backgroundImage?: string;
+    backgroundImage?: string | undefined;
     backgroundColor: string;
     backgroundPosition: string;
-    mobileBackgroundPosition?: string;
+    mobileBackgroundPosition?: string | undefined;
     overlayOpacity: number;
-    textColor?: "light" | "dark" | "auto";
-    overlayGradient?: boolean;
+    textColor?: "light" | "dark" | "auto" | undefined;
+    overlayGradient?: boolean | undefined;
   };
   header: {
     navLabel: string;
