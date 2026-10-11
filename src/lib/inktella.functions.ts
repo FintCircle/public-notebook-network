@@ -408,3 +408,17 @@ export const addGuestnote = createServerFn({ method: "POST" })
     );
     return { id };
   });
+
+export const deleteNotepage = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({ slug: z.string() }).parse(d))
+  .handler(async ({ data }) => {
+    const { d1, requireUserId } = await import("./d1.server");
+    const userId = await requireUserId(getRequest());
+    const [page] = await d1<{ id: string; owner_id: string }>(
+      "SELECT id, owner_id FROM notepages WHERE slug = ?",
+      [data.slug],
+    );
+    if (!page || page.owner_id !== userId) throw new Error("That Notepage isn't yours.");
+    await d1("DELETE FROM notepages WHERE slug = ? AND owner_id = ?", [data.slug, userId]);
+    return { success: true };
+  });

@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, Eye, Palette, PenLine, Plus } from "lucide-react";
+import { BookOpen, Eye, Palette, PenLine, Plus, Trash2 } from "lucide-react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
 import { notesOf } from "@/data/inktella";
-import { myNotepages } from "@/lib/inktella-store";
+import { myNotepages, useInktellaStore } from "@/lib/inktella-store";
+import { deleteNotepage } from "@/lib/inktella.functions";
 import { AuthOnly } from "@/lib/auth";
 
 export const Route = createFileRoute("/notepages/")({
@@ -25,6 +26,21 @@ export const Route = createFileRoute("/notepages/")({
 
 function MyNotepages() {
   const mine = myNotepages();
+  const { refresh } = useInktellaStore();
+
+  async function handleDelete(slug: string, name: string) {
+    if (
+      window.confirm(`Delete ${name} forever? All notes will be removed and this cannot be undone.`)
+    ) {
+      try {
+        await deleteNotepage({ data: { slug } });
+        await refresh();
+      } catch (err) {
+        console.error("Failed to delete notepage", err);
+        alert(err instanceof Error ? err.message : "Failed to delete Notepage.");
+      }
+    }
+  }
 
   return (
     <AuthOnly message="Your notebooks are private until you tell us who you are. The public ones can wait outside.">
@@ -64,33 +80,53 @@ function MyNotepages() {
                         <p className="mt-3 text-xs opacity-45">{entries.length} published notes</p>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          asChild
+                          aria-label="View Notepage"
+                          title="View Notepage"
+                        >
                           <Link to="/$notepage" params={{ notepage: np.slug }}>
                             <Eye aria-hidden />
-                            View
                           </Link>
                         </Button>
-                        <Button asChild>
+                        <Button size="icon" asChild aria-label="New note" title="New note">
                           <Link to="/write" search={{ notepage: np.slug }}>
                             <PenLine aria-hidden />
-                            New note
                           </Link>
                         </Button>
-                      </div>
-                    </div>
-                    <div className="mt-7">
-                      <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          asChild
+                          aria-label={`Notes (${entries.length})`}
+                          title={`Notes (${entries.length})`}
+                        >
                           <Link to="/notepages/$notepage" params={{ notepage: np.slug }}>
-                            <PenLine aria-hidden />
-                            Notes <span className="opacity-50">{entries.length}</span>
+                            <BookOpen aria-hidden />
                           </Link>
                         </Button>
-                        <Button variant="outline" asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          asChild
+                          aria-label="Customize Notepage"
+                          title="Customize Notepage"
+                        >
                           <a href={`/customize/${np.slug}`}>
                             <Palette aria-hidden />
-                            Customize
                           </a>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive hover:text-destructive"
+                          aria-label="Delete Notepage"
+                          title="Delete Notepage"
+                          onClick={() => handleDelete(np.slug, np.name)}
+                        >
+                          <Trash2 aria-hidden />
                         </Button>
                       </div>
                     </div>
