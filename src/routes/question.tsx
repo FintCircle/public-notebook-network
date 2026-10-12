@@ -106,7 +106,7 @@ function QuestionPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteNav />
-      <main className="mx-auto max-w-3xl px-5 py-5 sm:py-8">
+        <main className="mx-auto max-w-3xl px-5 py-3 sm:py-5">
         <header className="border-b border-border/70 pb-5">
           <div className="flex items-center justify-between gap-4">
             <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
@@ -114,24 +114,24 @@ function QuestionPage() {
             </Link>
             <p className="hand text-base text-muted-foreground">think first, then read the room</p>
           </div>
-          <h1 className="mt-5 text-3xl tracking-tight sm:text-4xl">Question of the day.</h1>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+          <h1 className="mt-3 text-2xl tracking-tight sm:text-3xl">Question of the day.</h1>
+          <p className="mt-1 max-w-xl text-xs leading-relaxed text-muted-foreground">
             Everyone sees the same question. Give your point of view before you hear theirs.
           </p>
         </header>
 
-        <section className="border-b border-border/70 py-9" aria-labelledby="today-question">
+        <section className="border-b border-border/70 py-5" aria-labelledby="today-question">
           <div className="flex items-center justify-between gap-4 text-xs uppercase tracking-[0.18em] text-muted-foreground">
             <span>Today · Sep 28, 2026</span>
             <span>Question 01</span>
           </div>
-          <h2 id="today-question" className="mt-5 text-3xl leading-tight sm:text-5xl">
+          <h2 id="today-question" className="mt-4 text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
             What would you make more room for in your life?
           </h2>
           {!hasAnswered ? (
             <form
               onSubmit={submitAnswer}
-              className="mt-7 rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5"
+              className="mt-5 rounded-xl border border-border bg-card p-3 shadow-sm sm:p-4"
             >
               <label htmlFor="answer" className="sr-only">
                 Your answer
@@ -141,7 +141,7 @@ function QuestionPage() {
                 value={answer}
                 onChange={(event) => setAnswer(event.target.value)}
                 placeholder="Write your answer before reading the crowd..."
-                rows={4}
+                rows={2}
                 className="w-full resize-none bg-transparent text-lg outline-none placeholder:text-muted-foreground/60"
               />
               <div className="mt-3 flex items-center justify-between gap-4 border-t border-border/70 pt-3">
@@ -166,7 +166,7 @@ function QuestionPage() {
             <div>
               <p className="hand text-lg text-muted-foreground">after your answer</p>
               <h2 id="answers-heading" className="mt-1 text-3xl">
-                The room
+                Others POV
               </h2>
             </div>
             {hasAnswered && (
