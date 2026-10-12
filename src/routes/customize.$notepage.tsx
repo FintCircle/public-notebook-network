@@ -47,7 +47,7 @@ function CustomizeNotepage() {
   const np = getNotepage(slug);
   const [fontPack, setFontPack] = useState(fontPacks[0]);
   const [accent, setAccent] = useState(np?.theme.accent ?? "#c2410c");
-  const [background, setBackground] = useState<"ruled" | "white" | "custom">("ruled");
+  const [background, setBackground] = useState<"ruled" | "white" | "custom">("white");
   const [customBackground, setCustomBackground] = useState("");
   const [coverPhoto, setCoverPhoto] = useState<string>(np?.appearance?.backgroundImage ?? "");
 
@@ -86,12 +86,17 @@ function CustomizeNotepage() {
   );
 
   useEffect(() => {
+    const savedAccent = window.localStorage.getItem(`notepage-accent:${slug}`);
+    setAccent(savedAccent || np?.theme.accent || "#c2410c");
+
     const savedFocalDesk = window.localStorage.getItem(`notepage-focal-desktop:${slug}`);
     if (savedFocalDesk) {
       const parts = savedFocalDesk.split(" ");
       const x = parts[0] ? parseInt(parts[0], 10) : NaN;
       const y = parts[1] ? parseInt(parts[1], 10) : NaN;
       if (!isNaN(x) && !isNaN(y)) setFocalDesk([x, y]);
+    } else {
+      setFocalDesk(parsePos(np?.appearance?.backgroundPosition, 35));
     }
     const savedFocalMob = window.localStorage.getItem(`notepage-focal-mobile:${slug}`);
     if (savedFocalMob) {
@@ -99,15 +104,26 @@ function CustomizeNotepage() {
       const x = parts[0] ? parseInt(parts[0], 10) : NaN;
       const y = parts[1] ? parseInt(parts[1], 10) : NaN;
       if (!isNaN(x) && !isNaN(y)) setFocalMob([x, y]);
+    } else {
+      setFocalMob(
+        parsePos(
+          np?.appearance?.mobileBackgroundPosition ?? np?.appearance?.backgroundPosition,
+          35,
+        ),
+      );
     }
     const savedTextColor = window.localStorage.getItem(`notepage-text-color:${slug}`) as
       "light" | "dark" | "auto" | null;
-    if (savedTextColor) setTextColor(savedTextColor);
+    setTextColor(savedTextColor || np?.appearance?.textColor || "auto");
+
     const savedOpacity = window.localStorage.getItem(`notepage-overlay-opacity:${slug}`);
-    if (savedOpacity) setOverlayOpacity(parseFloat(savedOpacity));
+    setOverlayOpacity(
+      savedOpacity ? parseFloat(savedOpacity) : (np?.appearance?.overlayOpacity ?? 0.45),
+    );
+
     const savedCoverPhoto = window.localStorage.getItem(`notepage-cover-photo:${slug}`);
-    if (savedCoverPhoto) setCoverPhoto(savedCoverPhoto);
-  }, [slug]);
+    setCoverPhoto(savedCoverPhoto || np?.appearance?.backgroundImage || "");
+  }, [slug, np]);
 
   if (!np) return null;
 
@@ -129,7 +145,14 @@ function CustomizeNotepage() {
       className="min-h-screen"
       style={
         {
-          ...themeStyle(np),
+          ...themeStyle({
+            ...np,
+            theme: {
+              ...np.theme,
+              accent: accent,
+            },
+          }),
+          "--np-accent": accent,
           "--np-heading": fontPack.heading,
           "--np-body": fontPack.body,
           "--np-hand": fontPack.hand,
@@ -180,6 +203,10 @@ function CustomizeNotepage() {
                 );
                 if (coverPhoto)
                   window.localStorage.setItem(`notepage-cover-photo:${slug}`, coverPhoto);
+
+                if (np) {
+                  np.theme.accent = accent;
+                }
 
                 setSaveMessage("Saved successfully!");
                 setTimeout(() => setSaveMessage(null), 3000);
@@ -429,6 +456,10 @@ function CustomizeNotepage() {
                   {
                     ...themeStyle({
                       ...np,
+                      theme: {
+                        ...np.theme,
+                        accent: accent,
+                      },
                       appearance: {
                         backgroundType: coverPhoto ? "image" : np.appearance.backgroundType,
                         backgroundImage: coverPhoto || np.appearance.backgroundImage,

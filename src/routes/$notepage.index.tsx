@@ -62,7 +62,7 @@ function NotepageHome() {
     <main className="min-h-screen w-full overflow-x-hidden bg-transparent">
       <section
         className={`notepage-cover relative flex min-h-[100svh] w-full flex-col justify-between overflow-hidden px-6 py-8 text-[var(--np-cover-ink)] sm:px-14 sm:py-12 ${
-          hasCoverImage ? "" : "notepage-cover-fallback"
+          hasCoverImage ? "" : "notepage-cover-fallback bg-white"
         }`}
       >
         {hasCoverImage && (
