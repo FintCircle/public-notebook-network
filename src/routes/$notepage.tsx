@@ -35,6 +35,11 @@ function NotepageShell() {
   );
 
   useEffect(() => {
+    const favicon =
+      window.localStorage.getItem(`notepage-favicon:${notepage}`) || "/inktella-logo.png";
+    const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    if (icon) icon.href = favicon;
+
     const saved = window.localStorage.getItem(`notepage-accent:${notepage}`);
     setAccent(saved || np?.theme.accent || "#c2410c");
 

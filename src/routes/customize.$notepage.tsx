@@ -50,6 +50,7 @@ function CustomizeNotepage() {
   const [background, setBackground] = useState<"ruled" | "white" | "custom">("white");
   const [customBackground, setCustomBackground] = useState("");
   const [coverPhoto, setCoverPhoto] = useState<string>(np?.appearance?.backgroundImage ?? "");
+  const [favicon, setFavicon] = useState<string>("");
 
   // Focal positions stored as percentages [x, y]
   const parsePos = (posStr: string | undefined, defaultY = 35): [number, number] => {
@@ -123,6 +124,7 @@ function CustomizeNotepage() {
 
     const savedCoverPhoto = window.localStorage.getItem(`notepage-cover-photo:${slug}`);
     setCoverPhoto(savedCoverPhoto || np?.appearance?.backgroundImage || "");
+    setFavicon(window.localStorage.getItem(`notepage-favicon:${slug}`) || "");
   }, [slug, np]);
 
   if (!np) return null;
@@ -203,6 +205,8 @@ function CustomizeNotepage() {
                 );
                 if (coverPhoto)
                   window.localStorage.setItem(`notepage-cover-photo:${slug}`, coverPhoto);
+                if (favicon) window.localStorage.setItem(`notepage-favicon:${slug}`, favicon);
+                else window.localStorage.removeItem(`notepage-favicon:${slug}`);
 
                 if (np) {
                   np.theme.accent = accent;
@@ -286,6 +290,54 @@ function CustomizeNotepage() {
                   </button>
                 ))}
               </div>
+            </div>
+            <div className="rounded-2xl border border-border/70 bg-card p-5 sm:p-7">
+              <div className="flex items-center gap-2">
+                <ImagePlus aria-hidden className="size-5" />
+                <h2 className="text-lg font-semibold">Notepage favicon</h2>
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Add a square PNG, SVG, or ICO icon for this Notepage. Without one, the Inktella icon
+                is used.
+              </p>
+              <input
+                type="file"
+                accept="image/png,image/svg+xml,image/x-icon,.ico"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (!file || file.size > 1024 * 1024) return;
+                  if (file.type === "image/svg+xml") {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      const source = String(reader.result);
+                      if (/<script|on\\w+\\s*=|javascript:/i.test(source)) return;
+                      setFavicon(
+                        `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(source)))}`,
+                      );
+                    };
+                    reader.readAsText(file);
+                  } else {
+                    const reader = new FileReader();
+                    reader.onload = () => setFavicon(String(reader.result));
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="mt-4 block w-full text-sm file:mr-4 file:rounded-xl file:border-0 file:bg-primary file:px-4 file:py-2 file:font-semibold file:text-primary-foreground"
+              />
+              {favicon && (
+                <img
+                  src={favicon}
+                  alt="Selected Notepage favicon"
+                  className="mt-4 size-16 rounded-xl object-cover"
+                />
+              )}
+              <button
+                type="button"
+                onClick={() => setFavicon("")}
+                className="mt-3 text-sm underline underline-offset-4"
+              >
+                Use Inktella icon instead
+              </button>
             </div>
             {/* Cover Photograph & Crop / Focal Point Selector */}
             <div className="rounded-2xl border border-border/70 bg-card p-5 sm:p-7">

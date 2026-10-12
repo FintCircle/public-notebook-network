@@ -34,7 +34,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   if (key === null) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-5">
+        <img
+          src="/inktella-logo.png"
+          alt="Inktella"
+          className="size-20 rounded-full object-cover"
+        />
         <p className="hand text-2xl opacity-50">opening the notebooks…</p>
       </div>
     );
@@ -70,7 +75,12 @@ function StoreWithUser({ children }: { children: ReactNode }) {
 
   if (!isLoaded && !gaveUp) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-5">
+        <img
+          src="/inktella-logo.png"
+          alt="Inktella"
+          className="size-20 rounded-full object-cover"
+        />
         <p className="hand text-2xl opacity-50">opening the notebooks…</p>
       </div>
     );
