@@ -9,12 +9,12 @@ export const Route = createFileRoute("/topics/")({
       { title: "Topics | Inktella" },
       {
         name: "description",
-        content: "Follow shared Notetags across public notebooks on Inktella.",
+        content: "Follow admin-curated Topics across public Notepages on Inktella.",
       },
       { property: "og:title", content: "Topics | Inktella" },
       {
         property: "og:description",
-        content: "Follow shared Notetags across public notebooks on Inktella.",
+        content: "Follow admin-curated Topics across public Notepages on Inktella.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -98,7 +98,7 @@ function Notetags() {
           </p>
           <h1 className="mt-3 text-4xl tracking-tight">Topics</h1>
           <p className="hand mt-2 text-xl opacity-65">
-            Find the conversations people are writing into.
+            Follow the themes curated by Inktella.
           </p>
         </div>
         <div className="mt-10 divide-y divide-border/70 border-y border-border/70">
