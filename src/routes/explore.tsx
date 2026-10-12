@@ -10,7 +10,7 @@ export const Route = createFileRoute("/explore")({
       { title: "Explore notebooks and Notetags | Inktella" },
       {
         name: "description",
-        content: "Wander through public notebooks and follow Notetags across the Tellaverse.",
+        content: "Wander through public Notepages and user-created Notetags across Inktella.",
       },
       { property: "og:title", content: "Explore notebooks and Notetags on Inktella" },
       {
@@ -78,8 +78,8 @@ function Explore() {
           {sortOptions.map((option) => <button key={option} type="button" onClick={() => setSort(option)} className={cn("rounded-full border px-3 py-1.5 text-xs transition-colors", sort === option ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground hover:border-foreground hover:text-foreground")}>{option}</button>)}
         </div>
 
-        <Link to="/topics/" className="mt-7 flex items-center justify-between rounded-2xl border border-border bg-muted/40 px-5 py-4 transition-colors hover:bg-muted">
-          <span><span className="block text-sm font-medium">Browse Notetags</span><span className="mt-1 block text-xs text-muted-foreground">Follow the ideas connecting every Notepage.</span></span><span aria-hidden className="text-xl">→</span>
+        <Link to="/notetags/" className="mt-7 flex items-center justify-between rounded-2xl border border-border bg-muted/40 px-5 py-4 transition-colors hover:bg-muted">
+          <span><span className="block text-sm font-medium">Browse Notetags</span><span className="mt-1 block text-xs text-muted-foreground">Explore user-created labels across Inktella.</span></span><span aria-hidden className="text-xl">→</span>
         </Link>
 
         <section className="mt-8" aria-labelledby="notepages-heading">
@@ -101,7 +101,7 @@ function Explore() {
           {visibleCount < filteredPages.length && <button type="button" onClick={() => setVisibleCount((count) => count + 12)} className="mx-auto block rounded-full border border-border px-5 py-2 text-sm hover:border-foreground">Load more</button>}
         </section>
 
-        <section className="mt-14" aria-labelledby="tags-heading"><div className="flex items-baseline justify-between"><h2 id="tags-heading" className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Notetags</h2><Link to="/topics/" className="text-xs underline underline-offset-4">View all</Link></div><div className="mt-5 flex flex-wrap items-baseline gap-x-5 gap-y-3">{tags.slice(0, 24).map(([tag, count]) => <Link key={tag} to="/topics/$tag" params={{ tag }} style={{ fontSize: `${Math.min(2.1, 0.85 + count * 0.12)}rem` }} className="leading-none tracking-tight opacity-75 transition-opacity hover:opacity-100">#{tag}<span className="ml-1 text-xs opacity-50">{count}</span></Link>)}</div></section>
+        <section className="mt-14" aria-labelledby="tags-heading"><div className="flex items-baseline justify-between"><h2 id="tags-heading" className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Notetags</h2><Link to="/notetags/" className="text-xs underline underline-offset-4">View all</Link></div><div className="mt-5 flex flex-wrap items-baseline gap-x-5 gap-y-3">{tags.slice(0, 24).map(([tag, count]) => <Link key={tag} to="/topics/$tag" params={{ tag }} style={{ fontSize: `${Math.min(2.1, 0.85 + count * 0.12)}rem` }} className="leading-none tracking-tight opacity-75 transition-opacity hover:opacity-100">#{tag}<span className="ml-1 text-xs opacity-50">{count}</span></Link>)}</div></section>
       </main>
       <SiteFooter />
     </div>
