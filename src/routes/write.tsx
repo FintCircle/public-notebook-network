@@ -93,12 +93,7 @@ function WriteContent() {
     : undefined;
 
   return (
-    <NoteEditor
-      key={existing?.id ?? "new"}
-      notepage={selectedNotepage.slug}
-      name={selectedNotepage.name}
-      existing={existing}
-    />
+    <NoteEditor notepage={selectedNotepage.slug} name={selectedNotepage.name} existing={existing} />
   );
 }
 
@@ -262,6 +257,7 @@ function NoteEditor({
       const currentLineText = $from.nodeBefore?.text ?? "";
       if (currentLineText.startsWith("/")) {
         setSlashQuery(currentLineText.slice(1));
+        setSlashSelectedIndex(0);
         setSlashMenuOpen(true);
       } else {
         setSlashMenuOpen(false);
@@ -457,7 +453,6 @@ function NoteEditor({
           });
         } else {
           setStatus(`Saved draft at ${time}`);
-          void refresh();
         }
       } catch (e) {
         setSaveState("error");
@@ -580,6 +575,7 @@ function NoteEditor({
                   <button
                     key={opt.id}
                     type="button"
+                    onMouseDown={(event) => event.preventDefault()}
                     onClick={() => executeSlashAction(opt.action)}
                     onMouseEnter={() => setSlashSelectedIndex(index)}
                     className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-xs transition-colors ${

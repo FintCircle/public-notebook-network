@@ -474,6 +474,12 @@
 }
 
 /* Tiptap Editor placeholder & styling */
+.prose-note .tiptap,
+.prose-note .tiptap:focus,
+.prose-note .tiptap:focus-visible {
+  outline: none;
+}
+
 .tiptap p.is-editor-empty:first-child::before {
   color: color-mix(in oklab, currentColor 35%, transparent);
   content: attr(data-placeholder);
