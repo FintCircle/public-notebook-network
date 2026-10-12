@@ -409,6 +409,20 @@ export const addGuestnote = createServerFn({ method: "POST" })
     return { id };
   });
 
+export const deleteNote = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({ noteId: z.string() }).parse(d))
+  .handler(async ({ data }) => {
+    const { d1, requireUserId } = await import("./d1.server");
+    const userId = await requireUserId(getRequest());
+    const [note] = await d1<{ id: string; author_id: string }>(
+      "SELECT id, author_id FROM notes WHERE id = ?",
+      [data.noteId],
+    );
+    if (!note || note.author_id !== userId) throw new Error("That note isn't yours.");
+    await d1("DELETE FROM notes WHERE id = ? AND author_id = ?", [data.noteId, userId]);
+    return { success: true };
+  });
+
 export const deleteNotepage = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ slug: z.string() }).parse(d))
   .handler(async ({ data }) => {

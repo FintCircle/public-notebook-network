@@ -4,8 +4,9 @@ import { useState } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
 import { notepages, notesOf, type Notepage } from "@/data/inktella";
+import { drafts } from "@/lib/inktella-store";
 import { useInktellaStore } from "@/lib/inktella-store";
-import { deleteNotepage as deleteNotepageFn } from "@/lib/inktella.functions";
+import { deleteNote as deleteNoteFn } from "@/lib/inktella.functions";
 
 export const Route = createFileRoute("/notepages/$notepage")({
   head: () => ({
@@ -29,8 +30,8 @@ function PostsManagementRoute() {
 }
 
 function PostsManagement({ notepage }: { notepage: Notepage }) {
-  const [removed, setRemoved] = useState(false);
-  const notes = notesOf(notepage.slug);
+  const [deletedIds, setDeletedIds] = useState<string[]>([]);
+  const notes = [...notesOf(notepage.slug), ...drafts.filter((note) => note.notepage === notepage.slug)].filter((note) => !deletedIds.includes(note.id));
   const { refresh } = useInktellaStore();
 
   function exportNotes() {
@@ -44,37 +45,16 @@ function PostsManagement({ notepage }: { notepage: Notepage }) {
     URL.revokeObjectURL(url);
   }
 
-  async function handleDeleteNotepage() {
-    if (
-      window.confirm(
-        `Delete ${notepage.name} forever? All notes will be removed and this cannot be undone.`,
-      )
-    ) {
-      try {
-        await deleteNotepageFn({ data: { slug: notepage.slug } });
-        await refresh();
-        setRemoved(true);
-      } catch (err) {
-        console.error("Failed to delete notepage", err);
-        alert(err instanceof Error ? err.message : "Failed to delete Notepage.");
-      }
+  async function handleDeleteNote(noteId: string) {
+    if (!window.confirm("Delete this note? This cannot be undone.")) return;
+    try {
+      await deleteNoteFn({ data: { noteId } });
+      setDeletedIds((current) => [...current, noteId]);
+      await refresh();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete note.");
     }
   }
-
-  if (removed)
-    return (
-      <main className="grid min-h-screen place-items-center px-5 text-center">
-        <div>
-          <h1 className="text-3xl">Notepage removed</h1>
-          <p className="mt-3 text-muted-foreground">
-            This Notepage and its notes have been permanently removed.
-          </p>
-          <Button asChild className="mt-6">
-            <Link to="/notepages">Back to Notepages</Link>
-          </Button>
-        </div>
-      </main>
-    );
 
   return (
     <div className="min-h-screen">
@@ -115,11 +95,11 @@ function PostsManagement({ notepage }: { notepage: Notepage }) {
             </div>
           </div>
           <div className="flex border-b border-border/70 bg-muted/30 p-2 text-sm">
-            <span className="rounded-md bg-background px-4 py-2 font-medium shadow-sm">
-              Published <span className="ml-1 opacity-50">{notes.length}</span>
+              <span className="rounded-md bg-background px-4 py-2 font-medium shadow-sm">
+              Published <span className="ml-1 opacity-50">{notes.filter((note) => note.status === "published").length}</span>
             </span>
             <span className="px-4 py-2 text-muted-foreground">
-              Drafts <span className="ml-1 opacity-50">0</span>
+              Drafts <span className="ml-1 opacity-50">{notes.filter((note) => note.status === "draft").length}</span>
             </span>
           </div>
           <div className="px-5 py-5 sm:px-8 sm:py-6">
@@ -135,37 +115,21 @@ function PostsManagement({ notepage }: { notepage: Notepage }) {
                 >
                   <Download aria-hidden />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-destructive hover:text-destructive"
-                  aria-label="Delete Notepage"
-                  title="Delete Notepage"
-                  onClick={handleDeleteNotepage}
-                >
-                  <Trash2 aria-hidden />
-                </Button>
+
               </div>
             </div>
             <div className="flex flex-col divide-y divide-border/60">
               {notes.map((note) => (
-                <Link
-                  key={note.id}
-                  to="/$notepage/notepage/$noteId"
-                  params={{ notepage: notepage.slug, noteId: note.id }}
-                  className="flex gap-4 border-b border-border/60 py-3 transition-colors last:border-b-0 hover:bg-muted/50"
-                >
-                  <time
-                    dateTime={note.publishedAt}
-                    className="w-24 shrink-0 text-sm text-muted-foreground"
-                  >
-                    {new Date(note.publishedAt).toLocaleDateString("en-US", {
-                      day: "2-digit",
-                      month: "short",
-                    })}
-                  </time>
-                  <span className="font-medium">{note.title}</span>
-                </Link>
+                <div key={note.id} className="flex items-center gap-3 border-b border-border/60 py-3 last:border-b-0 hover:bg-muted/50">
+                  <Link to="/$notepage/notepage/$noteId" params={{ notepage: notepage.slug, noteId: note.id }} className="flex min-w-0 flex-1 gap-4">
+                    <time dateTime={note.publishedAt} className="w-24 shrink-0 text-sm text-muted-foreground">
+                      {new Date(note.publishedAt || Date.now()).toLocaleDateString("en-US", { day: "2-digit", month: "short" })}
+                    </time>
+                    <span className="font-medium">{note.title}</span>
+                    {note.status === "draft" && <span className="text-xs text-muted-foreground">Draft</span>}
+                  </Link>
+                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" aria-label={`Delete ${note.title}`} title="Delete note" onClick={() => void handleDeleteNote(note.id)}><Trash2 aria-hidden /></Button>
+                </div>
               ))}
             </div>
           </div>

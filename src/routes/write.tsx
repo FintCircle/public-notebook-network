@@ -11,6 +11,7 @@ import BubbleMenuExtension from "@tiptap/extension-bubble-menu";
 
 import { SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { CustomImage } from "@/components/tiptap-image-extension";
 import { FloatingToolbar } from "@/components/floating-toolbar";
 import { getNotepage, interests, notes as publishedNotes, type Note } from "@/data/inktella";
@@ -156,7 +157,7 @@ function NoteEditor({
   const [focusMode, setFocusMode] = useState(false);
   const [title, setTitle] = useState(existing?.title ?? "");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [publishOpen, setPublishOpen] = useState(false);
+  const [actionSheet, setActionSheet] = useState<"draft" | "publish" | null>(null);
   const [publishNotepage, setPublishNotepage] = useState(notepage ?? "");
   const [publishTopics, setPublishTopics] = useState<string[]>(existingTopics);
   const [publishTags, setPublishTags] = useState(
@@ -416,7 +417,7 @@ function NoteEditor({
         return;
       }
       if (!publishNotepage) {
-        setStatus("Choose a Notepage before saving a draft.");
+        setStatus(`Choose a Notepage before ${publish ? "publishing" : "saving a draft"}.`);
         return;
       }
       const tagList = [...publishTopics.map((t) => t.toLowerCase()), ...publishTags.split(/[\s,]+/)]
@@ -466,20 +467,6 @@ function NoteEditor({
     },
     [editor, publishTopics, publishTags, publishNotepage, title, existing, refresh, navigate],
   );
-
-  // Debounced Autosave
-  useEffect(() => {
-    if (!hasUnsavedChanges || !editor) return;
-    const timer = setTimeout(() => {
-      if (navigator.onLine) {
-        void submit(false);
-      } else {
-        setSaveState("offline");
-        setStatus("Offline. Changes cached locally.");
-      }
-    }, 2500);
-    return () => clearTimeout(timer);
-  }, [hasUnsavedChanges, editor, submit]);
 
   // Handle Drag & Drop Images into writing area
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -598,149 +585,40 @@ function NoteEditor({
           className="sr-only"
         />
 
-        {/* Publishing & Save Actions Footer */}
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-            <button
-              type="button"
-              disabled={saveState === "saving"}
-              onClick={() => void submit(false)}
-              className="text-sm underline underline-offset-4 opacity-70 hover:opacity-100 disabled:opacity-40"
-            >
-              Save draft
-            </button>
-            <button
-              type="button"
-              disabled={saveState === "saving"}
-              onClick={() => setPublishOpen(true)}
-              className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
-            >
-              Publish
-            </button>
+        <div className="mt-8 flex items-center justify-between gap-2 border-y border-border/70 py-2">
+          <button type="button" onClick={() => { editor?.commands.clearContent(); setTitle(""); setHasUnsavedChanges(false); setStatus(null); }} className="rounded px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground">Clear</button>
+          <div className="flex items-center gap-1">
+            <button type="button" disabled={saveState === "saving"} onClick={() => setActionSheet("draft")} className="rounded px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40">Save draft</button>
+            <button type="button" disabled={saveState === "saving"} onClick={() => setActionSheet("publish")} className="rounded bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">Publish</button>
           </div>
-
-          {/* Saving Status Indicator */}
-          {status && (
-            <div className="inline-flex items-center gap-2 text-xs text-muted-foreground">
-              <span
-                className={`h-2 w-2 rounded-full ${
-                  saveState === "saving"
-                    ? "animate-pulse bg-amber-500"
-                    : saveState === "saved"
-                      ? "bg-emerald-500"
-                      : saveState === "offline"
-                        ? "bg-slate-400"
-                        : "bg-primary"
-                }`}
-              />
-              <span aria-live="polite">{status}</span>
-            </div>
-          )}
         </div>
+        {status && <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">{status}</p>}
 
-        {publishOpen && (
-          <div className="fixed inset-0 z-40 flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
-            <div
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="publish-title"
-              className="w-full max-w-lg rounded-2xl bg-background p-6 shadow-2xl"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2 id="publish-title" className="text-2xl">
-                    Ready to publish?
-                  </h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Choose where this note belongs and how readers will find it.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setPublishOpen(false)}
-                  aria-label="Close publish options"
-                  className="text-2xl leading-none text-muted-foreground"
-                >
-                  ×
-                </button>
-              </div>
-              <div className="mt-6 grid gap-5">
-                <label className="grid gap-2 text-sm font-medium">
-                  Notepage <span className="font-normal text-muted-foreground">required</span>
-                  <select
-                    value={publishNotepage}
-                    onChange={(event) => setPublishNotepage(event.target.value)}
-                    className="rounded-xl border border-border bg-background px-3 py-2.5"
-                  >
-                    <option value="">Choose a Notepage</option>
-                    {myNotepages().map((page) => (
-                      <option key={page.slug} value={page.slug}>
-                        {page.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <div>
-                  <div className="text-sm font-medium">
-                    Topic{" "}
-                    <span className="font-normal text-muted-foreground">choose at least one</span>
-                  </div>
+        <Sheet open={actionSheet !== null} onOpenChange={(open) => !open && setActionSheet(null)}>
+          <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-2xl">
+            <SheetHeader>
+              <SheetTitle>{actionSheet === "draft" ? "Save this draft" : "Ready to publish?"}</SheetTitle>
+              <SheetDescription>Choose where this note belongs before continuing.</SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-5 py-5">
+              <label className="grid gap-2 text-sm font-medium">Notepage <span className="font-normal text-muted-foreground">required</span>
+                <select value={publishNotepage} onChange={(event) => setPublishNotepage(event.target.value)} className="rounded-xl border border-border bg-background px-3 py-2.5">
+                  <option value="">Choose a Notepage</option>
+                  {myNotepages().map((page) => <option key={page.slug} value={page.slug}>{page.name}</option>)}
+                </select>
+              </label>
+              {actionSheet === "publish" && <>
+                <div><div className="text-sm font-medium">Topic <span className="font-normal text-muted-foreground">choose at least one</span></div>
                   <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Topics">
-                    {interests.map((topic) => {
-                      const selected = publishTopics.includes(topic);
-                      return (
-                        <button
-                          key={topic}
-                          type="button"
-                          aria-pressed={selected}
-                          onClick={() =>
-                            setPublishTopics((current) =>
-                              selected
-                                ? current.filter((item) => item !== topic)
-                                : [...current, topic],
-                            )
-                          }
-                          className={`rounded-full border px-3 py-1.5 text-sm ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border/70 hover:border-foreground"}`}
-                        >
-                          {topic}
-                        </button>
-                      );
-                    })}
+                    {interests.map((topic) => { const selected = publishTopics.includes(topic); return <button key={topic} type="button" aria-pressed={selected} onClick={() => setPublishTopics((current) => selected ? current.filter((item) => item !== topic) : [...current, topic])} className={`rounded-full border px-3 py-1.5 text-sm ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border/70 hover:border-foreground"}`}>{topic}</button>; })}
                   </div>
                 </div>
-                <label className="grid gap-2 text-sm font-medium">
-                  Tags <span className="font-normal text-muted-foreground">optional</span>
-                  <input
-                    value={publishTags}
-                    onChange={(event) => setPublishTags(event.target.value)}
-                    placeholder="#personal-project #draft"
-                    className="rounded-xl border border-border bg-transparent px-3 py-2.5 outline-none focus:border-foreground"
-                  />
-                </label>
-              </div>
-              <div className="mt-7 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setPublishOpen(false)}
-                  className="rounded-md px-4 py-2 text-sm text-muted-foreground hover:bg-muted"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  disabled={saveState === "saving"}
-                  onClick={() => {
-                    setPublishOpen(false);
-                    void submit(true);
-                  }}
-                  className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
-                >
-                  Publish note
-                </button>
-              </div>
+                <label className="grid gap-2 text-sm font-medium">Tags <span className="font-normal text-muted-foreground">optional</span><input value={publishTags} onChange={(event) => setPublishTags(event.target.value)} placeholder="#personal-project #draft" className="rounded-xl border border-border bg-transparent px-3 py-2.5 outline-none focus:border-foreground" /></label>
+              </>}
             </div>
-          </div>
-        )}
+            <SheetFooter><Button variant="outline" onClick={() => setActionSheet(null)}>Cancel</Button><Button disabled={saveState === "saving"} onClick={() => { setActionSheet(null); void submit(actionSheet === "publish"); }}>{actionSheet === "draft" ? "Save draft" : "Publish note"}</Button></SheetFooter>
+          </SheetContent>
+        </Sheet>
       </main>
 
       {/* Mobile-Friendly Fixed Formatting Toolbar Above Keyboard */}
