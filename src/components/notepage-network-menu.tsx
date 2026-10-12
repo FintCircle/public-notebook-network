@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bell, Compass, Menu, PenLine, Search, Tags, X } from "lucide-react";
 import type { Notepage } from "@/data/inktella";
@@ -21,13 +21,28 @@ export function NotepageNetworkMenu({
   side?: "left" | "right";
 }) {
   const [open, setOpen] = useState(false);
+  const [accent, setAccent] = useState(notepage.theme.accent ?? "#c2410c");
+
+  useEffect(() => {
+    const saved =
+      typeof window !== "undefined"
+        ? window.localStorage.getItem(`notepage-accent:${notepage.slug}`)
+        : null;
+    setAccent(saved || notepage.theme.accent || "#c2410c");
+  }, [notepage.slug, notepage.theme.accent]);
+
   const linkClassName =
-    "flex size-10 items-center justify-center rounded-full border border-current/15 bg-[var(--np-bg)] text-[var(--np-ink)] shadow-sm transition-transform hover:scale-105";
+    "flex size-10 items-center justify-center rounded-full border border-transparent bg-[var(--np-accent)] text-white shadow-md transition-transform hover:scale-105 hover:bg-[var(--np-accent)]/90";
 
   return (
     <div
       className={`fixed bottom-5 z-30 flex flex-col gap-3 text-[var(--np-ink)] ${side === "left" ? "left-5 items-start" : "right-5 items-end"}`}
-      style={themeStyle(notepage)}
+      style={
+        {
+          ...themeStyle(notepage),
+          "--np-accent": accent,
+        } as React.CSSProperties
+      }
     >
       {open && (
         <nav
@@ -63,7 +78,7 @@ export function NotepageNetworkMenu({
                 key={item.to}
                 className={`flex items-center gap-2 ${side === "left" ? "flex-row-reverse" : ""}`}
               >
-                <span className="hand rounded-full bg-[var(--np-bg)]/90 px-2.5 py-0.5 text-base leading-none shadow-sm backdrop-blur-sm">
+                <span className="hand rounded-full bg-[var(--np-accent)] px-2.5 py-0.5 text-base leading-none text-white shadow-md backdrop-blur-sm">
                   {item.note}
                 </span>
                 {link}
@@ -78,7 +93,7 @@ export function NotepageNetworkMenu({
         aria-label={open ? "Close Inktella network menu" : "Open Inktella network menu"}
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="size-12 rounded-full border border-current/15 bg-[var(--np-bg)] text-[var(--np-ink)] shadow-sm transition-transform hover:scale-105 hover:bg-[var(--np-bg)]"
+        className="size-12 rounded-full border border-transparent bg-[var(--np-accent)] text-white shadow-md transition-transform hover:scale-105 hover:bg-[var(--np-accent)]/90"
       >
         {open ? <X aria-hidden /> : <Menu aria-hidden />}
       </Button>
