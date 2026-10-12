@@ -1,20 +1,50 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type ClipboardEvent,
-} from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useCallback, useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import LinkExtension from "@tiptap/extension-link";
+import TextAlign from "@tiptap/extension-text-align";
+import Placeholder from "@tiptap/extension-placeholder";
+import CharacterCount from "@tiptap/extension-character-count";
+import BubbleMenuExtension from "@tiptap/extension-bubble-menu";
+
 import { SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
+import { CustomImage } from "@/components/tiptap-image-extension";
+import { FloatingToolbar } from "@/components/floating-toolbar";
 import { getNotepage, interests, notes as publishedNotes, type Note } from "@/data/inktella";
 import { AuthOnly } from "@/lib/auth";
 import { saveNote, updateNote } from "@/lib/inktella.functions";
 import { drafts, myNotepages, useInktellaStore } from "@/lib/inktella-store";
-import { markdownToHtml, normalizeEditorHtml } from "@/lib/note-format";
-import { useNavigate } from "@tanstack/react-router";
+
+import {
+  Bold,
+  Italic,
+  Underline as UnderlineIcon,
+  Strikethrough,
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  Quote,
+  Minus,
+  Code,
+  Link as LinkIcon,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  RemoveFormatting,
+  Undo,
+  Redo,
+  Image as ImageIcon,
+  Eye,
+  Maximize2,
+  Minimize2,
+  Plus,
+  Heading,
+} from "lucide-react";
 
 export const Route = createFileRoute("/write")({
   validateSearch: (
@@ -41,8 +71,6 @@ export const Route = createFileRoute("/write")({
   }),
   component: Write,
 });
-
-type ToolbarState = { top: number; left: number } | null;
 
 export default function Write() {
   return (
@@ -109,6 +137,14 @@ function NotepageChooser() {
   );
 }
 
+type SlashOption = {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  action: () => void;
+};
+
 function NoteEditor({
   notepage,
   name,
@@ -118,10 +154,7 @@ function NoteEditor({
   name: string;
   existing?: Note | undefined;
 }) {
-  const bodyRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const [toolbar, setToolbar] = useState<ToolbarState>(null);
   const existingTopics = existing
     ? interests.filter((t) => existing.notetags.includes(t.toLowerCase()))
     : [];
@@ -135,327 +168,668 @@ function NoteEditor({
   );
   const [topics, setTopics] = useState<string[]>(existingTopics);
   const [status, setStatus] = useState<string | null>(null);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error" | "offline">(
+    "idle",
+  );
   const [isAddingImage, setIsAddingImage] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
+  const [title, setTitle] = useState(existing?.title ?? "");
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // Slash commands popup state
+  const [slashMenuOpen, setSlashMenuOpen] = useState(false);
+  const [slashQuery, setSlashQuery] = useState("");
+  const [slashSelectedIndex, setSlashSelectedIndex] = useState(0);
+
   const { refresh } = useInktellaStore();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (existing && bodyRef.current) bodyRef.current.innerHTML = existing.html;
-  }, [existing]);
+  // Process & compress uploaded or dropped image files
+  const processImageFile = useCallback(
+    (file: File, callback: (dataUrl: string, alt: string) => void) => {
+      if (!file || !file.type.startsWith("image/")) return;
+      setIsAddingImage(true);
+      const imageUrl = URL.createObjectURL(file);
+      const image = new Image();
+      image.onload = () => {
+        // Retain natural aspect ratio, scale down if extremely large
+        const scale = Math.min(1, 1600 / Math.max(image.width, image.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(image.width * scale);
+        canvas.height = Math.round(image.height * scale);
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        }
+        const isGif = file.type === "image/gif";
+        // If GIF, keep original blob if under 3MB, else fallback to compressed
+        if (isGif && file.size < 3 * 1024 * 1024) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (typeof reader.result === "string") {
+              callback(reader.result, file.name.replace(/\.[^.]+$/, ""));
+            }
+            URL.revokeObjectURL(imageUrl);
+            setIsAddingImage(false);
+          };
+          reader.readAsDataURL(file);
+          return;
+        }
+        const dataUrl = canvas.toDataURL(
+          file.type === "image/png" ? "image/png" : "image/jpeg",
+          0.82,
+        );
+        URL.revokeObjectURL(imageUrl);
+        const alt = file.name.replace(/\.[^.]+$/, "").replace(/["<>&]/g, "");
+        callback(dataUrl, alt);
+        setIsAddingImage(false);
+      };
+      image.onerror = () => {
+        URL.revokeObjectURL(imageUrl);
+        setIsAddingImage(false);
+        setStatus("Failed to load image.");
+      };
+      image.src = imageUrl;
+    },
+    [],
+  );
 
-  async function submit(publish: boolean) {
-    const surface = bodyRef.current;
-    const html = surface ? normalizeEditorHtml(surface) : "";
-    const text = surface?.innerText.trim() ?? "";
-    if (!text && !html.includes("<img")) {
-      setStatus("Write something first — even one line counts.");
-      return;
-    }
-    const tagList = [...topics.map((t) => t.toLowerCase()), ...tags.split(/[\s,]+/)]
-      .map((t) =>
-        t
-          .replace(/^#/, "")
-          .toLowerCase()
-          .replace(/[^a-z0-9-]/g, ""),
-      )
-      .filter(Boolean)
-      .slice(0, 12);
-    const typedTitle = titleRef.current?.innerText.trim() ?? "";
-    const firstLine = (text.split("\n")[0] ?? "").replace(/^#+\s*/, "");
-    const title = (typedTitle || existing?.title || firstLine || "Untitled").slice(0, 120);
-    const preview = text
-      .replace(/^#+\s*/gm, "")
-      .replace(/\*\*/g, "")
-      .slice(0, 220);
-    setSaving(true);
-    try {
-      const payload = { title, html, preview, notetags: tagList, publish };
-      const { id } = existing
-        ? await updateNote({ data: { ...payload, noteId: existing.id } })
-        : await saveNote({ data: { ...payload, notepageSlug: notepage } });
-      if (publish) {
-        await refresh();
-        await navigate({
-          to: "/$notepage/notepage/$noteId",
-          params: { notepage, noteId: id },
-        });
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        heading: { levels: [1, 2, 3] },
+      }),
+      Underline,
+      LinkExtension.configure({
+        openOnClick: false,
+        autolink: true,
+      }),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+      CustomImage,
+      CharacterCount,
+      BubbleMenuExtension,
+      Placeholder.configure({
+        placeholder: "Write something or type / for commands…",
+      }),
+    ],
+    content: existing?.html ?? "",
+    onUpdate: ({ editor }) => {
+      setHasUnsavedChanges(true);
+      const { selection } = editor.state;
+      const { $from } = selection;
+      const currentLineText = $from.nodeBefore?.text ?? "";
+      if (currentLineText.startsWith("/")) {
+        setSlashQuery(currentLineText.slice(1));
+        setSlashMenuOpen(true);
       } else {
-        setStatus("Draft saved. It stays private until you publish.");
-        void refresh();
+        setSlashMenuOpen(false);
       }
-    } catch (e) {
-      setStatus(e instanceof Error ? e.message : "That didn't save. Try again.");
-    } finally {
-      setSaving(false);
-    }
-  }
+    },
+  });
 
-  const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
-    const html = e.clipboardData.getData("text/html");
-    const text = e.clipboardData.getData("text/plain");
-    if (html || !text) return;
-    e.preventDefault();
-    document.execCommand("insertHTML", false, markdownToHtml(text));
-  };
-
-  const updateToolbar = useCallback(() => {
-    const selection = window.getSelection();
-    const surface = bodyRef.current;
-    if (!selection || selection.isCollapsed || selection.rangeCount === 0 || !surface) {
-      setToolbar(null);
-      return;
-    }
-    const range = selection.getRangeAt(0);
-    if (!surface.contains(range.commonAncestorContainer)) {
-      setToolbar(null);
-      return;
-    }
-    const rect = range.getBoundingClientRect();
-    const host = surface.getBoundingClientRect();
-    setToolbar({
-      top: rect.top - host.top - 46,
-      left: Math.max(0, rect.left - host.left + rect.width / 2),
-    });
-  }, []);
-
-  useEffect(() => {
-    document.addEventListener("selectionchange", updateToolbar);
-    return () => document.removeEventListener("selectionchange", updateToolbar);
-  }, [updateToolbar]);
-
-  const run = (command: string, value?: string) => {
-    document.execCommand(command, false, value);
-    updateToolbar();
-  };
-
-  const insertBlock = (html: string) => {
-    bodyRef.current?.focus();
-    document.execCommand("insertHTML", false, html);
-  };
+  // Handle slash command execution
+  const executeSlashAction = useCallback(
+    (action: () => void) => {
+      if (!editor) return;
+      const { selection } = editor.state;
+      const { $from } = selection;
+      const currentLineText = $from.nodeBefore?.text ?? "";
+      if (currentLineText.startsWith("/")) {
+        editor.commands.deleteRange({
+          from: $from.pos - currentLineText.length,
+          to: $from.pos,
+        });
+      }
+      action();
+      setSlashMenuOpen(false);
+      setSlashQuery("");
+    },
+    [editor],
+  );
 
   const openImagePicker = () => imageInputRef.current?.click();
 
   const handleImageSelected = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = "";
-    if (!file || !file.type.startsWith("image/")) return;
-
-    setIsAddingImage(true);
-    const imageUrl = URL.createObjectURL(file);
-    const image = new Image();
-    image.onload = () => {
-      // Shrink and embed the picture so it's saved with the note (not a temporary link).
-      const scale = Math.min(1, 1400 / Math.max(image.width, image.height));
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.round(image.width * scale);
-      canvas.height = Math.round(image.height * scale);
-      canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
-      URL.revokeObjectURL(imageUrl);
-      const alt = file.name.replace(/\.[^.]+$/, "").replace(/["<>&]/g, "");
-      insertBlock(`<figure><img src="${dataUrl}" alt="${alt}" /></figure><p><br></p>`);
-      setIsAddingImage(false);
-    };
-    image.onerror = () => {
-      URL.revokeObjectURL(imageUrl);
-      setIsAddingImage(false);
-      setStatus("That image could not be added.");
-    };
-    image.src = imageUrl;
+    if (!file) return;
+    processImageFile(file, (src, alt) => {
+      editor?.chain().focus().setImage({ src, alt }).run();
+    });
   };
 
-  const controls: { label: string; title: string; onClick: () => void }[] = [
-    { label: "B", title: "Bold", onClick: () => run("bold") },
-    { label: "I", title: "Italic", onClick: () => run("italic") },
-    { label: "H2", title: "Heading", onClick: () => run("formatBlock", "h2") },
-    { label: "H3", title: "Subheading", onClick: () => run("formatBlock", "h3") },
-    { label: "\u201C", title: "Quote", onClick: () => run("formatBlock", "blockquote") },
-    { label: "•", title: "Bulleted list", onClick: () => run("insertUnorderedList") },
-    { label: "1.", title: "Numbered list", onClick: () => run("insertOrderedList") },
+  const slashOptions: SlashOption[] = [
     {
-      label: "</>",
-      title: "Inline code",
-      onClick: () => {
-        const text = window.getSelection()?.toString() ?? "";
-        if (text) insertBlock(`<code>${text}</code>`);
-      },
+      id: "h1",
+      title: "Heading 1",
+      description: "Big title heading",
+      icon: <Heading1 className="h-4 w-4" />,
+      action: () => editor?.chain().focus().toggleHeading({ level: 1 }).run(),
     },
     {
-      label: "link",
-      title: "Add a link",
-      onClick: () => {
-        const url = window.prompt("Link to");
-        if (url) run("createLink", url);
-      },
+      id: "h2",
+      title: "Heading 2",
+      description: "Medium section heading",
+      icon: <Heading2 className="h-4 w-4" />,
+      action: () => editor?.chain().focus().toggleHeading({ level: 2 }).run(),
+    },
+    {
+      id: "h3",
+      title: "Heading 3",
+      description: "Small subsection heading",
+      icon: <Heading3 className="h-4 w-4" />,
+      action: () => editor?.chain().focus().toggleHeading({ level: 3 }).run(),
+    },
+    {
+      id: "image",
+      title: "Image",
+      description: "Upload or embed an image with captions",
+      icon: <ImageIcon className="h-4 w-4" />,
+      action: openImagePicker,
+    },
+    {
+      id: "bulletList",
+      title: "Bullet List",
+      description: "Create a simple bulleted list",
+      icon: <List className="h-4 w-4" />,
+      action: () => editor?.chain().focus().toggleBulletList().run(),
+    },
+    {
+      id: "orderedList",
+      title: "Numbered List",
+      description: "Create a numbered list",
+      icon: <ListOrdered className="h-4 w-4" />,
+      action: () => editor?.chain().focus().toggleOrderedList().run(),
+    },
+    {
+      id: "blockquote",
+      title: "Quote",
+      description: "Highlight a quote or passage",
+      icon: <Quote className="h-4 w-4" />,
+      action: () => editor?.chain().focus().toggleBlockquote().run(),
+    },
+    {
+      id: "divider",
+      title: "Divider",
+      description: "Visually separate sections",
+      icon: <Minus className="h-4 w-4" />,
+      action: () => editor?.chain().focus().setHorizontalRule().run(),
+    },
+    {
+      id: "codeBlock",
+      title: "Code Block",
+      description: "Display code with preformatted styling",
+      icon: <Code className="h-4 w-4" />,
+      action: () => editor?.chain().focus().toggleCodeBlock().run(),
     },
   ];
 
+  const filteredSlashOptions = slashOptions.filter(
+    (opt) =>
+      opt.title.toLowerCase().includes(slashQuery.toLowerCase()) ||
+      opt.description.toLowerCase().includes(slashQuery.toLowerCase()),
+  );
+
+  // Keyboard navigation for slash menu
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!slashMenuOpen) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSlashSelectedIndex((prev) => (prev + 1) % Math.max(1, filteredSlashOptions.length));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSlashSelectedIndex((prev) =>
+          prev === 0 ? Math.max(0, filteredSlashOptions.length - 1) : prev - 1,
+        );
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        const selected = filteredSlashOptions[slashSelectedIndex];
+        if (selected) executeSlashAction(selected.action);
+      } else if (e.key === "Escape") {
+        setSlashMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [slashMenuOpen, slashSelectedIndex, filteredSlashOptions, executeSlashAction]);
+
+  // Unsaved changes window listener
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  // Save / Publish submit logic
+  const submit = useCallback(
+    async (publish: boolean) => {
+      if (!editor) return;
+      const html = editor.getHTML();
+      const text = editor.getText().trim();
+      if (!text && !html.includes("<img")) {
+        setStatus("Write something first — even one line counts.");
+        return;
+      }
+      const tagList = [...topics.map((t) => t.toLowerCase()), ...tags.split(/[\s,]+/)]
+        .map((t) =>
+          t
+            .replace(/^#/, "")
+            .toLowerCase()
+            .replace(/[^a-z0-9-]/g, ""),
+        )
+        .filter(Boolean)
+        .slice(0, 12);
+
+      const typedTitle = title.trim();
+      const firstLine = (text.split("\n")[0] ?? "").replace(/^#+\s*/, "");
+      const finalTitle = (typedTitle || existing?.title || firstLine || "Untitled").slice(0, 120);
+      const preview = text
+        .replace(/^#+\s*/gm, "")
+        .replace(/\*\*/g, "")
+        .slice(0, 220);
+
+      setSaveState("saving");
+      setStatus("Saving…");
+      try {
+        const payload = { title: finalTitle, html, preview, notetags: tagList, publish };
+        const { id } = existing
+          ? await updateNote({ data: { ...payload, noteId: existing.id } })
+          : await saveNote({ data: { ...payload, notepageSlug: notepage } });
+
+        setHasUnsavedChanges(false);
+        setSaveState("saved");
+        const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+        if (publish) {
+          setStatus(`Published at ${time}`);
+          await refresh();
+          await navigate({
+            to: "/$notepage/notepage/$noteId",
+            params: { notepage, noteId: id },
+          });
+        } else {
+          setStatus(`Saved draft at ${time}`);
+          void refresh();
+        }
+      } catch (e) {
+        setSaveState("error");
+        setStatus(e instanceof Error ? e.message : "That didn't save. Try again.");
+      }
+    },
+    [editor, topics, tags, title, existing, notepage, refresh, navigate],
+  );
+
+  // Debounced Autosave
+  useEffect(() => {
+    if (!hasUnsavedChanges || !editor) return;
+    const timer = setTimeout(() => {
+      if (navigator.onLine) {
+        void submit(false);
+      } else {
+        setSaveState("offline");
+        setStatus("Offline. Changes cached locally.");
+      }
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [hasUnsavedChanges, editor, submit]);
+
+  // Handle Drag & Drop Images into writing area
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    const imageFile = files.find((f) => f.type.startsWith("image/"));
+    if (imageFile) {
+      processImageFile(imageFile, (src, alt) => {
+        editor?.chain().focus().setImage({ src, alt }).run();
+      });
+    }
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  // Word count & estimated reading time calculation
+  const wordCount = editor?.storage.characterCount?.words() ?? 0;
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
   return (
-    <div className="min-h-screen">
-      <SiteNav />
+    <div className={`min-h-screen transition-colors ${focusMode ? "bg-background" : ""}`}>
+      {!focusMode && <SiteNav />}
 
-      <main className="mx-auto max-w-2xl px-5 pt-12 pb-24">
-        <div className="mb-8 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-          <span className="opacity-50">Noting down in</span>
-          <Link
-            to="/$notepage"
-            params={{ notepage }}
-            className="underline decoration-current/30 underline-offset-4 hover:decoration-current"
-          >
-            {name}
-          </Link>
-          <Link
-            to="/write"
-            search={{ notepage: undefined, edit: undefined }}
-            className="text-xs opacity-45 hover:opacity-100"
-          >
-            change
-          </Link>
-        </div>
-        <h1
-          ref={titleRef}
-          contentEditable
-          suppressContentEditableWarning
-          data-placeholder="Untitled"
-          aria-label="Note title"
-          className="font-heading text-3xl leading-tight tracking-tight outline-none empty:before:opacity-30 empty:before:content-[attr(data-placeholder)] sm:text-4xl"
-        />
-
-        <div className="relative mt-8">
-          {toolbar && (
-            <div
-              role="toolbar"
-              aria-label="Formatting"
-              style={{ top: toolbar.top, left: toolbar.left }}
-              className="absolute z-10 flex -translate-x-1/2 items-center gap-1 rounded-md border border-border bg-popover px-1.5 py-1 shadow-sm"
-            >
-              {controls.map((c) => (
-                <button
-                  key={c.label}
-                  type="button"
-                  title={c.title}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={c.onClick}
-                  className="rounded px-2 py-1 text-xs hover:bg-accent"
-                >
-                  {c.label}
-                </button>
-              ))}
+      <main className={`mx-auto max-w-2xl px-5 pt-8 pb-32 ${focusMode ? "pt-16" : ""}`}>
+        {/* Navigation / Notepage selector & Focus mode header */}
+        <div className="mb-6 flex items-center justify-between text-sm">
+          {!focusMode ? (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+              <span className="opacity-50">Noting down in</span>
+              <Link
+                to="/$notepage"
+                params={{ notepage }}
+                className="underline decoration-current/30 underline-offset-4 hover:decoration-current"
+              >
+                {name}
+              </Link>
+              <Link
+                to="/write"
+                search={{ notepage: undefined, edit: undefined }}
+                className="text-xs opacity-45 hover:opacity-100"
+              >
+                change
+              </Link>
+            </div>
+          ) : (
+            <div className="text-xs font-medium uppercase tracking-widest text-muted-foreground/60">
+              Focus Mode
             </div>
           )}
 
-          <div
-            ref={bodyRef}
-            onPaste={handlePaste}
-            contentEditable
-            suppressContentEditableWarning
-            aria-label="Note body"
-            data-placeholder="Start writing…"
-            className="prose-note min-h-[45vh] outline-none empty:before:opacity-30 empty:before:content-[attr(data-placeholder)]"
-          />
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm opacity-60">
-          <input
-            ref={imageInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageSelected}
-            className="sr-only"
-          />
-          <button
-            type="button"
-            className="hover:opacity-100 disabled:cursor-wait disabled:opacity-50"
-            onClick={openImagePicker}
-            disabled={isAddingImage}
-          >
-            {isAddingImage ? "adding image…" : "+ add image"}
-          </button>
-          <button
-            type="button"
-            className="hover:opacity-100"
-            onClick={() => insertBlock("<pre><code>code block</code></pre>")}
-          >
-            + code block
-          </button>
-          <button type="button" className="hover:opacity-100" onClick={() => insertBlock("<hr />")}>
-            + separator
-          </button>
-        </div>
-
-        <hr className="rule-irregular mt-12" />
-
-        <div className="mt-8">
-          <div className="flex items-baseline justify-between gap-4">
-            <label className="hand text-lg opacity-70">topic (choose at least one)</label>
-            <span className="text-xs opacity-50">platform topics</span>
-          </div>
-          <p className="mt-1 text-sm opacity-55">
-            Your note will appear under the topics you select.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Platform topics">
-            {interests.map((topic) => {
-              const selected = topics.includes(topic);
-              return (
-                <button
-                  key={topic}
-                  type="button"
-                  aria-pressed={selected}
-                  onClick={() =>
-                    setTopics((current) =>
-                      selected ? current.filter((item) => item !== topic) : [...current, topic],
-                    )
-                  }
-                  className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border/70 hover:border-foreground"}`}
-                >
-                  {topic}
-                </button>
-              );
-            })}
-          </div>
-          <label htmlFor="notetags" className="mt-6 block text-sm opacity-60">
-            Additional tags (optional)
-          </label>
-          <input
-            id="notetags"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            placeholder="#personal-project #draft"
-            className="mt-2 w-full border-b border-border bg-transparent py-2 text-sm outline-none placeholder:opacity-40 focus:border-foreground"
-          />
-        </div>
-
-        <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-          <button
-            type="button"
-            disabled={saving}
-            onClick={() => void submit(false)}
-            className="text-sm underline underline-offset-4 opacity-70 hover:opacity-100"
-          >
-            Save draft
-          </button>
-          <button
-            type="button"
-            disabled={saving}
-            onClick={() =>
-              topics.length
-                ? void submit(true)
-                : setStatus(
-                    "Choose a platform topic first — even notes need a little neighborhood.",
-                  )
-            }
-            className="rounded-md bg-primary px-5 py-2.5 text-sm text-primary-foreground hover:opacity-90"
-          >
-            Publish
-          </button>
-          {status && (
-            <span aria-live="polite" className="hand text-lg opacity-70">
-              {status}
+          <div className="flex items-center gap-3">
+            {/* Word count & Reading time indicator */}
+            <span className="text-xs text-muted-foreground/70">
+              {wordCount} {wordCount === 1 ? "word" : "words"} · {readingTime} min read
             </span>
+
+            <button
+              type="button"
+              onClick={() => setFocusMode((prev) => !prev)}
+              title={focusMode ? "Exit focus mode" : "Enter focus mode"}
+              className="rounded p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              {focusMode ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Note Title Input */}
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+            setHasUnsavedChanges(true);
+          }}
+          placeholder="Untitled"
+          aria-label="Note title"
+          className="w-full bg-transparent font-heading text-3xl font-semibold leading-tight tracking-tight outline-none placeholder:opacity-30 focus:outline-none sm:text-4xl"
+        />
+
+        {/* Tiptap Floating Selection Toolbar */}
+        <FloatingToolbar editor={editor} />
+
+        {/* Tiptap Editor Canvas */}
+        <div onDrop={handleDrop} onDragOver={handleDragOver} className="relative mt-6 min-h-[50vh]">
+          <EditorContent editor={editor} className="prose-note outline-none focus:outline-none" />
+
+          {/* Slash Commands Dropdown Menu */}
+          {slashMenuOpen && filteredSlashOptions.length > 0 && (
+            <div className="absolute z-30 mt-2 w-72 rounded-lg border border-border bg-popover p-1 shadow-lg backdrop-blur-md">
+              <div className="px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">
+                Insert block
+              </div>
+              <div className="max-h-60 overflow-y-auto">
+                {filteredSlashOptions.map((opt, index) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => executeSlashAction(opt.action)}
+                    onMouseEnter={() => setSlashSelectedIndex(index)}
+                    className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-xs transition-colors ${
+                      index === slashSelectedIndex
+                        ? "bg-accent text-accent-foreground font-medium"
+                        : "text-popover-foreground hover:bg-accent/50"
+                    }`}
+                  >
+                    <span className="shrink-0 text-muted-foreground">{opt.icon}</span>
+                    <div>
+                      <div className="font-medium">{opt.title}</div>
+                      <div className="text-[11px] opacity-60">{opt.description}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Topic & Tags Section */}
+        {!focusMode && (
+          <>
+            <hr className="rule-irregular mt-12" />
+
+            <div className="mt-8">
+              <div className="flex items-baseline justify-between gap-4">
+                <label className="hand text-lg opacity-70">topic (choose at least one)</label>
+                <span className="text-xs opacity-50">platform topics</span>
+              </div>
+              <p className="mt-1 text-sm opacity-55">
+                Your note will appear under the topics you select.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Platform topics">
+                {interests.map((topic) => {
+                  const selected = topics.includes(topic);
+                  return (
+                    <button
+                      key={topic}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => {
+                        setTopics((current) =>
+                          selected ? current.filter((item) => item !== topic) : [...current, topic],
+                        );
+                        setHasUnsavedChanges(true);
+                      }}
+                      className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                        selected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border/70 hover:border-foreground"
+                      }`}
+                    >
+                      {topic}
+                    </button>
+                  );
+                })}
+              </div>
+              <label htmlFor="notetags" className="mt-6 block text-sm opacity-60">
+                Additional tags (optional)
+              </label>
+              <input
+                id="notetags"
+                value={tags}
+                onChange={(e) => {
+                  setTags(e.target.value);
+                  setHasUnsavedChanges(true);
+                }}
+                placeholder="#personal-project #draft"
+                className="mt-2 w-full border-b border-border bg-transparent py-2 text-sm outline-none placeholder:opacity-40 focus:border-foreground"
+              />
+            </div>
+          </>
+        )}
+
+        {/* Hidden File Input for Image Selector */}
+        <input
+          ref={imageInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleImageSelected}
+          className="sr-only"
+        />
+
+        {/* Publishing & Save Actions Footer */}
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <button
+              type="button"
+              disabled={saveState === "saving"}
+              onClick={() => void submit(false)}
+              className="text-sm underline underline-offset-4 opacity-70 hover:opacity-100 disabled:opacity-40"
+            >
+              Save draft
+            </button>
+            <button
+              type="button"
+              disabled={saveState === "saving"}
+              onClick={() =>
+                topics.length
+                  ? void submit(true)
+                  : setStatus(
+                      "Choose a platform topic first — even notes need a little neighborhood.",
+                    )
+              }
+              className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              Publish
+            </button>
+          </div>
+
+          {/* Saving Status Indicator */}
+          {status && (
+            <div className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+              <span
+                className={`h-2 w-2 rounded-full ${
+                  saveState === "saving"
+                    ? "animate-pulse bg-amber-500"
+                    : saveState === "saved"
+                      ? "bg-emerald-500"
+                      : saveState === "offline"
+                        ? "bg-slate-400"
+                        : "bg-primary"
+                }`}
+              />
+              <span aria-live="polite">{status}</span>
+            </div>
           )}
         </div>
       </main>
+
+      {/* Mobile-Friendly Fixed Formatting Toolbar Above Keyboard */}
+      {editor && (
+        <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-border bg-background/95 p-1.5 shadow-md backdrop-blur-md">
+          <div className="mx-auto flex max-w-2xl items-center gap-1 overflow-x-auto px-2 py-0.5 no-scrollbar">
+            <button
+              type="button"
+              title="Add Image"
+              onClick={openImagePicker}
+              disabled={isAddingImage}
+              className="flex shrink-0 items-center gap-1 rounded bg-primary/10 px-2 py-1 text-xs font-medium text-primary hover:bg-primary/20"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>Image</span>
+            </button>
+
+            <span className="mx-1 h-4 w-px shrink-0 bg-border" />
+
+            <button
+              type="button"
+              title="Bold"
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              className={`shrink-0 rounded p-1.5 hover:bg-accent ${editor.isActive("bold") ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground"}`}
+            >
+              <Bold className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              title="Italic"
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              className={`shrink-0 rounded p-1.5 hover:bg-accent ${editor.isActive("italic") ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground"}`}
+            >
+              <Italic className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              title="Underline"
+              onClick={() => editor.chain().focus().toggleUnderline().run()}
+              className={`shrink-0 rounded p-1.5 hover:bg-accent ${editor.isActive("underline") ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground"}`}
+            >
+              <UnderlineIcon className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              title="Strikethrough"
+              onClick={() => editor.chain().focus().toggleStrike().run()}
+              className={`shrink-0 rounded p-1.5 hover:bg-accent ${editor.isActive("strike") ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground"}`}
+            >
+              <Strikethrough className="h-4 w-4" />
+            </button>
+
+            <span className="mx-1 h-4 w-px shrink-0 bg-border" />
+
+            <button
+              type="button"
+              title="Heading 2"
+              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+              className={`shrink-0 rounded p-1.5 hover:bg-accent ${editor.isActive("heading", { level: 2 }) ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground"}`}
+            >
+              <Heading2 className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              title="Heading 3"
+              onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+              className={`shrink-0 rounded p-1.5 hover:bg-accent ${editor.isActive("heading", { level: 3 }) ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground"}`}
+            >
+              <Heading3 className="h-4 w-4" />
+            </button>
+
+            <span className="mx-1 h-4 w-px shrink-0 bg-border" />
+
+            <button
+              type="button"
+              title="Bullet list"
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              className={`shrink-0 rounded p-1.5 hover:bg-accent ${editor.isActive("bulletList") ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground"}`}
+            >
+              <List className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              title="Numbered list"
+              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              className={`shrink-0 rounded p-1.5 hover:bg-accent ${editor.isActive("orderedList") ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground"}`}
+            >
+              <ListOrdered className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              title="Blockquote"
+              onClick={() => editor.chain().focus().toggleBlockquote().run()}
+              className={`shrink-0 rounded p-1.5 hover:bg-accent ${editor.isActive("blockquote") ? "bg-accent text-accent-foreground font-bold" : "text-muted-foreground"}`}
+            >
+              <Quote className="h-4 w-4" />
+            </button>
+
+            <span className="mx-1 h-4 w-px shrink-0 bg-border" />
+
+            <button
+              type="button"
+              title="Undo"
+              onClick={() => editor.chain().focus().undo().run()}
+              disabled={!editor.can().undo()}
+              className="shrink-0 rounded p-1.5 text-muted-foreground hover:bg-accent disabled:opacity-30"
+            >
+              <Undo className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              title="Redo"
+              onClick={() => editor.chain().focus().redo().run()}
+              disabled={!editor.can().redo()}
+              className="shrink-0 rounded p-1.5 text-muted-foreground hover:bg-accent disabled:opacity-30"
+            >
+              <Redo className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
