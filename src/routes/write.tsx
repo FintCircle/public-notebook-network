@@ -84,17 +84,13 @@ function WriteContent() {
   const { notepage, edit } = Route.useSearch();
   const found = notepage ? getNotepage(notepage) : undefined;
   const selectedNotepage = found && myNotepages().includes(found) ? found : undefined;
-
-  if (!selectedNotepage) return <NotepageChooser />;
   const existing = edit
     ? [...publishedNotes, ...drafts].find(
-        (n) => n.id === edit && n.notepage === selectedNotepage.slug,
+        (n) => n.id === edit && (!notepage || n.notepage === notepage),
       )
     : undefined;
 
-  return (
-    <NoteEditor notepage={selectedNotepage.slug} name={selectedNotepage.name} existing={existing} />
-  );
+  return <NoteEditor notepage={selectedNotepage?.slug} existing={existing} />;
 }
 
 function NotepageChooser() {
@@ -142,26 +138,16 @@ type SlashOption = {
 
 function NoteEditor({
   notepage,
-  name,
   existing,
 }: {
-  notepage: string;
-  name: string;
+  notepage?: string;
+  name?: string;
   existing?: Note | undefined;
 }) {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const existingTopics = existing
     ? interests.filter((t) => existing.notetags.includes(t.toLowerCase()))
     : [];
-  const [tags, setTags] = useState(
-    existing
-      ? existing.notetags
-          .filter((t) => !existingTopics.some((x) => x.toLowerCase() === t))
-          .map((t) => `#${t}`)
-          .join(" ")
-      : "",
-  );
-  const [topics, setTopics] = useState<string[]>(existingTopics);
   const [status, setStatus] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error" | "offline">(
     "idle",
@@ -170,6 +156,17 @@ function NoteEditor({
   const [focusMode, setFocusMode] = useState(false);
   const [title, setTitle] = useState(existing?.title ?? "");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [publishOpen, setPublishOpen] = useState(false);
+  const [publishNotepage, setPublishNotepage] = useState(notepage ?? "");
+  const [publishTopics, setPublishTopics] = useState<string[]>(existingTopics);
+  const [publishTags, setPublishTags] = useState(
+    existing
+      ? existing.notetags
+          .filter((tag) => !existingTopics.some((topic) => topic.toLowerCase() === tag))
+          .map((tag) => `#${tag}`)
+          .join(" ")
+      : "",
+  );
 
   // Slash commands popup state
   const [slashMenuOpen, setSlashMenuOpen] = useState(false);
@@ -414,7 +411,15 @@ function NoteEditor({
         setStatus("Write something first — even one line counts.");
         return;
       }
-      const tagList = [...topics.map((t) => t.toLowerCase()), ...tags.split(/[\s,]+/)]
+      if (publish && (!publishNotepage || !publishTopics.length)) {
+        setStatus("Choose a Notepage and at least one topic before publishing.");
+        return;
+      }
+      if (!publishNotepage) {
+        setStatus("Choose a Notepage before saving a draft.");
+        return;
+      }
+      const tagList = [...publishTopics.map((t) => t.toLowerCase()), ...publishTags.split(/[\s,]+/)]
         .map((t) =>
           t
             .replace(/^#/, "")
@@ -438,7 +443,7 @@ function NoteEditor({
         const payload = { title: finalTitle, html, preview, notetags: tagList, publish };
         const { id } = existing
           ? await updateNote({ data: { ...payload, noteId: existing.id } })
-          : await saveNote({ data: { ...payload, notepageSlug: notepage } });
+          : await saveNote({ data: { ...payload, notepageSlug: publishNotepage } });
 
         setHasUnsavedChanges(false);
         setSaveState("saved");
@@ -449,7 +454,7 @@ function NoteEditor({
           await refresh();
           await navigate({
             to: "/$notepage/notepage/$noteId",
-            params: { notepage, noteId: id },
+            params: { notepage: publishNotepage, noteId: id },
           });
         } else {
           setStatus(`Saved draft at ${time}`);
@@ -459,7 +464,7 @@ function NoteEditor({
         setStatus(e instanceof Error ? e.message : "That didn't save. Try again.");
       }
     },
-    [editor, topics, tags, title, existing, notepage, refresh, navigate],
+    [editor, publishTopics, publishTags, publishNotepage, title, existing, refresh, navigate],
   );
 
   // Debounced Autosave
@@ -505,21 +510,9 @@ function NoteEditor({
         <div className="mb-6 flex items-center justify-between text-sm">
           {!focusMode ? (
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-              <span className="opacity-50">Noting down in</span>
-              <Link
-                to="/$notepage"
-                params={{ notepage }}
-                className="underline decoration-current/30 underline-offset-4 hover:decoration-current"
-              >
-                {name}
-              </Link>
-              <Link
-                to="/write"
-                search={{ notepage: undefined, edit: undefined }}
-                className="text-xs opacity-45 hover:opacity-100"
-              >
-                change
-              </Link>
+              <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground/60">
+                A blank page for your next note
+              </span>
             </div>
           ) : (
             <div className="text-xs font-medium uppercase tracking-widest text-muted-foreground/60">
@@ -596,61 +589,6 @@ function NoteEditor({
           )}
         </div>
 
-        {/* Topic & Tags Section */}
-        {!focusMode && (
-          <>
-            <hr className="rule-irregular mt-12" />
-
-            <div className="mt-8">
-              <div className="flex items-baseline justify-between gap-4">
-                <label className="hand text-lg opacity-70">topic (choose at least one)</label>
-                <span className="text-xs opacity-50">platform topics</span>
-              </div>
-              <p className="mt-1 text-sm opacity-55">
-                Your note will appear under the topics you select.
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Platform topics">
-                {interests.map((topic) => {
-                  const selected = topics.includes(topic);
-                  return (
-                    <button
-                      key={topic}
-                      type="button"
-                      aria-pressed={selected}
-                      onClick={() => {
-                        setTopics((current) =>
-                          selected ? current.filter((item) => item !== topic) : [...current, topic],
-                        );
-                        setHasUnsavedChanges(true);
-                      }}
-                      className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                        selected
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border/70 hover:border-foreground"
-                      }`}
-                    >
-                      {topic}
-                    </button>
-                  );
-                })}
-              </div>
-              <label htmlFor="notetags" className="mt-6 block text-sm opacity-60">
-                Additional tags (optional)
-              </label>
-              <input
-                id="notetags"
-                value={tags}
-                onChange={(e) => {
-                  setTags(e.target.value);
-                  setHasUnsavedChanges(true);
-                }}
-                placeholder="#personal-project #draft"
-                className="mt-2 w-full border-b border-border bg-transparent py-2 text-sm outline-none placeholder:opacity-40 focus:border-foreground"
-              />
-            </div>
-          </>
-        )}
-
         {/* Hidden File Input for Image Selector */}
         <input
           ref={imageInputRef}
@@ -674,13 +612,7 @@ function NoteEditor({
             <button
               type="button"
               disabled={saveState === "saving"}
-              onClick={() =>
-                topics.length
-                  ? void submit(true)
-                  : setStatus(
-                      "Choose a platform topic first — even notes need a little neighborhood.",
-                    )
-              }
+              onClick={() => setPublishOpen(true)}
               className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               Publish
@@ -705,6 +637,110 @@ function NoteEditor({
             </div>
           )}
         </div>
+
+        {publishOpen && (
+          <div className="fixed inset-0 z-40 flex items-end justify-center bg-foreground/20 p-4 sm:items-center">
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="publish-title"
+              className="w-full max-w-lg rounded-2xl bg-background p-6 shadow-2xl"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 id="publish-title" className="text-2xl">
+                    Ready to publish?
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Choose where this note belongs and how readers will find it.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPublishOpen(false)}
+                  aria-label="Close publish options"
+                  className="text-2xl leading-none text-muted-foreground"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="mt-6 grid gap-5">
+                <label className="grid gap-2 text-sm font-medium">
+                  Notepage <span className="font-normal text-muted-foreground">required</span>
+                  <select
+                    value={publishNotepage}
+                    onChange={(event) => setPublishNotepage(event.target.value)}
+                    className="rounded-xl border border-border bg-background px-3 py-2.5"
+                  >
+                    <option value="">Choose a Notepage</option>
+                    {myNotepages().map((page) => (
+                      <option key={page.slug} value={page.slug}>
+                        {page.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <div>
+                  <div className="text-sm font-medium">
+                    Topic{" "}
+                    <span className="font-normal text-muted-foreground">choose at least one</span>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Topics">
+                    {interests.map((topic) => {
+                      const selected = publishTopics.includes(topic);
+                      return (
+                        <button
+                          key={topic}
+                          type="button"
+                          aria-pressed={selected}
+                          onClick={() =>
+                            setPublishTopics((current) =>
+                              selected
+                                ? current.filter((item) => item !== topic)
+                                : [...current, topic],
+                            )
+                          }
+                          className={`rounded-full border px-3 py-1.5 text-sm ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border/70 hover:border-foreground"}`}
+                        >
+                          {topic}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <label className="grid gap-2 text-sm font-medium">
+                  Tags <span className="font-normal text-muted-foreground">optional</span>
+                  <input
+                    value={publishTags}
+                    onChange={(event) => setPublishTags(event.target.value)}
+                    placeholder="#personal-project #draft"
+                    className="rounded-xl border border-border bg-transparent px-3 py-2.5 outline-none focus:border-foreground"
+                  />
+                </label>
+              </div>
+              <div className="mt-7 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setPublishOpen(false)}
+                  className="rounded-md px-4 py-2 text-sm text-muted-foreground hover:bg-muted"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={saveState === "saving"}
+                  onClick={() => {
+                    setPublishOpen(false);
+                    void submit(true);
+                  }}
+                  className="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
+                >
+                  Publish note
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Mobile-Friendly Fixed Formatting Toolbar Above Keyboard */}
