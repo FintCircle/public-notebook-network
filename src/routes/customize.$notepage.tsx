@@ -118,7 +118,7 @@ function CustomizeNotepage() {
 
     const savedOpacity = window.localStorage.getItem(`notepage-overlay-opacity:${slug}`);
     setOverlayOpacity(
-      savedOpacity ? parseFloat(savedOpacity) : np?.appearance?.overlayOpacity ?? 0.45,
+      savedOpacity ? parseFloat(savedOpacity) : (np?.appearance?.overlayOpacity ?? 0.45),
     );
 
     const savedCoverPhoto = window.localStorage.getItem(`notepage-cover-photo:${slug}`);

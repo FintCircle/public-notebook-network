@@ -60,11 +60,11 @@ function NotepageShell() {
       "light" | "dark" | "auto" | null;
     setTextColor(savedTextColor || np?.appearance?.textColor || "auto");
 
-    const savedOverlayOpacity = window.localStorage.getItem(
-      `notepage-overlay-opacity:${notepage}`,
-    );
+    const savedOverlayOpacity = window.localStorage.getItem(`notepage-overlay-opacity:${notepage}`);
     setOverlayOpacity(
-      savedOverlayOpacity ? parseFloat(savedOverlayOpacity) : np?.appearance?.overlayOpacity ?? 0.45,
+      savedOverlayOpacity
+        ? parseFloat(savedOverlayOpacity)
+        : (np?.appearance?.overlayOpacity ?? 0.45),
     );
   }, [notepage, np]);
 
