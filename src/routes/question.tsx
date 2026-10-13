@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { getActiveQuestion } from "@/lib/inktella.functions";
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import {
@@ -16,7 +17,10 @@ import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/question")({ component: QuestionPage });
+export const Route = createFileRoute("/question")({
+  loader: () => getActiveQuestion(),
+  component: QuestionPage,
+});
 
 type Answer = {
   id: number;
@@ -82,6 +86,7 @@ const archive = [
 ];
 
 function QuestionPage() {
+  const activeQuestion = Route.useLoaderData();
   const [answer, setAnswer] = useState("");
   const [hasAnswered, setHasAnswered] = useState(false);
   const [tab, setTab] = useState<"top" | "new" | "random">("top");
@@ -114,19 +119,21 @@ function QuestionPage() {
             </Link>
             <p className="hand text-base text-muted-foreground">think first, then read the room</p>
           </div>
-          <h1 className="mt-3 text-2xl tracking-tight sm:text-3xl">Question of the day.</h1>
-          <p className="mt-1 max-w-xl text-xs leading-relaxed text-muted-foreground">
-            Everyone sees the same question. Give your point of view before you hear theirs.
-          </p>
+          <h1 className="mt-3 text-lg tracking-tight sm:text-xl">Question of the day.</h1>
         </header>
 
         <section className="border-b border-border/70 py-5" aria-labelledby="today-question">
           <div className="flex items-center justify-between gap-4 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-            <span>Today · Sep 28, 2026</span>
-            <span>Question 01</span>
+            <span>
+              Today · {new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(`${activeQuestion.activeDate}T00:00:00`))}
+            </span>
+            <span>Question {String(activeQuestion.questionNumber).padStart(2, "0")}</span>
           </div>
-          <h2 id="today-question" className="mt-4 text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
-            What would you make more room for in your life?
+          <h2
+            id="today-question"
+            className="mt-4 text-[clamp(2rem,7vw,3.5rem)] font-semibold leading-[1.12] tracking-[-0.025em]"
+          >
+            {activeQuestion.prompt}
           </h2>
           {!hasAnswered ? (
             <form
@@ -141,15 +148,15 @@ function QuestionPage() {
                 value={answer}
                 onChange={(event) => setAnswer(event.target.value)}
                 placeholder="Write your answer before reading the crowd..."
-                rows={2}
-                className="w-full resize-none bg-transparent text-lg outline-none placeholder:text-muted-foreground/60"
+                rows={5}
+                className="min-h-36 w-full resize-none bg-transparent text-lg leading-relaxed outline-none placeholder:text-muted-foreground/60"
               />
-              <div className="mt-3 flex items-center justify-between gap-4 border-t border-border/70 pt-3">
-                <span className="text-xs text-muted-foreground">
-                  Your first thought is the point.
-                </span>
+              <div className="mt-4 flex flex-col gap-3 border-t border-border/70 pt-4">
+                <p className="text-sm text-muted-foreground">
+                  Your answer comes first. Everyone else&apos;s comes after.
+                </p>
                 <Button type="submit" disabled={!answer.trim()}>
-                  Unlock the answers <Send aria-hidden />
+                  Share my answer <Send aria-hidden />
                 </Button>
               </div>
             </form>
