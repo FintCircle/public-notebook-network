@@ -67,27 +67,21 @@ function NotificationsPage() {
     <AuthOnly message="Notifications are where the network taps you on the shoulder.">
       <div className="min-h-screen">
         <SiteNav />
-        <main className="mx-auto max-w-2xl px-5 py-14 sm:py-20">
-          <div className="flex items-start justify-between gap-5">
+        <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
+          <div className="flex items-center justify-between gap-5 border-b border-border/70 pb-5">
             <div>
-              <p className="hand text-2xl text-muted-foreground">
-                the little inbox of the internet
-              </p>
-              <h1 className="mt-2 font-heading text-5xl tracking-tight">Notifications</h1>
-              <p className="mt-4 max-w-lg leading-relaxed text-muted-foreground">
-                Views, likes, guestnotes, and the occasional note from the people keeping the lights
-                on.
-              </p>
+              <p className="hand text-lg text-muted-foreground">the little inbox</p>
+              <h1 className="mt-1 font-heading text-3xl tracking-tight sm:text-4xl">Notifications</h1>
             </div>
             <div
-              className="rounded-full border border-border/70 p-3 text-muted-foreground"
+              className="rounded-full border border-border/70 p-2.5 text-muted-foreground"
               aria-hidden
             >
-              <Bell size={22} />
+              <Bell size={19} />
             </div>
           </div>
 
-          <div className="mt-10 flex items-center justify-between border-y border-border/70 py-4 text-sm">
+          <div className="flex items-center justify-between border-b border-border/70 py-4 text-sm">
             <span>{unread ? `${unread} unread` : "All caught up"}</span>
             <button
               type="button"
