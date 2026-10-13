@@ -84,7 +84,7 @@ function Explore() {
 
         <section className="mt-8" aria-labelledby="notepages-heading">
           <div className="flex items-baseline justify-between"><h2 id="notepages-heading" className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Notepages</h2><span className="text-xs text-muted-foreground">{filteredPages.length} found</span></div>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-5">
             {visiblePages.map((page) => {
               const appearance = notepageAppearance(page);
               const cover = appearance.backgroundImage;
