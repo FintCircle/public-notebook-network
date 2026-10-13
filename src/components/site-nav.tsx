@@ -19,15 +19,14 @@ import { useAuth } from "@/lib/auth";
 import { useRandomizer } from "@/lib/randomizer";
 
 const items = [
-  { to: "/notella", label: "Notella", icon: Newspaper },
+  { to: "/notella", label: "Notes", icon: Newspaper },
   { to: "/explore", label: "Explore", icon: Compass },
-  { to: "/write", label: "Note down", icon: PenLine },
-  { to: "/notifications", label: "Notifications", icon: Bell },
-  { to: "/question", label: "One question a day", icon: CircleHelp },
+  { to: "/write", label: "Write", icon: PenLine },
+  { to: "/question", label: "Question", icon: CircleHelp },
 ];
 
 const iconLinkClass =
-  "inline-flex size-10 items-center justify-center text-muted-foreground transition-colors hover:text-foreground";
+  "inline-flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-muted-foreground transition-colors hover:text-foreground";
 
 const utilityLinkClass =
   "inline-flex size-10 items-center justify-center rounded-full bg-muted text-foreground transition-colors hover:bg-accent";
@@ -61,6 +60,14 @@ export function SiteNav() {
               >
                 <Shuffle aria-hidden />
               </button>
+              <Link
+                to="/notifications"
+                className={utilityLinkClass}
+                aria-label="Notifications"
+                title="Notifications"
+              >
+                <Bell aria-hidden />
+              </Link>
               {isAuthenticated ? (
                 <button
                   type="button"
@@ -86,7 +93,7 @@ export function SiteNav() {
             <HomepagePopularSwitcher />
           ) : (
             <nav
-              className="grid grid-cols-6 border-t border-border/60 px-2"
+              className="grid grid-cols-5 border-t border-border/60 px-2"
               aria-label="Primary navigation"
             >
               {[...items, { to: "/topics", label: "Topics", icon: Tags }].map((item, index) => {
@@ -103,7 +110,7 @@ export function SiteNav() {
                     title={item.label}
                   >
                     <Icon aria-hidden />
-                    <span className="sr-only">{item.label}</span>
+                    <span className="text-[0.68rem] font-medium leading-none">{item.label}</span>
                   </Link>
                 );
               })}

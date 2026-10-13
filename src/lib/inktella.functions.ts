@@ -209,6 +209,34 @@ export const loadInktella = createServerFn({ method: "POST" })
     }
   });
 
+export type ActiveQuestion = {
+  id: string;
+  questionNumber: number;
+  prompt: string;
+  activeDate: string;
+};
+
+export const getActiveQuestion = createServerFn({ method: "GET" }).handler(
+  async (): Promise<ActiveQuestion> => {
+    try {
+      const { d1 } = await import("./d1.server");
+      const rows = await d1<ActiveQuestion>(
+        "SELECT id, question_number AS questionNumber, prompt, active_date AS activeDate FROM daily_questions WHERE active_date <= date('now') AND (expires_at IS NULL OR expires_at >= date('now')) ORDER BY active_date DESC, question_number DESC LIMIT 1",
+      );
+      if (rows[0]) return rows[0];
+    } catch (error) {
+      console.warn("Active question query failed:", error);
+    }
+
+    return {
+      id: "q-2026-10-13",
+      questionNumber: 1,
+      prompt: "What would you make more room for in your life?",
+      activeDate: "2026-10-13",
+    };
+  },
+);
+
 const fonts = ["Space Grotesk", "Instrument Serif", "Lora"] as const;
 
 export const createNotepage = createServerFn({ method: "POST" })
