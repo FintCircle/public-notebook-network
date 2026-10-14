@@ -82,18 +82,24 @@ export const interests = [
   "Personal stories",
 ];
 
-export function getNotepage(slug: string) {
-  return notepages.find((n) => n.slug === slug);
+export function getNotepage(identifier: string) {
+  return notepages.find((n) => n.slug === identifier || n.subdomain === identifier);
 }
 
-export function notesOf(slug: string) {
+function canonicalNotepageSlug(identifier: string) {
+  return getNotepage(identifier)?.slug ?? identifier;
+}
+
+export function notesOf(identifier: string) {
+  const slug = canonicalNotepageSlug(identifier);
   return notes
     .filter((n) => n.notepage === slug)
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
 export function getNote(notepage: string, id: string) {
-  return notes.find((n) => n.notepage === notepage && n.id === id);
+  const slug = canonicalNotepageSlug(notepage);
+  return notes.find((n) => n.notepage === slug && n.id === id);
 }
 
 export function notesByTag(tag: string, notepage?: string) {
