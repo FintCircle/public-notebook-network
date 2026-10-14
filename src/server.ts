@@ -52,6 +52,26 @@ export default {
       const subdomain = subdomainFromRequest(request);
       let routedRequest = request;
       if (subdomain) {
+        try {
+          const { d1 } = await import("./lib/d1.server");
+          const matches = await d1<{ id: string }>(
+            "SELECT id FROM notepages WHERE lower(subdomain) = ? LIMIT 1",
+            [subdomain],
+          );
+          if (!matches[0]) {
+            return new Response("Notepage not found", {
+              status: 404,
+              headers: { "content-type": "text/plain; charset=utf-8" },
+            });
+          }
+        } catch (error) {
+          console.error("Unable to resolve Notepage subdomain", error);
+          return new Response("Notepage unavailable", {
+            status: 503,
+            headers: { "content-type": "text/plain; charset=utf-8" },
+          });
+        }
+
         const url = new URL(request.url);
         const pathname = url.pathname === "/" ? "" : url.pathname;
         if (!pathname.startsWith(`/${subdomain}`)) {
