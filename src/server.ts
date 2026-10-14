@@ -86,7 +86,7 @@ export default {
           pathname.startsWith("/favicon") ||
           pathname.startsWith("/robots.txt") ||
           pathname.startsWith("/sitemap") ||
-          /\\.[a-z0-9]{2,8}$/i.test(pathname);
+          /\.[a-z0-9]{2,8}$/i.test(pathname);
 
         if (isRuntimeRequest) {
           const response = await handler.fetch(request, env, ctx);
@@ -97,9 +97,9 @@ export default {
         // Inktella. Only its public sections may be served from this host.
         const isNotepagePath =
           pathname === "/" ||
-          /^\\/(?:notes|about|guestnote)(?:\\/|$)/.test(pathname) ||
-          /^\\/notepage\\/[^/]+(?:\\/|$)/.test(pathname) ||
-          /^\\/notetags\\/[^/]+(?:\\/|$)/.test(pathname);
+          /^\/(?:notes|about|guestnote)(?:\/|$)/.test(pathname) ||
+          /^\/notepage\/[^/]+(?:\/|$)/.test(pathname) ||
+          /^\/notetags\/[^/]+(?:\/|$)/.test(pathname);
 
         if (!isNotepagePath) {
           return new Response("Not found", {
