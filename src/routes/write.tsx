@@ -11,9 +11,17 @@ import BubbleMenuExtension from "@tiptap/extension-bubble-menu";
 
 import { SiteNav } from "@/components/site-nav";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { CustomImage } from "@/components/tiptap-image-extension";
 import { FloatingToolbar } from "@/components/floating-toolbar";
+import { InlineCombobox, InlineTagInput } from "@/components/inline-combobox";
 import { getNotepage, interests, notes as publishedNotes, type Note } from "@/data/inktella";
 import { AuthOnly } from "@/lib/auth";
 import { saveNote, updateNote } from "@/lib/inktella.functions";
@@ -158,6 +166,7 @@ function NoteEditor({
   const [title, setTitle] = useState(existing?.title ?? "");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [actionSheet, setActionSheet] = useState<"draft" | "publish" | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<"notepage" | "topics" | "tags" | null>(null);
   const [publishNotepage, setPublishNotepage] = useState(notepage ?? "");
   const [publishTopics, setPublishTopics] = useState<string[]>(existingTopics);
   const [publishTags, setPublishTags] = useState(
@@ -586,37 +595,107 @@ function NoteEditor({
         />
 
         <div className="mt-8 flex items-center justify-between gap-2 border-y border-border/70 py-2">
-          <button type="button" onClick={() => { editor?.commands.clearContent(); setTitle(""); setHasUnsavedChanges(false); setStatus(null); }} className="rounded px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground">Clear</button>
+          <button
+            type="button"
+            onClick={() => {
+              editor?.commands.clearContent();
+              setTitle("");
+              setHasUnsavedChanges(false);
+              setStatus(null);
+            }}
+            className="rounded px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            Clear
+          </button>
           <div className="flex items-center gap-1">
-            <button type="button" disabled={saveState === "saving"} onClick={() => setActionSheet("draft")} className="rounded px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40">Save draft</button>
-            <button type="button" disabled={saveState === "saving"} onClick={() => setActionSheet("publish")} className="rounded bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">Publish</button>
+            <button
+              type="button"
+              disabled={saveState === "saving"}
+              onClick={() => setActionSheet("draft")}
+              className="rounded px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40"
+            >
+              Save draft
+            </button>
+            <button
+              type="button"
+              disabled={saveState === "saving"}
+              onClick={() => setActionSheet("publish")}
+              className="rounded bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+            >
+              Publish
+            </button>
           </div>
         </div>
-        {status && <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">{status}</p>}
+        {status && (
+          <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
+            {status}
+          </p>
+        )}
 
         <Sheet open={actionSheet !== null} onOpenChange={(open) => !open && setActionSheet(null)}>
           <SheetContent side="bottom" className="max-h-[88dvh] overflow-y-auto rounded-t-2xl">
             <SheetHeader>
-              <SheetTitle>{actionSheet === "draft" ? "Save this draft" : "Ready to publish?"}</SheetTitle>
+              <SheetTitle>
+                {actionSheet === "draft" ? "Save this draft" : "Ready to publish?"}
+              </SheetTitle>
               <SheetDescription>Choose where this note belongs before continuing.</SheetDescription>
             </SheetHeader>
             <div className="grid gap-5 py-5">
-              <label className="grid gap-2 text-sm font-medium">Notepage <span className="font-normal text-muted-foreground">required</span>
-                <select value={publishNotepage} onChange={(event) => setPublishNotepage(event.target.value)} className="rounded-xl border border-border bg-background px-3 py-2.5">
-                  <option value="">Choose a Notepage</option>
-                  {myNotepages().map((page) => <option key={page.slug} value={page.slug}>{page.name}</option>)}
-                </select>
-              </label>
-              {actionSheet === "publish" && <>
-                <div><div className="text-sm font-medium">Topic <span className="font-normal text-muted-foreground">choose at least one</span></div>
-                  <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Topics">
-                    {interests.map((topic) => { const selected = publishTopics.includes(topic); return <button key={topic} type="button" aria-pressed={selected} onClick={() => setPublishTopics((current) => selected ? current.filter((item) => item !== topic) : [...current, topic])} className={`rounded-full border px-3 py-1.5 text-sm ${selected ? "border-primary bg-primary text-primary-foreground" : "border-border/70 hover:border-foreground"}`}>{topic}</button>; })}
-                  </div>
-                </div>
-                <label className="grid gap-2 text-sm font-medium">Tags <span className="font-normal text-muted-foreground">optional</span><input value={publishTags} onChange={(event) => setPublishTags(event.target.value)} placeholder="#personal-project #draft" className="rounded-xl border border-border bg-transparent px-3 py-2.5 outline-none focus:border-foreground" /></label>
-              </>}
+              <InlineCombobox
+                label="Notepage"
+                value={publishNotepage}
+                placeholder="Choose a Notepage"
+                options={myNotepages().map((page) => ({ value: page.slug, label: page.name }))}
+                open={openDropdown === "notepage"}
+                onOpenChange={(open) => setOpenDropdown(open ? "notepage" : null)}
+                onChange={setPublishNotepage}
+              />
+              {actionSheet === "publish" && (
+                <>
+                  <InlineCombobox
+                    label="Topic"
+                    value={publishTopics[0] ?? ""}
+                    placeholder={
+                      publishTopics.length
+                        ? `${publishTopics.length} topics selected`
+                        : "Choose a topic"
+                    }
+                    options={interests.map((topic) => ({ value: topic, label: topic }))}
+                    selectedValues={publishTopics}
+                    open={openDropdown === "topics"}
+                    onOpenChange={(open) => setOpenDropdown(open ? "topics" : null)}
+                    onChange={(topic) =>
+                      setPublishTopics((current) =>
+                        current.includes(topic)
+                          ? current.filter((item) => item !== topic)
+                          : [...current, topic],
+                      )
+                    }
+                  />
+                  <InlineTagInput
+                    value={publishTags}
+                    onChange={setPublishTags}
+                    suggestions={interests}
+                    open={openDropdown === "tags"}
+                    onOpenChange={(open) => setOpenDropdown(open ? "tags" : null)}
+                  />
+                </>
+              )}
             </div>
-            <SheetFooter><Button variant="outline" onClick={() => setActionSheet(null)}>Cancel</Button><Button disabled={saveState === "saving"} onClick={() => { setActionSheet(null); void submit(actionSheet === "publish"); }}>{actionSheet === "draft" ? "Save draft" : "Publish note"}</Button></SheetFooter>
+            <SheetFooter>
+              <Button variant="outline" onClick={() => setActionSheet(null)}>
+                Cancel
+              </Button>
+              <Button
+                disabled={saveState === "saving"}
+                onClick={() => {
+                  setActionSheet(null);
+                  void submit(actionSheet === "publish");
+                }}
+              >
+                {actionSheet === "draft" ? "Save draft" : "Publish note"}
+              </Button>
+            </SheetFooter>
           </SheetContent>
         </Sheet>
       </main>
