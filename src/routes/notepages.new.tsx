@@ -70,6 +70,7 @@ function fileToDataUrl(file: File, maxSide = 1600): Promise<string> {
 function NewNotepageForm() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
+  const [subdomain, setSubdomain] = useState("");
   const [description, setDescription] = useState("");
   const [background, setBackground] = useState(0);
   const [type, setType] = useState<(typeof types)[number]>("Space Grotesk");
@@ -101,6 +102,7 @@ function NewNotepageForm() {
           name: name.trim(),
           description: description.trim(),
           slug: slugify(name) || "notepage",
+          subdomain: slugify(subdomain || name) || "notepage",
           bg: tokens.bg,
           ink: tokens.ink,
           headingFont: type,
@@ -138,6 +140,25 @@ function NewNotepageForm() {
                   placeholder="Derrick's Notes"
                   className="mt-2 h-12"
                 />
+              </div>
+              <div>
+                <label htmlFor="page-subdomain" className="text-sm">
+                  Notepage address
+                </label>
+                <div className="mt-2 flex items-center rounded-md border border-input bg-background px-3 focus-within:ring-2 focus-within:ring-ring">
+                  <Input
+                    id="page-subdomain"
+                    value={subdomain || slugify(name)}
+                    onChange={(e) => setSubdomain(slugify(e.target.value))}
+                    placeholder="derricks-notes"
+                    className="h-11 border-0 px-0 shadow-none focus-visible:ring-0"
+                    aria-describedby="page-subdomain-help"
+                  />
+                  <span className="text-sm text-muted-foreground">.inktella.com</span>
+                </div>
+                <p id="page-subdomain-help" className="mt-1 text-xs text-muted-foreground">
+                  This becomes the front door to your Notepage.
+                </p>
               </div>
               <div>
                 <label htmlFor="page-description" className="text-sm">

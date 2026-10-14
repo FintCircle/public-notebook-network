@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { seedGuestnotes, seedNotes, seedNotepages, seedProfiles } from "@/data/seedData";
+import { isValidSubdomain, normalizeSubdomain, suggestSubdomain } from "./notepage-subdomains";
 
 export const getClerkPublishableKey = createServerFn({ method: "GET" }).handler(async () => {
   const { CLERK_PUBLISHABLE_KEY_FALLBACK } = await import("./clerk-config");
@@ -38,6 +39,7 @@ function getRawSeedData(me: string | null): RawData {
     id: np.id,
     owner_id: np.ownerId,
     slug: np.slug,
+    subdomain: np.slug,
     name: np.name,
     description: np.description,
     cover_path: np.appearance.backgroundImage ?? null,
@@ -239,6 +241,24 @@ export const getActiveQuestion = createServerFn({ method: "GET" }).handler(
 
 const fonts = ["Space Grotesk", "Instrument Serif", "Lora"] as const;
 
+export const checkNotepageSubdomain = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ subdomain: z.string().max(40) }).parse(d))
+  .handler(async ({ data }) => {
+    const subdomain = normalizeSubdomain(data.subdomain);
+    if (!isValidSubdomain(subdomain))
+      return { available: false, reason: "That address is not available." };
+    try {
+      const { d1 } = await import("./d1.server");
+      const rows = await d1("SELECT id FROM notepages WHERE subdomain = ? LIMIT 1", [subdomain]);
+      return {
+        available: rows.length === 0,
+        reason: rows.length ? "That address is already taken." : "",
+      };
+    } catch {
+      return { available: true, reason: "" };
+    }
+  });
+
 export const createNotepage = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z
@@ -246,6 +266,7 @@ export const createNotepage = createServerFn({ method: "POST" })
         name: z.string().trim().min(2).max(80),
         description: z.string().trim().min(6).max(400),
         slug: z.string().regex(/^[a-z0-9-]{2,40}$/),
+        subdomain: z.string().regex(/^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/),
         bg: z.string().max(60),
         ink: z.string().max(60),
         headingFont: z.enum(fonts),
@@ -274,6 +295,13 @@ export const createNotepage = createServerFn({ method: "POST" })
       "api",
     ];
     let slug = data.slug;
+    const subdomain = normalizeSubdomain(data.subdomain);
+    if (!isValidSubdomain(subdomain) || reserved.includes(subdomain)) {
+      throw new Error("Choose a valid Notepage address.");
+    }
+    if ((await d1("SELECT 1 FROM notepages WHERE subdomain = ?", [subdomain])).length) {
+      throw new Error("That Notepage address is already taken.");
+    }
     if (
       reserved.includes(slug) ||
       (await d1("SELECT 1 FROM notepages WHERE slug = ?", [slug])).length
@@ -283,11 +311,12 @@ export const createNotepage = createServerFn({ method: "POST" })
     const id = crypto.randomUUID();
     const now = new Date().toISOString();
     await d1(
-      "INSERT INTO notepages (id, owner_id, slug, name, description, cover_path, bg, ink, heading_font, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO notepages (id, owner_id, slug, subdomain, name, description, cover_path, bg, ink, heading_font, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         id,
         userId,
         slug,
+        subdomain,
         data.name,
         data.description,
         data.coverUrl ?? null,

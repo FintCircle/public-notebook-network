@@ -11,6 +11,7 @@ export type Notepage = {
   id: string;
   ownerId: string;
   slug: string;
+  subdomain?: string;
   name: string;
   description: string;
   owner: string;
