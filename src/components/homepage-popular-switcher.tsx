@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Flame, Heart } from "lucide-react";
-import { getPopularDecayedNotes, getNotepage, type Note } from "@/data/inktella";
+import { getPopularDecayedNotes, type Note } from "@/data/inktella";
 
 export function HomepagePopularSwitcher() {
   const [popularNotes, setPopularNotes] = useState<Note[]>([]);
@@ -40,8 +40,6 @@ export function HomepagePopularSwitcher() {
   };
 
   const currentMobileNote = popularNotes[currentIndex];
-  const mobileNotepage = currentMobileNote ? getNotepage(currentMobileNote.notepage) : null;
-
   return (
     <div
       className="border-t border-border/60 bg-muted/30 px-3 py-2 text-sm select-none"
@@ -51,10 +49,9 @@ export function HomepagePopularSwitcher() {
       onBlur={() => setIsPaused(false)}
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
-        {/* Label Badge */}
-        <div className="flex shrink-0 items-center gap-1.5 font-medium text-xs tracking-wider uppercase text-primary/90 bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20">
-          <Flame className="size-3.5 text-primary fill-primary/20" aria-hidden />
-          <span>Popular Notes</span>
+        <div className="flex shrink-0 items-center justify-center rounded-full bg-primary/10 p-2 text-primary" title="Popular notes">
+          <Flame className="size-4 fill-primary/20" aria-hidden />
+          <span className="sr-only">Popular notes</span>
         </div>
 
         {/* Desktop View: Smooth switcher row displaying popular note titles */}
@@ -78,11 +75,7 @@ export function HomepagePopularSwitcher() {
                 title={`Read "${title}" by ${np?.name || note.notepage}`}
               >
                 <span className="truncate max-w-[160px] lg:max-w-[200px]">{title}</span>
-                {np && (
-                  <span className="text-[10px] text-muted-foreground/70 group-hover:text-muted-foreground transition-colors">
-                    · {np.name}
-                  </span>
-                )}
+
                 <span className="flex items-center gap-0.5 text-[10px] text-primary/80 font-normal">
                   <Heart className="size-2.5 fill-primary/40 text-primary" aria-hidden />
                   {note.likes}
@@ -115,11 +108,7 @@ export function HomepagePopularSwitcher() {
                     currentMobileNote.preview.slice(0, 30) ||
                     "Untitled Note"}
                 </span>
-                {mobileNotepage && (
-                  <span className="text-[10px] text-muted-foreground shrink-0">
-                    ({mobileNotepage.name})
-                  </span>
-                )}
+
                 <span className="inline-flex items-center gap-0.5 text-[10px] text-primary shrink-0">
                   <Heart className="size-2.5 fill-primary/40 text-primary" aria-hidden />
                   {currentMobileNote.likes}
