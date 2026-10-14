@@ -58,7 +58,8 @@ export function HomepagePopularSwitcher() {
         <div className="hidden md:flex flex-1 items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
           {popularNotes.map((note, idx) => {
             const np = getNotepage(note.notepage);
-            const title = note.title.trim() || note.preview.slice(0, 35) || "Untitled Note";
+            const title =
+              note.title?.trim() || note.preview?.trim().slice(0, 35) || "Untitled Note";
             const isActive = idx === currentIndex;
 
             return (
@@ -104,8 +105,8 @@ export function HomepagePopularSwitcher() {
                 className="inline-flex items-center justify-center gap-1.5 max-w-full text-xs font-medium text-foreground hover:text-primary transition-colors py-0.5"
               >
                 <span className="truncate">
-                  {currentMobileNote.title.trim() ||
-                    currentMobileNote.preview.slice(0, 30) ||
+                  {currentMobileNote.title?.trim() ||
+                    currentMobileNote.preview?.trim().slice(0, 30) ||
                     "Untitled Note"}
                 </span>
 
