@@ -626,10 +626,6 @@ export function pageHostAddressUrl(value: string) {
   return publicNotepageUrl(value);
 }
 
-export function pageHostAddressSuggestion(value: string) {
-  return suggestSubdomain(value);
-}
-
 export function pageHostAddressValidation(value: string) {
   return subdomainValidationMessage(value);
 }
