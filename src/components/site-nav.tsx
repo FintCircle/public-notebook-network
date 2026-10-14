@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { HomepagePopularSwitcher } from "@/components/homepage-popular-switcher";
 import {
+  BarChart3,
   Bell,
   CircleHelp,
   Compass,
@@ -161,6 +162,13 @@ export function SiteNav() {
               </div>
             </div>
             <nav className="mt-8 flex flex-col gap-2" aria-label="Profile settings">
+              <Link
+                to="/stats"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
+              >
+                <BarChart3 aria-hidden className="size-4" /> Stats
+              </Link>
               <Link
                 to="/topics"
                 onClick={() => setIsMenuOpen(false)}

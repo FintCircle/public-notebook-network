@@ -1,13 +1,127 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  ArrowUpRight,
-  BarChart3,
-  BookOpen,
-  Eye,
-  Heart,
-  Users,
-} from "lucide-react";
+import { ArrowUpRight, BarChart3, BookOpen, Eye, Heart, Users } from "lucide-react";
 import { useState } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 
-export const Route = createFileRoute("/stats")({\n  head: () => ({\n    meta: [\n      { title: "Stats | Inktella" },\n      { name: "description", content: "A small, human view of how your Notepage is being read." },\n    ],\n  }),\n  component: Stats,\n});\n\nconst periods = ["7 days", "30 days", "90 days", "All time"];\nconst chartData = [30, 39, 48, 43, 54, 64, 58, 72, 67, 84, 78, 92, 86, 101, 95, 115, 108, 126, 118, 142];\nconst notes = [\n  ["Building something nobody asked for", "428", "31"],\n  ["What I learned this week", "291", "26"],\n  ["A small thought about the web", "184", "19"],\n  ["Untitled · Sep 18", "97", "8"],\n];\nconst sources = [\n  ["Inktella Explore", "52%"],\n  ["Direct links", "31%"],\n  ["Search engines", "17%"],\n];\n\nfunction Stats() {\n  const [period, setPeriod] = useState("30 days");\n  const max = Math.max(...chartData);\n\n  return (\n    <div className="min-h-screen">\n      <SiteNav />\n      <main className="mx-auto max-w-5xl px-5 py-12 sm:py-16">\n        <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">\n          <div>\n            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Your corner of Inktella</p>\n            <h1 className="mt-3 font-heading text-5xl tracking-tight sm:text-6xl">Your Notepage stats</h1>\n            <p className="mt-4 max-w-lg leading-relaxed text-muted-foreground">\n              A simple look at how people discover, read, and interact with your notes.\n            </p>\n          </div>\n          <div className="flex items-center gap-2 rounded-full border border-border p-1" aria-label="Date range">\n            {periods.map((item) => (\n              <button\n                key={item}\n                type="button"\n                onClick={() => setPeriod(item)}\n                className={`rounded-full px-3 py-2 text-xs transition-colors ${period === item ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"}`}\n                aria-pressed={period === item}\n              >\n                {item}\n              </button>\n            ))}\n          </div>\n        </div>\n\n        <section className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4" aria-label="Overview">\n          <StatCard icon={Eye} label="Notepage views" value="2,481" change="+18%" />\n          <StatCard icon={Users} label="Unique visitors" value="1,204" change="+12%" />\n          <StatCard icon={BookOpen} label="Notes read" value="1,876" change="+9%" />\n          <StatCard icon={Heart} label="Likes received" value="143" change="+6%" />\n        </section>\n\n        <section className="mt-10 rounded-2xl border border-border bg-card p-5 sm:p-7">\n          <div className="flex flex-wrap items-start justify-between gap-4">\n            <div>\n              <h2 className="text-xl">Reading activity</h2>\n              <p className="mt-1 text-sm text-muted-foreground">Daily views · {period}</p>\n            </div>\n            <BarChart3 aria-hidden className="size-5 text-muted-foreground" />\n          </div>\n          <div className="mt-8 flex h-52 items-end gap-1 border-b border-l border-border px-2 sm:gap-2 sm:px-4">\n            {chartData.map((value, index) => (\n              <div key={index} className="group relative flex h-full flex-1 items-end">\n                <div className="w-full rounded-t-sm bg-primary/70 transition-colors group-hover:bg-primary" style={{ height: `${(value / max) * 100}%` }} title={`${value} views`} />\n              </div>\n            ))}\n          </div>\n          <div className="mt-3 flex justify-between pl-2 text-xs text-muted-foreground"><span>Oct 1</span><span>Oct 15</span><span>Oct 30</span></div>\n        </section>\n\n        <section className="mt-10 grid gap-10 lg:grid-cols-[1.25fr_0.75fr]">\n          <div className="rounded-2xl border border-border bg-card p-5 sm:p-7">\n            <h2 className="text-xl">Notes people are reading</h2>\n            <div className="mt-5 divide-y divide-border/70 border-y border-border/70">\n              {notes.map(([note, views, likes], index) => (\n                <div key={note} className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4 text-sm">\n                  <span className="text-muted-foreground">0{index + 1}</span>\n                  <span className="min-w-0 truncate">{note}</span>\n                  <span className="text-right text-muted-foreground">{views} views · {likes} likes</span>\n                </div>\n              ))}\n            </div>\n            <button type="button" className="mt-5 inline-flex items-center gap-2 text-sm text-primary hover:underline">View all notes <ArrowUpRight aria-hidden /></button>\n          </div>\n\n          <div className="rounded-2xl border border-border bg-card p-5 sm:p-7">\n            <h2 className="text-xl">Where readers came from</h2>\n            <div className="mt-7 flex flex-col gap-5">\n              {sources.map(([name, value]) => (\n                <div key={name}>\n                  <div className="flex justify-between text-sm"><span>{name}</span><span className="text-muted-foreground">{value}</span></div>\n                  <div className="mt-2 h-2 rounded-full bg-muted"><div className="h-2 rounded-full bg-primary/70" style={{ width: value }} /></div>\n                </div>\n              ))}\n            </div>\n          </div>\n        </section>\n\n        <section className="mt-10 rounded-2xl border border-primary/20 bg-primary/5 p-5 sm:p-7">\n          <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">\n            <div><p className="text-sm text-muted-foreground">A signature Inktella statistic</p><h2 className="mt-2 text-2xl">Cover-to-Reading Rate</h2><p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">The share of visitors who opened a note after seeing your Notepage cover.</p></div>\n            <div className="sm:text-right"><p className="font-heading text-5xl tracking-tight">64.8%</p><p className="mt-1 text-sm text-primary">+8.2 percentage points</p></div>\n          </div>\n          <div className="mt-8 grid grid-cols-2 gap-4 border-t border-primary/15 pt-5 sm:grid-cols-3"><div><p className="text-2xl">1,250</p><p className="text-xs text-muted-foreground">Cover visitors</p></div><div><p className="text-2xl">810</p><p className="text-xs text-muted-foreground">Started reading</p></div><div className="col-span-2 sm:col-span-1"><p className="text-sm text-muted-foreground">Readers are getting past the cover and into your writing.</p></div></div>\n        </section>\n\n        <p className="hand mt-14 max-w-md text-2xl leading-snug text-muted-foreground">Your little corner was visited 2,481 times. Keep noting things down.</p>\n      </main>\n      <SiteFooter />\n    </div>\n  );\n}\n\nfunction StatCard({ icon: Icon, label, value, change }: { icon: typeof Eye; label: string; value: string; change: string }) {\n  return <div className="bg-card p-5 sm:p-6"><Icon aria-hidden className="size-4 text-muted-foreground" /><p className="mt-5 text-3xl tracking-tight">{value}</p><div className="mt-1 flex items-center justify-between gap-2"><p className="text-sm text-muted-foreground">{label}</p><span className="text-xs text-primary">{change}</span></div></div>;\n}\n\nexport default Stats;
+export const Route = createFileRoute("/stats")({
+  head: () => ({
+    meta: [
+      { title: "Stats | Inktella" },
+      {
+        name: "description",
+        content: "A small, human view of how your Notepage is being read.",
+      },
+    ],
+  }),
+  component: Stats,
+});
+
+const periods = ["7 days", "30 days", "90 days", "All time"];
+const chartData = [30, 39, 48, 43, 54, 64, 58, 72, 67, 84, 78, 92, 86, 101, 95, 115, 108, 126, 118, 142];
+const notes = [
+  ["Building something nobody asked for", "428", "31"],
+  ["What I learned this week", "291", "26"],
+  ["A small thought about the web", "184", "19"],
+  ["Untitled · Sep 18", "97", "8"],
+];
+const sources = [
+  ["Inktella Explore", "52%"],
+  ["Direct links", "31%"],
+  ["Search engines", "17%"],
+];
+
+function Stats() {
+  const [period, setPeriod] = useState("30 days");
+  const max = Math.max(...chartData);
+
+  return (
+    <div className="min-h-screen">
+      <SiteNav />
+      <main className="mx-auto max-w-5xl px-5 py-12 sm:py-16">
+        <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Your corner of Inktella</p>
+            <h1 className="mt-3 font-heading text-5xl tracking-tight sm:text-6xl">Your Notepage stats</h1>
+            <p className="mt-4 max-w-lg leading-relaxed text-muted-foreground">
+              A simple look at how people discover, read, and interact with your notes.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-1 rounded-full border border-border p-1" aria-label="Date range">
+            {periods.map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => setPeriod(item)}
+                className={`rounded-full px-3 py-2 text-xs transition-colors ${period === item ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"}`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <section className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Overview">
+          <StatCard icon={Eye} label="Notepage views" value="2,481" change="+18%" />
+          <StatCard icon={Users} label="Unique visitors" value="1,204" change="+12%" />
+          <StatCard icon={BookOpen} label="Notes read" value="1,876" change="+9%" />
+          <StatCard icon={Heart} label="Likes received" value="143" change="+6%" />
+        </section>
+
+        <section className="mt-12 rounded-2xl border border-border bg-card p-5 sm:p-7" aria-labelledby="reading-activity">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h2 id="reading-activity" className="font-heading text-2xl">Reading activity</h2>
+              <p className="mt-1 text-sm text-muted-foreground">Views over the last {period.toLowerCase()}</p>
+            </div>
+            <BarChart3 className="size-5 text-muted-foreground" aria-hidden />
+          </div>
+          <div className="mt-8 flex h-56 items-end gap-1.5 sm:gap-3" aria-label="Views chart">
+            {chartData.map((value, index) => (
+              <div key={`${value}-${index}`} className="group flex h-full flex-1 items-end">
+                <div
+                  className="relative w-full rounded-t-sm bg-primary/75 transition-all group-hover:bg-primary"
+                  style={{ height: `${(value / max) * 100}%` }}
+                  title={`${value} views`}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 flex justify-between text-xs text-muted-foreground"><span>Sep 15</span><span>Oct 14</span></div>
+        </section>
+
+        <div className="mt-12 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+          <section className="rounded-2xl border border-border bg-card p-5 sm:p-7" aria-labelledby="popular-notes">
+            <div className="flex items-center justify-between"><h2 id="popular-notes" className="font-heading text-2xl">Popular notes</h2><ArrowUpRight className="size-5 text-muted-foreground" aria-hidden /></div>
+            <div className="mt-6 flex flex-col gap-1">
+              {notes.map(([title, views, likes], index) => (
+                <div key={title} className="flex items-center gap-4 border-t border-border py-4">
+                  <span className="w-5 text-sm text-muted-foreground">{index + 1}</span>
+                  <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{title}</p><p className="mt-1 text-xs text-muted-foreground">{views} views · {likes} likes</p></div>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section className="rounded-2xl border border-border bg-card p-5 sm:p-7" aria-labelledby="traffic-sources">
+            <h2 id="traffic-sources" className="font-heading text-2xl">Traffic sources</h2>
+            <div className="mt-7 flex flex-col gap-5">{sources.map(([source, percent]) => <div key={source}><div className="flex justify-between text-sm"><span>{source}</span><span className="text-muted-foreground">{percent}</span></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: percent }} /></div></div>)}</div>
+          </section>
+        </div>
+
+        <section className="mt-6 rounded-2xl border border-border bg-primary/5 p-5 sm:p-7" aria-labelledby="cover-rate">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div><p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">A useful signal</p><h2 id="cover-rate" className="mt-2 font-heading text-3xl">Cover-to-reading rate</h2><p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">The percentage of visitors who opened a note after viewing your Notepage cover.</p></div>
+            <div className="shrink-0"><p className="font-heading text-5xl">64.8%</p><p className="mt-1 text-sm text-primary">+8.2 percentage points</p></div>
+          </div>
+          <div className="mt-7 grid grid-cols-2 gap-4 border-t border-border/70 pt-5 text-sm sm:max-w-md"><div><p className="text-2xl font-medium">1,250</p><p className="text-muted-foreground">Cover visitors</p></div><div><p className="text-2xl font-medium">810</p><p className="text-muted-foreground">Started reading</p></div></div>
+        </section>
+
+        <p className="mt-8 text-center text-xs text-muted-foreground">Illustrative data for this preview · Detailed stats are private to you.</p>
+      </main>
+      <SiteFooter />
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, label, value, change }: { icon: typeof Eye; label: string; value: string; change: string }) {
+  return <article className="rounded-2xl border border-border bg-card p-5"><Icon className="size-5 text-muted-foreground" aria-hidden /><p className="mt-7 text-sm text-muted-foreground">{label}</p><div className="mt-2 flex items-end justify-between gap-3"><p className="font-heading text-4xl">{value}</p><span className="mb-1 text-xs text-primary">{change}</span></div></article>;
+}
