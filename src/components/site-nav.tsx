@@ -61,14 +61,16 @@ export function SiteNav() {
               >
                 <Shuffle aria-hidden />
               </button>
-              <Link
-                to="/notifications"
-                className={utilityLinkClass}
-                aria-label="Notifications"
-                title="Notifications"
-              >
-                <Bell aria-hidden />
-              </Link>
+              {isAuthenticated && (
+                <Link
+                  to="/notifications"
+                  className={utilityLinkClass}
+                  aria-label="Notifications"
+                  title="Notifications"
+                >
+                  <Bell aria-hidden />
+                </Link>
+              )}
               {isAuthenticated ? (
                 <button
                   type="button"

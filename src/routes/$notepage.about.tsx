@@ -5,6 +5,8 @@ import Underline from "@tiptap/extension-underline";
 import { useState } from "react";
 import { ArrowLeft, Bold, Italic, Underline as UnderlineIcon, Check, Pencil } from "lucide-react";
 import { getNotepage } from "@/data/inktella";
+import { useAuth } from "@/lib/auth";
+import { currentUserId } from "@/lib/inktella-store";
 
 export const Route = createFileRoute("/$notepage/about")({
   head: ({ params }) => {
@@ -17,6 +19,7 @@ export const Route = createFileRoute("/$notepage/about")({
 function NotepageAbout() {
   const { notepage: slug } = Route.useParams();
   const page = getNotepage(slug);
+  const { isAuthenticated } = useAuth();
   const [editing, setEditing] = useState(false);
   const [content, setContent] = useState(`<p>${page?.description ?? "A public notebook for ideas worth keeping."}</p>`);
   const editor = useEditor({
@@ -32,9 +35,11 @@ function NotepageAbout() {
       <div className="mx-auto max-w-2xl">
         <div className="flex items-center justify-between gap-4">
           <Link to="/$notepage" params={{ notepage: slug }} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft aria-hidden /> {page.name}</Link>
-          <button type="button" onClick={() => setEditing((value) => !value)} className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-2 text-sm hover:bg-muted">
-            {editing ? <><Check aria-hidden /> Done</> : <><Pencil aria-hidden /> Edit about</>}
-          </button>
+          {isAuthenticated && page.ownerId === currentUserId && (
+            <button type="button" onClick={() => setEditing((value) => !value)} className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-2 text-sm hover:bg-muted">
+              {editing ? <><Check aria-hidden /> Done</> : <><Pencil aria-hidden /> Edit about</>}
+            </button>
+          )}
         </div>
         <section className="mt-12">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">About this Notepage</p>

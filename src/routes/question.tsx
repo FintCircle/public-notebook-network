@@ -17,6 +17,8 @@ import {
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
+import { portalUrl } from "@/lib/account-portal";
 
 export const Route = createFileRoute("/question")({
   loader: () => getActiveQuestion(),
@@ -105,6 +107,7 @@ function QuestionPage() {
   const [selectedProfile, setSelectedProfile] = useState<Answer | null>(null);
   const [suggestion, setSuggestion] = useState("");
   const [suggestionSent, setSuggestionSent] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const visibleAnswers = useMemo(() => {
     if (tab === "new") return [...answers].reverse();
@@ -147,7 +150,11 @@ function QuestionPage() {
           </h2>
           {!hasAnswered ? (
             <div className="mt-5">
-              {!answerComposerOpen ? (
+              {!isAuthenticated ? (
+                <a href={portalUrl("sign-in")} className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground">
+                  <LockKeyhole aria-hidden /> Sign in to share your answer
+                </a>
+              ) : !answerComposerOpen ? (
                 <Button type="button" onClick={() => setAnswerComposerOpen(true)}>
                   <PenLine aria-hidden data-icon="inline-start" /> Share my answer
                 </Button>
