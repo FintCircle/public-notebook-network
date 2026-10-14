@@ -48,7 +48,18 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
-      const response = await handler.fetch(request, env, ctx);
+      const { subdomainFromRequest } = await import("./lib/notepage-subdomains");
+      const subdomain = subdomainFromRequest(request);
+      let routedRequest = request;
+      if (subdomain) {
+        const url = new URL(request.url);
+        const pathname = url.pathname === "/" ? "" : url.pathname;
+        if (!pathname.startsWith(`/${subdomain}`)) {
+          url.pathname = `/${subdomain}${pathname}`;
+          routedRequest = new Request(url, request);
+        }
+      }
+      const response = await handler.fetch(routedRequest, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
     } catch (error) {
       console.error(error);

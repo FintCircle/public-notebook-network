@@ -68,6 +68,7 @@ export async function hydrateInktella() {
       id,
       ownerId: s(p["owner_id"]),
       slug: s(p["slug"]),
+      subdomain: s(p["subdomain"]) || s(p["slug"]),
       name: s(p["name"]),
       description: s(p["description"]),
       owner: ownerName,
