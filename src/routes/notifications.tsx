@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bell, Eye, Heart, Mail, Megaphone, Sparkles } from "lucide-react";
+import { Eye, Heart, Mail, Megaphone, Sparkles } from "lucide-react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { AuthOnly } from "@/lib/auth";
 
@@ -72,12 +72,6 @@ function NotificationsPage() {
             <div>
               <p className="hand text-lg text-muted-foreground">the little inbox</p>
               <h1 className="mt-1 font-heading text-3xl tracking-tight sm:text-4xl">Notifications</h1>
-            </div>
-            <div
-              className="rounded-full border border-border/70 p-2.5 text-muted-foreground"
-              aria-hidden
-            >
-              <Bell size={19} />
             </div>
           </div>
 

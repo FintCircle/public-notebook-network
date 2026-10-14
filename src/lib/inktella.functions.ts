@@ -480,6 +480,25 @@ export const deleteNote = createServerFn({ method: "POST" })
     return { success: true };
   });
 
+export const updateProfile = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z.object({
+      displayName: z.string().trim().min(1).max(120),
+      bio: z.string().max(1000),
+      country: z.string().max(120),
+      portraitUrl: z.string().url().startsWith("https://img.clerk.com/").nullable(),
+    }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { d1, requireUserId } = await import("./d1.server");
+    const userId = await requireUserId(getRequest());
+    await d1(
+      "UPDATE profiles SET display_name = ?, bio = ?, country = ?, portrait_url = ? WHERE id = ?",
+      [data.displayName, data.bio, data.country, data.portraitUrl, userId],
+    );
+    return { success: true };
+  });
+
 export const deleteNotepage = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ slug: z.string() }).parse(d))
   .handler(async ({ data }) => {
