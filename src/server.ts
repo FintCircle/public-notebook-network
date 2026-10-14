@@ -73,9 +73,44 @@ export default {
         }
 
         const url = new URL(request.url);
-        const pathname = url.pathname === "/" ? "" : url.pathname;
-        if (!pathname.startsWith(`/${subdomain}`)) {
-          url.pathname = `/${subdomain}${pathname}`;
+        const pathname = url.pathname;
+
+        // Keep TanStack server functions, assets, and dev-runtime requests on their
+        // original paths. Rewriting those requests into /:notepage/* makes the
+        // client report that notebooks cannot be opened and can accidentally expose
+        // the main application shell on a Notepage host.
+        const isRuntimeRequest =
+          pathname.startsWith("/_") ||
+          pathname.startsWith("/@") ||
+          pathname.startsWith("/assets/") ||
+          pathname.startsWith("/favicon") ||
+          pathname.startsWith("/robots.txt") ||
+          pathname.startsWith("/sitemap") ||
+          /\\.[a-z0-9]{2,8}$/i.test(pathname);
+
+        if (isRuntimeRequest) {
+          const response = await handler.fetch(request, env, ctx);
+          return await normalizeCatastrophicSsrResponse(response);
+        }
+
+        // A Notepage hostname is a scoped site, not an alternate entry point to
+        // Inktella. Only its public sections may be served from this host.
+        const isNotepagePath =
+          pathname === "/" ||
+          /^\\/(?:notes|about|guestnote)(?:\\/|$)/.test(pathname) ||
+          /^\\/notepage\\/[^/]+(?:\\/|$)/.test(pathname) ||
+          /^\\/notetags\\/[^/]+(?:\\/|$)/.test(pathname);
+
+        if (!isNotepagePath) {
+          return new Response("Not found", {
+            status: 404,
+            headers: { "content-type": "text/plain; charset=utf-8" },
+          });
+        }
+
+        const internalPath = pathname === "/" ? "" : pathname;
+        if (!internalPath.startsWith(`/${subdomain}`)) {
+          url.pathname = `/${subdomain}${internalPath}`;
           routedRequest = new Request(url, request);
         }
       }
