@@ -9,6 +9,7 @@ import {
   LockKeyhole,
   MapPin,
   MessageCircle,
+  PenLine,
   Send,
   Shuffle,
   X,
@@ -19,6 +20,14 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/question")({
   loader: () => getActiveQuestion(),
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: loaderData ? `${loaderData.prompt} · Inktella Questions` : "Question of the day · Inktella" },
+      { name: "description", content: "Pause, answer honestly, and read the thoughtful points of view shared by the Inktella community." },
+      { property: "og:title", content: loaderData ? loaderData.prompt : "Question of the day · Inktella" },
+      { property: "og:description", content: "A daily question for the public notebook network." },
+    ],
+  }),
   component: QuestionPage,
 });
 
@@ -89,6 +98,7 @@ function QuestionPage() {
   const activeQuestion = Route.useLoaderData();
   const [answer, setAnswer] = useState("");
   const [hasAnswered, setHasAnswered] = useState(false);
+  const [answerComposerOpen, setAnswerComposerOpen] = useState(false);
   const [tab, setTab] = useState<"top" | "new" | "random">("top");
   const [liked, setLiked] = useState<number[]>([]);
   const [shared, setShared] = useState(false);
@@ -136,9 +146,15 @@ function QuestionPage() {
             {activeQuestion.prompt}
           </h2>
           {!hasAnswered ? (
+            <div className="mt-5">
+              {!answerComposerOpen ? (
+                <Button type="button" onClick={() => setAnswerComposerOpen(true)}>
+                  <PenLine aria-hidden data-icon="inline-start" /> Share my answer
+                </Button>
+              ) : (
             <form
               onSubmit={submitAnswer}
-              className="mt-5 rounded-xl border border-border bg-card p-3 shadow-sm sm:p-4"
+              className="rounded-xl border border-border bg-card p-3 shadow-sm sm:p-4"
             >
               <label htmlFor="answer" className="sr-only">
                 Your answer
@@ -160,6 +176,8 @@ function QuestionPage() {
                 </Button>
               </div>
             </form>
+              )}
+            </div>
           ) : (
             <div className="mt-7 flex items-center gap-3 rounded-xl bg-accent/60 p-4 text-sm">
               <LockKeyhole aria-hidden className="size-4" /> Your answer is in. The crowd is
@@ -373,8 +391,8 @@ function QuestionPage() {
           <h2 id="suggest-question-heading" className="mt-1 text-2xl">
             Suggest a question
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Have a question everyone should sit with? Send it to the Inktella team.
+          <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+            <PenLine aria-hidden className="size-4" /> Have a question everyone should sit with? Send it to the Inktella team.
           </p>
           {suggestionSent ? (
             <p className="mt-4 rounded-lg bg-muted px-3 py-2 text-sm">
@@ -395,7 +413,7 @@ function QuestionPage() {
                 value={suggestion}
                 onChange={(event) => setSuggestion(event.target.value)}
                 placeholder="What should we ask?"
-                className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                className="min-w-0 flex-1 border-b border-border/70 bg-transparent px-1 py-2 text-sm outline-none placeholder:text-muted-foreground/60 focus:border-foreground"
               />
               <Button type="submit">Send suggestion</Button>
             </form>
@@ -407,10 +425,10 @@ function QuestionPage() {
             <div>
               <p className="hand text-lg text-muted-foreground">the questions we have asked</p>
               <h2 id="archive-heading" className="mt-1 text-3xl">
-                Archive
+                <Link to="/questions/archive" className="hover:underline">Archive</Link>
               </h2>
             </div>
-            <span className="text-sm text-muted-foreground">Browse only</span>
+            <Link to="/questions/archive" className="text-sm text-muted-foreground hover:text-foreground">Browse all →</Link>
           </div>
           <div className="mt-5 divide-y divide-border/70">
             {archive.map((item) => (
