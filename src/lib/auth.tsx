@@ -27,9 +27,22 @@ const AuthContext = createContext<AuthContextValue>(visitor);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [key, setKey] = useState<string | null>(null);
   useEffect(() => {
-    getClerkPublishableKey()
-      .then((k) => setKey(k || CLERK_PUBLISHABLE_KEY_FALLBACK))
-      .catch(() => setKey(CLERK_PUBLISHABLE_KEY_FALLBACK));
+    let active = true;
+    const timeout = new Promise<string>((resolve) => {
+      window.setTimeout(() => resolve(CLERK_PUBLISHABLE_KEY_FALLBACK), 4000);
+    });
+
+    Promise.race([getClerkPublishableKey(), timeout])
+      .then((k) => {
+        if (active) setKey(k || CLERK_PUBLISHABLE_KEY_FALLBACK);
+      })
+      .catch(() => {
+        if (active) setKey(CLERK_PUBLISHABLE_KEY_FALLBACK);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   if (key === null) {
