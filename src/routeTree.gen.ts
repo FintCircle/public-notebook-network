@@ -14,6 +14,7 @@ import { Route as NotepageRouteImport } from './routes/$notepage'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
+import { Route as ManageProfileRouteImport } from './routes/manage-profile'
 import { Route as NotellaRouteImport } from './routes/notella'
 import { Route as NotepagesRouteImport } from './routes/notepages'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -35,6 +36,7 @@ import { Route as NotepagesIndexRouteImport } from './routes/notepages.index'
 import { Route as NotepagesNotepageRouteImport } from './routes/notepages.$notepage'
 import { Route as NotepagesNewRouteImport } from './routes/notepages.new'
 import { Route as NotetagsIndexRouteImport } from './routes/notetags.index'
+import { Route as QuestionsQuestionIdRouteImport } from './routes/questions.$questionId'
 import { Route as QuestionsArchiveRouteImport } from './routes/questions.archive'
 import { Route as TopicsIndexRouteImport } from './routes/topics.index'
 import { Route as TopicsTagRouteImport } from './routes/topics.$tag'
@@ -64,6 +66,11 @@ const ExploreRoute = ExploreRouteImport.update({
 const GuidelinesRoute = GuidelinesRouteImport.update({
   id: '/guidelines',
   path: '/guidelines',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageProfileRoute = ManageProfileRouteImport.update({
+  id: '/manage-profile',
+  path: '/manage-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotellaRoute = NotellaRouteImport.update({
@@ -171,6 +178,11 @@ const NotetagsIndexRoute = NotetagsIndexRouteImport.update({
   path: '/notetags/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QuestionsQuestionIdRoute = QuestionsQuestionIdRouteImport.update({
+  id: '/questions/$questionId',
+  path: '/questions/$questionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QuestionsArchiveRoute = QuestionsArchiveRouteImport.update({
   id: '/questions/archive',
   path: '/questions/archive',
@@ -203,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/explore': typeof ExploreRoute
   '/guidelines': typeof GuidelinesRoute
+  '/manage-profile': typeof ManageProfileRoute
   '/notella': typeof NotellaRoute
   '/notepages': typeof NotepagesRouteWithChildren
   '/notifications': typeof NotificationsRoute
@@ -221,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/customize/$notepage': typeof CustomizeNotepageRoute
   '/notepages/$notepage': typeof NotepagesNotepageRoute
   '/notepages/new': typeof NotepagesNewRoute
+  '/questions/$questionId': typeof QuestionsQuestionIdRoute
   '/questions/archive': typeof QuestionsArchiveRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage/': typeof NotepageIndexRoute
@@ -235,6 +249,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/explore': typeof ExploreRoute
   '/guidelines': typeof GuidelinesRoute
+  '/manage-profile': typeof ManageProfileRoute
   '/notella': typeof NotellaRoute
   '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
@@ -252,6 +267,7 @@ export interface FileRoutesByTo {
   '/customize/$notepage': typeof CustomizeNotepageRoute
   '/notepages/$notepage': typeof NotepagesNotepageRoute
   '/notepages/new': typeof NotepagesNewRoute
+  '/questions/$questionId': typeof QuestionsQuestionIdRoute
   '/questions/archive': typeof QuestionsArchiveRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage': typeof NotepageIndexRoute
@@ -268,6 +284,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/explore': typeof ExploreRoute
   '/guidelines': typeof GuidelinesRoute
+  '/manage-profile': typeof ManageProfileRoute
   '/notella': typeof NotellaRoute
   '/notepages': typeof NotepagesRouteWithChildren
   '/notifications': typeof NotificationsRoute
@@ -286,6 +303,7 @@ export interface FileRoutesById {
   '/customize/$notepage': typeof CustomizeNotepageRoute
   '/notepages/$notepage': typeof NotepagesNotepageRoute
   '/notepages/new': typeof NotepagesNewRoute
+  '/questions/$questionId': typeof QuestionsQuestionIdRoute
   '/questions/archive': typeof QuestionsArchiveRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage/': typeof NotepageIndexRoute
@@ -303,6 +321,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/explore'
     | '/guidelines'
+    | '/manage-profile'
     | '/notella'
     | '/notepages'
     | '/notifications'
@@ -321,6 +340,7 @@ export interface FileRouteTypes {
     | '/customize/$notepage'
     | '/notepages/$notepage'
     | '/notepages/new'
+    | '/questions/$questionId'
     | '/questions/archive'
     | '/topics/$tag'
     | '/$notepage/'
@@ -335,6 +355,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/explore'
     | '/guidelines'
+    | '/manage-profile'
     | '/notella'
     | '/notifications'
     | '/pricing'
@@ -352,6 +373,7 @@ export interface FileRouteTypes {
     | '/customize/$notepage'
     | '/notepages/$notepage'
     | '/notepages/new'
+    | '/questions/$questionId'
     | '/questions/archive'
     | '/topics/$tag'
     | '/$notepage'
@@ -367,6 +389,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/explore'
     | '/guidelines'
+    | '/manage-profile'
     | '/notella'
     | '/notepages'
     | '/notifications'
@@ -385,6 +408,7 @@ export interface FileRouteTypes {
     | '/customize/$notepage'
     | '/notepages/$notepage'
     | '/notepages/new'
+    | '/questions/$questionId'
     | '/questions/archive'
     | '/topics/$tag'
     | '/$notepage/'
@@ -401,6 +425,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ExploreRoute: typeof ExploreRoute
   GuidelinesRoute: typeof GuidelinesRoute
+  ManageProfileRoute: typeof ManageProfileRoute
   NotellaRoute: typeof NotellaRoute
   NotepagesRoute: typeof NotepagesRouteWithChildren
   NotificationsRoute: typeof NotificationsRoute
@@ -414,6 +439,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   WriteRoute: typeof WriteRoute
   CustomizeNotepageRoute: typeof CustomizeNotepageRoute
+  QuestionsQuestionIdRoute: typeof QuestionsQuestionIdRoute
   QuestionsArchiveRoute: typeof QuestionsArchiveRoute
   TopicsTagRoute: typeof TopicsTagRoute
   NotetagsIndexRoute: typeof NotetagsIndexRoute
@@ -455,6 +481,13 @@ declare module '@tanstack/react-router' {
       path: '/guidelines'
       fullPath: '/guidelines'
       preLoaderRoute: typeof GuidelinesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage-profile': {
+      id: '/manage-profile'
+      path: '/manage-profile'
+      fullPath: '/manage-profile'
+      preLoaderRoute: typeof ManageProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notella': {
@@ -604,6 +637,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotetagsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/questions/$questionId': {
+      id: '/questions/$questionId'
+      path: '/questions/$questionId'
+      fullPath: '/questions/$questionId'
+      preLoaderRoute: typeof QuestionsQuestionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/questions/archive': {
       id: '/questions/archive'
       path: '/questions/archive'
@@ -686,6 +726,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ExploreRoute: ExploreRoute,
   GuidelinesRoute: GuidelinesRoute,
+  ManageProfileRoute: ManageProfileRoute,
   NotellaRoute: NotellaRoute,
   NotepagesRoute: NotepagesRouteWithChildren,
   NotificationsRoute: NotificationsRoute,
@@ -699,6 +740,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   WriteRoute: WriteRoute,
   CustomizeNotepageRoute: CustomizeNotepageRoute,
+  QuestionsQuestionIdRoute: QuestionsQuestionIdRoute,
   QuestionsArchiveRoute: QuestionsArchiveRoute,
   TopicsTagRoute: TopicsTagRoute,
   NotetagsIndexRoute: NotetagsIndexRoute,
