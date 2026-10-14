@@ -57,7 +57,10 @@ export const seedProfiles = [
   },
 ];
 
-export const seedNotepages: Notepage[] = [
+export const seedNotepages: Notepage[] = []; /* Seeded Notepages are intentionally disabled. */
+
+/* Legacy seed data retained below for reference. */
+const legacySeedNotepages: Notepage[] = [
   {
     id: "np_derrick_01",
     ownerId: "usr_derrick_01",

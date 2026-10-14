@@ -34,7 +34,7 @@ function QuestionsArchivePage() {
         </header>
         <section className="divide-y divide-border/70" aria-label="Archived questions">
           {archive.map((item) => (
-            <Link key={item.id} to="/question" className="group flex items-center justify-between gap-5 py-6 hover:bg-muted/30">
+            <Link key={item.id} to="/questions/$questionId" params={{ questionId: item.id }} className="group flex items-center justify-between gap-5 py-6 hover:bg-muted/30">
               <span className="min-w-0">
                 <span className="block text-xs uppercase tracking-[0.16em] text-muted-foreground">{item.date}</span>
                 <span className="mt-2 block text-xl leading-snug">{item.question}</span>
