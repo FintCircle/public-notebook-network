@@ -35,6 +35,7 @@ import { Route as NotepagesIndexRouteImport } from './routes/notepages.index'
 import { Route as NotepagesNotepageRouteImport } from './routes/notepages.$notepage'
 import { Route as NotepagesNewRouteImport } from './routes/notepages.new'
 import { Route as NotetagsIndexRouteImport } from './routes/notetags.index'
+import { Route as QuestionsArchiveRouteImport } from './routes/questions.archive'
 import { Route as TopicsIndexRouteImport } from './routes/topics.index'
 import { Route as TopicsTagRouteImport } from './routes/topics.$tag'
 import { Route as NotepageNotepageNoteIdRouteImport } from './routes/$notepage.notepage.$noteId'
@@ -170,6 +171,11 @@ const NotetagsIndexRoute = NotetagsIndexRouteImport.update({
   path: '/notetags/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QuestionsArchiveRoute = QuestionsArchiveRouteImport.update({
+  id: '/questions/archive',
+  path: '/questions/archive',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TopicsIndexRoute = TopicsIndexRouteImport.update({
   id: '/topics/',
   path: '/topics/',
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/customize/$notepage': typeof CustomizeNotepageRoute
   '/notepages/$notepage': typeof NotepagesNotepageRoute
   '/notepages/new': typeof NotepagesNewRoute
+  '/questions/archive': typeof QuestionsArchiveRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage/': typeof NotepageIndexRoute
   '/notepages/': typeof NotepagesIndexRoute
@@ -245,6 +252,7 @@ export interface FileRoutesByTo {
   '/customize/$notepage': typeof CustomizeNotepageRoute
   '/notepages/$notepage': typeof NotepagesNotepageRoute
   '/notepages/new': typeof NotepagesNewRoute
+  '/questions/archive': typeof QuestionsArchiveRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage': typeof NotepageIndexRoute
   '/notepages': typeof NotepagesIndexRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/customize/$notepage': typeof CustomizeNotepageRoute
   '/notepages/$notepage': typeof NotepagesNotepageRoute
   '/notepages/new': typeof NotepagesNewRoute
+  '/questions/archive': typeof QuestionsArchiveRoute
   '/topics/$tag': typeof TopicsTagRoute
   '/$notepage/': typeof NotepageIndexRoute
   '/notepages/': typeof NotepagesIndexRoute
@@ -312,6 +321,7 @@ export interface FileRouteTypes {
     | '/customize/$notepage'
     | '/notepages/$notepage'
     | '/notepages/new'
+    | '/questions/archive'
     | '/topics/$tag'
     | '/$notepage/'
     | '/notepages/'
@@ -342,6 +352,7 @@ export interface FileRouteTypes {
     | '/customize/$notepage'
     | '/notepages/$notepage'
     | '/notepages/new'
+    | '/questions/archive'
     | '/topics/$tag'
     | '/$notepage'
     | '/notepages'
@@ -374,6 +385,7 @@ export interface FileRouteTypes {
     | '/customize/$notepage'
     | '/notepages/$notepage'
     | '/notepages/new'
+    | '/questions/archive'
     | '/topics/$tag'
     | '/$notepage/'
     | '/notepages/'
@@ -402,6 +414,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   WriteRoute: typeof WriteRoute
   CustomizeNotepageRoute: typeof CustomizeNotepageRoute
+  QuestionsArchiveRoute: typeof QuestionsArchiveRoute
   TopicsTagRoute: typeof TopicsTagRoute
   NotetagsIndexRoute: typeof NotetagsIndexRoute
   TopicsIndexRoute: typeof TopicsIndexRoute
@@ -591,6 +604,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotetagsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/questions/archive': {
+      id: '/questions/archive'
+      path: '/questions/archive'
+      fullPath: '/questions/archive'
+      preLoaderRoute: typeof QuestionsArchiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/topics/': {
       id: '/topics/'
       path: '/topics'
@@ -679,6 +699,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   WriteRoute: WriteRoute,
   CustomizeNotepageRoute: CustomizeNotepageRoute,
+  QuestionsArchiveRoute: QuestionsArchiveRoute,
   TopicsTagRoute: TopicsTagRoute,
   NotetagsIndexRoute: NotetagsIndexRoute,
   TopicsIndexRoute: TopicsIndexRoute,
