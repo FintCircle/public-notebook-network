@@ -110,7 +110,7 @@ function NotificationsPage() {
                     <p className="mt-2 leading-relaxed text-muted-foreground">{item.body}</p>
                     {item.kind === "guestnote" && (
                       <Link
-                        to="/profile"
+                        to="/"
                         className="mt-3 inline-block text-sm underline underline-offset-4"
                       >
                         Open your guestbook

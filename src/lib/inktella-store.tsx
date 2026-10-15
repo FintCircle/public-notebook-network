@@ -12,6 +12,8 @@ export type Guestnote = {
   createdAt: string;
 };
 export const guestnotes: Guestnote[] = [];
+export type NoteComment = { id: string; noteId: string; authorId: string; authorName: string; parentId?: string; body: string; createdAt: string; deletedAt?: string; isAuthor?: boolean };
+export const comments: NoteComment[] = [];
 export let currentUserId: string | null = null;
 
 function formatDate(iso: string) {
@@ -58,7 +60,7 @@ export async function hydrateInktella() {
   const profileById = new Map(raw.profiles.map((p) => [s(p["id"]), p]));
   const slugById = new Map<string, string>();
 
-  const mappedPages: Notepage[] = raw.notepages.map((p) => {
+  const mappedPages: Notepage[] = (raw.notepages ?? []).map((p) => {
     const id = s(p["id"]);
     slugById.set(id, s(p["slug"]));
     const owner = profileById.get(s(p["owner_id"]));
@@ -128,7 +130,7 @@ export async function hydrateInktella() {
     };
   });
 
-  const mappedGuestnotes: Guestnote[] = raw.guestnotes.map((g) => {
+  const mappedGuestnotes: Guestnote[] = (raw.guestnotes ?? []).map((g) => {
     const author = profileById.get(s(g["author_id"]));
     return {
       id: s(g["id"]),
@@ -146,6 +148,7 @@ export async function hydrateInktella() {
   notes.splice(0, notes.length, ...mappedNotes.filter((n) => n.status === "published"));
   drafts.splice(0, drafts.length, ...mappedNotes.filter((n) => n.status === "draft"));
   guestnotes.splice(0, guestnotes.length, ...mappedGuestnotes);
+  comments.splice(0, comments.length, ...(raw.comments ?? []).map((c) => ({ id: s(c.id), noteId: s(c.note_id), authorId: s(c.author_id), authorName: s(c.author_name) || "A reader", parentId: s(c.parent_id) || undefined, body: s(c.body), createdAt: s(c.created_at), deletedAt: s(c.deleted_at) || undefined, isAuthor: c.is_author === "1" })));
 }
 
 export const drafts: Note[] = [];
@@ -170,15 +173,11 @@ export function InktellaStoreProvider({
 }) {
   const [ready, setReady] = useState(false);
   const [version, setVersion] = useState(0);
-  const [error, setError] = useState("");
-
   const refresh = useCallback(async () => {
     try {
       await hydrateInktella();
-      setError("");
     } catch (e) {
       console.error(e);
-      setError("The notebooks couldn't be opened right now.");
     } finally {
       setVersion((v) => v + 1);
       setReady(true);
@@ -193,14 +192,7 @@ export function InktellaStoreProvider({
     <StoreContext.Provider value={{ ready, version, refresh }}>
       {ready ? (
         <div key={version} className="contents">
-          {error && (
-            <p
-              role="alert"
-              className="bg-destructive px-4 py-2 text-center text-sm text-destructive-foreground"
-            >
-              {error}
-            </p>
-          )}
+
           {children}
         </div>
       ) : (

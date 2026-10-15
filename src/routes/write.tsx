@@ -20,7 +20,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { CustomImage } from "@/components/tiptap-image-extension";
-import { FloatingToolbar } from "@/components/floating-toolbar";
 import { InlineCombobox, InlineTagInput } from "@/components/inline-combobox";
 import { getNotepage, interests, notes as publishedNotes, type Note } from "@/data/inktella";
 import { AuthOnly } from "@/lib/auth";
@@ -546,8 +545,6 @@ function NoteEditor({
           className="w-full bg-transparent font-heading text-3xl font-semibold leading-tight tracking-tight outline-none placeholder:opacity-30 focus:outline-none sm:text-4xl"
         />
 
-        {/* Tiptap Floating Selection Toolbar */}
-        <FloatingToolbar editor={editor} />
 
         {/* Tiptap Editor Canvas */}
         <div onDrop={handleDrop} onDragOver={handleDragOver} className="relative mt-6 min-h-[50vh]">
