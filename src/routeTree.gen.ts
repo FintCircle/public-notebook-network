@@ -16,7 +16,6 @@ import { Route as ManageProfileRouteImport } from './routes/manage-profile'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignedOutRouteImport } from './routes/signed-out'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -58,11 +57,6 @@ const PricingRoute = PricingRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignInRoute = SignInRouteImport.update({
@@ -109,7 +103,6 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/profile': typeof ProfileRoute
   '/sign-in': typeof SignInRoute
   '/signed-out': typeof SignedOutRoute
   '/terms': typeof TermsRoute
@@ -126,7 +119,6 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/profile': typeof ProfileRoute
   '/sign-in': typeof SignInRoute
   '/signed-out': typeof SignedOutRoute
   '/terms': typeof TermsRoute
@@ -144,7 +136,6 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
-  '/profile': typeof ProfileRoute
   '/sign-in': typeof SignInRoute
   '/signed-out': typeof SignedOutRoute
   '/terms': typeof TermsRoute
@@ -163,7 +154,6 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/pricing'
     | '/privacy'
-    | '/profile'
     | '/sign-in'
     | '/signed-out'
     | '/terms'
@@ -180,7 +170,6 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/pricing'
     | '/privacy'
-    | '/profile'
     | '/sign-in'
     | '/signed-out'
     | '/terms'
@@ -197,7 +186,6 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/pricing'
     | '/privacy'
-    | '/profile'
     | '/sign-in'
     | '/signed-out'
     | '/terms'
@@ -215,7 +203,6 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
-  ProfileRoute: typeof ProfileRoute
   SignInRoute: typeof SignInRoute
   SignedOutRoute: typeof SignedOutRoute
   TermsRoute: typeof TermsRoute
@@ -274,13 +261,6 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-in': {
@@ -343,7 +323,6 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
-  ProfileRoute: ProfileRoute,
   SignInRoute: SignInRoute,
   SignedOutRoute: SignedOutRoute,
   TermsRoute: TermsRoute,

@@ -1,18 +1,8 @@
 import { goToSignIn, portalUrl } from "@/lib/account-portal";
-import { Link, useNavigate, useLocation } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { HomepagePopularSwitcher } from "@/components/homepage-popular-switcher";
-import {
-  Bell,
-  Newspaper,
-  Tags,
-  PenLine,
-  Shuffle,
-  UserRound,
-  X,
-} from "lucide-react";
+import { Bell, Newspaper, Tags, PenLine, UserRound, X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { useRandomizer } from "@/lib/randomizer";
 
 const items = [
   { to: "/", label: "Notes", icon: Newspaper },
@@ -28,11 +18,7 @@ const utilityLinkClass =
 export function SiteNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, signOut, displayName } = useAuth();
-  const { randomize } = useRandomizer();
   const navigate = useNavigate();
-  const location = useLocation();
-  const isHomepage = location.pathname === "/";
-
   return (
     <>
       <header className="border-b border-border/70 bg-background">
@@ -45,15 +31,6 @@ export function SiteNav() {
               Inktella
             </Link>
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                className={utilityLinkClass}
-                aria-label="Open a random note"
-                title="Surprise me with a random note"
-                onClick={randomize}
-              >
-                <Shuffle aria-hidden />
-              </button>
               {isAuthenticated && (
                 <Link
                   to="/notifications"
@@ -85,33 +62,29 @@ export function SiteNav() {
               )}
             </div>
           </div>
-          {isHomepage ? (
-            <HomepagePopularSwitcher />
-          ) : (
-            <nav
-              className="grid grid-cols-3 border-t border-border/60 px-2"
-              aria-label="Primary navigation"
-            >
-              {[...items, { to: "/topics", label: "Topics", icon: Tags }].map((item, index) => {
-                const Icon = item.icon;
-                const href = item.to === "/write" ? "/write" : item.to;
-                return (
-                  <Link
-                    key={`${item.label}-${index}`}
-                    to={href}
-                    {...(item.to === "/write" ? { search: { notepage: undefined } } : {})}
-                    activeProps={{ className: "text-primary" }}
-                    className={iconLinkClass}
-                    aria-label={item.label}
-                    title={item.label}
-                  >
-                    <Icon aria-hidden />
-                    <span className="text-[0.68rem] font-medium leading-none">{item.label}</span>
-                  </Link>
-                );
-              })}
-            </nav>
-          )}
+          <nav
+            className="grid grid-cols-3 border-t border-border/60 px-2"
+            aria-label="Primary navigation"
+          >
+            {[...items, { to: "/topics", label: "Topics", icon: Tags }].map((item, index) => {
+              const Icon = item.icon;
+              const href = item.to === "/write" ? "/write" : item.to;
+              return (
+                <Link
+                  key={`${item.label}-${index}`}
+                  to={href}
+                  {...(item.to === "/write" ? { search: { notepage: undefined } } : {})}
+                  activeProps={{ className: "text-primary" }}
+                  className={iconLinkClass}
+                  aria-label={item.label}
+                  title={item.label}
+                >
+                  <Icon aria-hidden />
+                  <span className="text-[0.68rem] font-medium leading-none">{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
         </div>
       </header>
 
@@ -156,15 +129,7 @@ export function SiteNav() {
                 </p>
               </div>
             </div>
-            <nav className="mt-8 flex flex-col gap-2" aria-label="Profile settings">
-              <Link
-                to="/notepages"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
-              >
-                <Settings2 aria-hidden className="size-4" /> Manage Notepages
-              </Link>
-            </nav>
+
             <button
               type="button"
               className="mt-auto border-t border-border pt-5 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -195,7 +160,7 @@ export function SiteFooter() {
           <Link to="/" className="hand text-lg text-foreground hover:opacity-70">
             the public notebook network
           </Link>
-          <span>$10 / year / Notepage</span>
+          <span>Simple notes for the public notebook network</span>
         </div>
 
         <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-3 sm:justify-end">
