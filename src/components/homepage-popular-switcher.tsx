@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Flame, Heart } from "lucide-react";
-import { getPopularDecayedNotes, type Note } from "@/data/inktella";
+import { getNotepage, getPopularDecayedNotes, type Note } from "@/data/inktella";
 
 export function HomepagePopularSwitcher() {
   const [popularNotes, setPopularNotes] = useState<Note[]>([]);
