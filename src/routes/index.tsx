@@ -1,14 +1,17 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { LikeButton } from "@/components/like-button";
 import { NotetagList } from "@/components/notetag-list";
-import { getNotepage, notes } from "@/data/inktella";
+import { notes } from "@/data/inktella";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Notella — notes around things you care about | Inktella" },
-      { name: "description", content: "A quiet discovery feed of notes and writers around the things you care about." },
+      {
+        name: "description",
+        content: "A quiet discovery feed of notes and writers around the things you care about.",
+      },
     ],
   }),
   component: Notella,
@@ -24,21 +27,19 @@ function Notella() {
         <h1 className="text-xs uppercase tracking-[0.24em] opacity-50">Notella</h1>
         <p className="hand mt-2 text-2xl opacity-70">notes around things you care about</p>
         <div className="mt-10 divide-y divide-border/70">
-          {feed.map((note) => {
-            const np = getNotepage(note.notepage);
-            return (
-              <article key={note.id} className="py-8">
-                <div className="flex items-center gap-2.5">
-                  <span aria-hidden className="flex size-7 items-center justify-center rounded-full border border-border text-xs">{np?.avatarInitial}</span>
-                  <Link to="/$notepage" params={{ notepage: note.notepage }} className="text-sm hover:underline">{np?.owner}</Link>
-                </div>
-                <h2 className="mt-3 text-xl leading-snug"><Link to="/$notepage/notepage/$noteId" params={{ notepage: note.notepage, noteId: note.id }} className="hover:underline">{note.title}</Link></h2>
-                <p className="mt-2 leading-relaxed opacity-75">{note.preview}</p>
-                <div className="mt-4"><NotetagList tags={note.notetags} /></div>
-                <div className="mt-4 flex items-center justify-between"><LikeButton note={note} /><Link to="/$notepage/notepage/$noteId" params={{ notepage: note.notepage, noteId: note.id }} className="text-sm opacity-60 hover:opacity-100">Read →</Link></div>
-              </article>
-            );
-          })}
+          {feed.map((note) => (
+            <article key={note.id} className="py-8">
+              <p className="text-xs uppercase tracking-[0.18em] opacity-50">Note</p>
+              <h2 className="mt-3 text-xl leading-snug">{note.title}</h2>
+              <p className="mt-2 leading-relaxed opacity-75">{note.preview}</p>
+              <div className="mt-4">
+                <NotetagList tags={note.notetags} />
+              </div>
+              <div className="mt-4">
+                <LikeButton note={note} />
+              </div>
+            </article>
+          ))}
         </div>
       </main>
       <SiteFooter />
@@ -50,5 +51,7 @@ export default Notella;
 
 // Notella is the public homepage; the old /notella route is intentionally gone.
 // This default export keeps route tooling happy while the named Route remains authoritative.
-function _unused() { return null; }
+function _unused() {
+  return null;
+}
 void _unused;

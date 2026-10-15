@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Flame, Heart } from "lucide-react";
-import { getNotepage, getPopularDecayedNotes, type Note } from "@/data/inktella";
+import { getPopularDecayedNotes, type Note } from "@/data/inktella";
 
 export function HomepagePopularSwitcher() {
   const [popularNotes, setPopularNotes] = useState<Note[]>([]);
@@ -49,7 +48,10 @@ export function HomepagePopularSwitcher() {
       onBlur={() => setIsPaused(false)}
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
-        <div className="flex shrink-0 items-center justify-center rounded-full bg-primary/10 p-2 text-primary" title="Popular notes">
+        <div
+          className="flex shrink-0 items-center justify-center rounded-full bg-primary/10 p-2 text-primary"
+          title="Popular notes"
+        >
           <Flame className="size-4 fill-primary/20" aria-hidden />
           <span className="sr-only">Popular notes</span>
         </div>
@@ -57,31 +59,28 @@ export function HomepagePopularSwitcher() {
         {/* Desktop View: Smooth switcher row displaying popular note titles */}
         <div className="hidden md:flex flex-1 items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
           {popularNotes.map((note, idx) => {
-            const np = getNotepage(note.notepage);
             const title =
               note.title?.trim() || note.preview?.trim().slice(0, 35) || "Untitled Note";
             const isActive = idx === currentIndex;
 
             return (
-              <Link
+              <button
                 key={note.id}
-                to="/$notepage/notepage/$noteId"
-                params={{ notepage: note.notepage, noteId: note.id }}
+                type="button"
                 onMouseEnter={() => setCurrentIndex(idx)}
                 className={`group flex shrink-0 items-center gap-2 rounded-full px-3.5 py-1 text-xs font-medium transition-all duration-300 border ${
                   isActive
                     ? "bg-background text-foreground shadow-sm border-border scale-[1.02] ring-1 ring-primary/30"
-                    : "text-muted-foreground hover:text-foreground border-transparent hover:bg-background/60"
+                    : "text-muted-foreground border-transparent"
                 }`}
-                title={`Read "${title}" by ${np?.name || note.notepage}`}
+                aria-label={`Popular note: ${title}`}
               >
                 <span className="truncate max-w-[160px] lg:max-w-[200px]">{title}</span>
-
                 <span className="flex items-center gap-0.5 text-[10px] text-primary/80 font-normal">
                   <Heart className="size-2.5 fill-primary/40 text-primary" aria-hidden />
                   {note.likes}
                 </span>
-              </Link>
+              </button>
             );
           })}
         </div>
@@ -99,11 +98,7 @@ export function HomepagePopularSwitcher() {
 
           <div className="flex-1 overflow-hidden text-center">
             {currentMobileNote && (
-              <Link
-                to="/$notepage/notepage/$noteId"
-                params={{ notepage: currentMobileNote.notepage, noteId: currentMobileNote.id }}
-                className="inline-flex items-center justify-center gap-1.5 max-w-full text-xs font-medium text-foreground hover:text-primary transition-colors py-0.5"
-              >
+              <div className="inline-flex items-center justify-center gap-1.5 max-w-full text-xs font-medium text-foreground py-0.5">
                 <span className="truncate">
                   {currentMobileNote.title?.trim() ||
                     currentMobileNote.preview?.trim().slice(0, 30) ||
@@ -114,7 +109,7 @@ export function HomepagePopularSwitcher() {
                   <Heart className="size-2.5 fill-primary/40 text-primary" aria-hidden />
                   {currentMobileNote.likes}
                 </span>
-              </Link>
+              </div>
             )}
           </div>
 

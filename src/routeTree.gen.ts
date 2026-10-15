@@ -10,11 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as NotepageRouteImport } from './routes/$notepage'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as ManageProfileRouteImport } from './routes/manage-profile'
-import { Route as NotepagesRouteImport } from './routes/notepages'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -23,27 +21,13 @@ import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SignedOutRouteImport } from './routes/signed-out'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WriteRouteImport } from './routes/write'
-import { Route as NotepageIndexRouteImport } from './routes/$notepage.index'
-import { Route as NotepageAboutRouteImport } from './routes/$notepage.about'
-import { Route as NotepageGuestnoteRouteImport } from './routes/$notepage.guestnote'
-import { Route as NotepageNotesRouteImport } from './routes/$notepage.notes'
-import { Route as NotepagesIndexRouteImport } from './routes/notepages.index'
-import { Route as NotepagesNotepageRouteImport } from './routes/notepages.$notepage'
-import { Route as NotepagesNewRouteImport } from './routes/notepages.new'
 import { Route as NotetagsIndexRouteImport } from './routes/notetags.index'
 import { Route as TopicsIndexRouteImport } from './routes/topics.index'
 import { Route as TopicsTagRouteImport } from './routes/topics.$tag'
-import { Route as NotepageNotepageNoteIdRouteImport } from './routes/$notepage.notepage.$noteId'
-import { Route as NotepageNotetagsTagRouteImport } from './routes/$notepage.notetags.$tag'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotepageRoute = NotepageRouteImport.update({
-  id: '/$notepage',
-  path: '/$notepage',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -59,11 +43,6 @@ const GuidelinesRoute = GuidelinesRouteImport.update({
 const ManageProfileRoute = ManageProfileRouteImport.update({
   id: '/manage-profile',
   path: '/manage-profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotepagesRoute = NotepagesRouteImport.update({
-  id: '/notepages',
-  path: '/notepages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -106,41 +85,6 @@ const WriteRoute = WriteRouteImport.update({
   path: '/write',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NotepageIndexRoute = NotepageIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => NotepageRoute,
-} as any)
-const NotepageAboutRoute = NotepageAboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => NotepageRoute,
-} as any)
-const NotepageGuestnoteRoute = NotepageGuestnoteRouteImport.update({
-  id: '/guestnote',
-  path: '/guestnote',
-  getParentRoute: () => NotepageRoute,
-} as any)
-const NotepageNotesRoute = NotepageNotesRouteImport.update({
-  id: '/notes',
-  path: '/notes',
-  getParentRoute: () => NotepageRoute,
-} as any)
-const NotepagesIndexRoute = NotepagesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => NotepagesRoute,
-} as any)
-const NotepagesNotepageRoute = NotepagesNotepageRouteImport.update({
-  id: '/$notepage',
-  path: '/$notepage',
-  getParentRoute: () => NotepagesRoute,
-} as any)
-const NotepagesNewRoute = NotepagesNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => NotepagesRoute,
-} as any)
 const NotetagsIndexRoute = NotetagsIndexRouteImport.update({
   id: '/notetags/',
   path: '/notetags/',
@@ -156,24 +100,12 @@ const TopicsTagRoute = TopicsTagRouteImport.update({
   path: '/topics/$tag',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NotepageNotepageNoteIdRoute = NotepageNotepageNoteIdRouteImport.update({
-  id: '/notepage/$noteId',
-  path: '/notepage/$noteId',
-  getParentRoute: () => NotepageRoute,
-} as any)
-const NotepageNotetagsTagRoute = NotepageNotetagsTagRouteImport.update({
-  id: '/notetags/$tag',
-  path: '/notetags/$tag',
-  getParentRoute: () => NotepageRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/$notepage': typeof NotepageRouteWithChildren
   '/about': typeof AboutRoute
   '/guidelines': typeof GuidelinesRoute
   '/manage-profile': typeof ManageProfileRoute
-  '/notepages': typeof NotepagesRouteWithChildren
   '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -182,18 +114,9 @@ export interface FileRoutesByFullPath {
   '/signed-out': typeof SignedOutRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
-  '/$notepage/about': typeof NotepageAboutRoute
-  '/$notepage/guestnote': typeof NotepageGuestnoteRoute
-  '/$notepage/notes': typeof NotepageNotesRoute
-  '/notepages/$notepage': typeof NotepagesNotepageRoute
-  '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
-  '/$notepage/': typeof NotepageIndexRoute
-  '/notepages/': typeof NotepagesIndexRoute
   '/notetags/': typeof NotetagsIndexRoute
   '/topics/': typeof TopicsIndexRoute
-  '/$notepage/notepage/$noteId': typeof NotepageNotepageNoteIdRoute
-  '/$notepage/notetags/$tag': typeof NotepageNotetagsTagRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -208,27 +131,16 @@ export interface FileRoutesByTo {
   '/signed-out': typeof SignedOutRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
-  '/$notepage/about': typeof NotepageAboutRoute
-  '/$notepage/guestnote': typeof NotepageGuestnoteRoute
-  '/$notepage/notes': typeof NotepageNotesRoute
-  '/notepages/$notepage': typeof NotepagesNotepageRoute
-  '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
-  '/$notepage': typeof NotepageIndexRoute
-  '/notepages': typeof NotepagesIndexRoute
   '/notetags': typeof NotetagsIndexRoute
   '/topics': typeof TopicsIndexRoute
-  '/$notepage/notepage/$noteId': typeof NotepageNotepageNoteIdRoute
-  '/$notepage/notetags/$tag': typeof NotepageNotetagsTagRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/$notepage': typeof NotepageRouteWithChildren
   '/about': typeof AboutRoute
   '/guidelines': typeof GuidelinesRoute
   '/manage-profile': typeof ManageProfileRoute
-  '/notepages': typeof NotepagesRouteWithChildren
   '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -237,28 +149,17 @@ export interface FileRoutesById {
   '/signed-out': typeof SignedOutRoute
   '/terms': typeof TermsRoute
   '/write': typeof WriteRoute
-  '/$notepage/about': typeof NotepageAboutRoute
-  '/$notepage/guestnote': typeof NotepageGuestnoteRoute
-  '/$notepage/notes': typeof NotepageNotesRoute
-  '/notepages/$notepage': typeof NotepagesNotepageRoute
-  '/notepages/new': typeof NotepagesNewRoute
   '/topics/$tag': typeof TopicsTagRoute
-  '/$notepage/': typeof NotepageIndexRoute
-  '/notepages/': typeof NotepagesIndexRoute
   '/notetags/': typeof NotetagsIndexRoute
   '/topics/': typeof TopicsIndexRoute
-  '/$notepage/notepage/$noteId': typeof NotepageNotepageNoteIdRoute
-  '/$notepage/notetags/$tag': typeof NotepageNotetagsTagRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/$notepage'
     | '/about'
     | '/guidelines'
     | '/manage-profile'
-    | '/notepages'
     | '/notifications'
     | '/pricing'
     | '/privacy'
@@ -267,18 +168,9 @@ export interface FileRouteTypes {
     | '/signed-out'
     | '/terms'
     | '/write'
-    | '/$notepage/about'
-    | '/$notepage/guestnote'
-    | '/$notepage/notes'
-    | '/notepages/$notepage'
-    | '/notepages/new'
     | '/topics/$tag'
-    | '/$notepage/'
-    | '/notepages/'
     | '/notetags/'
     | '/topics/'
-    | '/$notepage/notepage/$noteId'
-    | '/$notepage/notetags/$tag'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -293,26 +185,15 @@ export interface FileRouteTypes {
     | '/signed-out'
     | '/terms'
     | '/write'
-    | '/$notepage/about'
-    | '/$notepage/guestnote'
-    | '/$notepage/notes'
-    | '/notepages/$notepage'
-    | '/notepages/new'
     | '/topics/$tag'
-    | '/$notepage'
-    | '/notepages'
     | '/notetags'
     | '/topics'
-    | '/$notepage/notepage/$noteId'
-    | '/$notepage/notetags/$tag'
   id:
     | '__root__'
     | '/'
-    | '/$notepage'
     | '/about'
     | '/guidelines'
     | '/manage-profile'
-    | '/notepages'
     | '/notifications'
     | '/pricing'
     | '/privacy'
@@ -321,27 +202,16 @@ export interface FileRouteTypes {
     | '/signed-out'
     | '/terms'
     | '/write'
-    | '/$notepage/about'
-    | '/$notepage/guestnote'
-    | '/$notepage/notes'
-    | '/notepages/$notepage'
-    | '/notepages/new'
     | '/topics/$tag'
-    | '/$notepage/'
-    | '/notepages/'
     | '/notetags/'
     | '/topics/'
-    | '/$notepage/notepage/$noteId'
-    | '/$notepage/notetags/$tag'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  NotepageRoute: typeof NotepageRouteWithChildren
   AboutRoute: typeof AboutRoute
   GuidelinesRoute: typeof GuidelinesRoute
   ManageProfileRoute: typeof ManageProfileRoute
-  NotepagesRoute: typeof NotepagesRouteWithChildren
   NotificationsRoute: typeof NotificationsRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -364,13 +234,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$notepage': {
-      id: '/$notepage'
-      path: '/$notepage'
-      fullPath: '/$notepage'
-      preLoaderRoute: typeof NotepageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -390,13 +253,6 @@ declare module '@tanstack/react-router' {
       path: '/manage-profile'
       fullPath: '/manage-profile'
       preLoaderRoute: typeof ManageProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notepages': {
-      id: '/notepages'
-      path: '/notepages'
-      fullPath: '/notepages'
-      preLoaderRoute: typeof NotepagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -455,55 +311,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WriteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$notepage/': {
-      id: '/$notepage/'
-      path: '/'
-      fullPath: '/$notepage/'
-      preLoaderRoute: typeof NotepageIndexRouteImport
-      parentRoute: typeof NotepageRoute
-    }
-    '/$notepage/about': {
-      id: '/$notepage/about'
-      path: '/about'
-      fullPath: '/$notepage/about'
-      preLoaderRoute: typeof NotepageAboutRouteImport
-      parentRoute: typeof NotepageRoute
-    }
-    '/$notepage/guestnote': {
-      id: '/$notepage/guestnote'
-      path: '/guestnote'
-      fullPath: '/$notepage/guestnote'
-      preLoaderRoute: typeof NotepageGuestnoteRouteImport
-      parentRoute: typeof NotepageRoute
-    }
-    '/$notepage/notes': {
-      id: '/$notepage/notes'
-      path: '/notes'
-      fullPath: '/$notepage/notes'
-      preLoaderRoute: typeof NotepageNotesRouteImport
-      parentRoute: typeof NotepageRoute
-    }
-    '/notepages/': {
-      id: '/notepages/'
-      path: '/'
-      fullPath: '/notepages/'
-      preLoaderRoute: typeof NotepagesIndexRouteImport
-      parentRoute: typeof NotepagesRoute
-    }
-    '/notepages/$notepage': {
-      id: '/notepages/$notepage'
-      path: '/$notepage'
-      fullPath: '/notepages/$notepage'
-      preLoaderRoute: typeof NotepagesNotepageRouteImport
-      parentRoute: typeof NotepagesRoute
-    }
-    '/notepages/new': {
-      id: '/notepages/new'
-      path: '/new'
-      fullPath: '/notepages/new'
-      preLoaderRoute: typeof NotepagesNewRouteImport
-      parentRoute: typeof NotepagesRoute
-    }
     '/notetags/': {
       id: '/notetags/'
       path: '/notetags'
@@ -525,68 +332,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TopicsTagRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$notepage/notepage/$noteId': {
-      id: '/$notepage/notepage/$noteId'
-      path: '/notepage/$noteId'
-      fullPath: '/$notepage/notepage/$noteId'
-      preLoaderRoute: typeof NotepageNotepageNoteIdRouteImport
-      parentRoute: typeof NotepageRoute
-    }
-    '/$notepage/notetags/$tag': {
-      id: '/$notepage/notetags/$tag'
-      path: '/notetags/$tag'
-      fullPath: '/$notepage/notetags/$tag'
-      preLoaderRoute: typeof NotepageNotetagsTagRouteImport
-      parentRoute: typeof NotepageRoute
-    }
   }
 }
 
-interface NotepageRouteChildren {
-  NotepageAboutRoute: typeof NotepageAboutRoute
-  NotepageGuestnoteRoute: typeof NotepageGuestnoteRoute
-  NotepageNotesRoute: typeof NotepageNotesRoute
-  NotepageIndexRoute: typeof NotepageIndexRoute
-  NotepageNotepageNoteIdRoute: typeof NotepageNotepageNoteIdRoute
-  NotepageNotetagsTagRoute: typeof NotepageNotetagsTagRoute
-}
-
-const NotepageRouteChildren: NotepageRouteChildren = {
-  NotepageAboutRoute: NotepageAboutRoute,
-  NotepageGuestnoteRoute: NotepageGuestnoteRoute,
-  NotepageNotesRoute: NotepageNotesRoute,
-  NotepageIndexRoute: NotepageIndexRoute,
-  NotepageNotepageNoteIdRoute: NotepageNotepageNoteIdRoute,
-  NotepageNotetagsTagRoute: NotepageNotetagsTagRoute,
-}
-
-const NotepageRouteWithChildren = NotepageRoute._addFileChildren(
-  NotepageRouteChildren,
-)
-
-interface NotepagesRouteChildren {
-  NotepagesNotepageRoute: typeof NotepagesNotepageRoute
-  NotepagesNewRoute: typeof NotepagesNewRoute
-  NotepagesIndexRoute: typeof NotepagesIndexRoute
-}
-
-const NotepagesRouteChildren: NotepagesRouteChildren = {
-  NotepagesNotepageRoute: NotepagesNotepageRoute,
-  NotepagesNewRoute: NotepagesNewRoute,
-  NotepagesIndexRoute: NotepagesIndexRoute,
-}
-
-const NotepagesRouteWithChildren = NotepagesRoute._addFileChildren(
-  NotepagesRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  NotepageRoute: NotepageRouteWithChildren,
   AboutRoute: AboutRoute,
   GuidelinesRoute: GuidelinesRoute,
   ManageProfileRoute: ManageProfileRoute,
-  NotepagesRoute: NotepagesRouteWithChildren,
   NotificationsRoute: NotificationsRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
