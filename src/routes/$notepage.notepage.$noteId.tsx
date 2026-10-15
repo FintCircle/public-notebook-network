@@ -3,6 +3,7 @@ import { LikeButton } from "@/components/like-button";
 import { NotetagList } from "@/components/notetag-list";
 import { getNote, getNotepage } from "@/data/inktella";
 import { currentUserId } from "@/lib/inktella-store";
+import { NoteComments } from "@/components/note-comments";
 
 export const Route = createFileRoute("/$notepage/notepage/$noteId")({
   head: ({ params }) => {
@@ -66,6 +67,8 @@ function NoteView() {
         <div className="mt-6">
           <LikeButton note={note} />
         </div>
+
+        <NoteComments noteId={note.id} />
 
         <footer className="mt-16 text-right">
           <p className="hand text-2xl">— {np.owner}</p>

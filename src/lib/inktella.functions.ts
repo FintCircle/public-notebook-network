@@ -19,6 +19,7 @@ export type RawData = {
   tags: Array<{ note_id: string; name: string }>;
   likes: Array<{ note_id: string; user_id: string }>;
   guestnotes: Array<Record<string, string | null>>;
+  comments: Array<Record<string, string | null>>;
   me: string | null;
 };
 
@@ -204,7 +205,7 @@ export const loadInktella = createServerFn({ method: "POST" })
         d1<{ note_id: string; user_id: string }>("SELECT note_id, user_id FROM likes"),
         d1<Record<string, string | null>>("SELECT * FROM guestnotes ORDER BY created_at"),
       ]);
-      return { notepages, notes, profiles, tags, likes, guestnotes, me };
+  return { notepages, notes, profiles, tags, likes, guestnotes, comments: [], me };
     } catch (e) {
       console.warn("D1 query failed, using seed data fallback:", e);
       return getRawSeedData(null);

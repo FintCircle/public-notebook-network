@@ -12,6 +12,8 @@ export type Guestnote = {
   createdAt: string;
 };
 export const guestnotes: Guestnote[] = [];
+export type NoteComment = { id: string; noteId: string; authorId: string; authorName: string; parentId?: string; body: string; createdAt: string; deletedAt?: string; isAuthor?: boolean };
+export const comments: NoteComment[] = [];
 export let currentUserId: string | null = null;
 
 function formatDate(iso: string) {
@@ -146,6 +148,7 @@ export async function hydrateInktella() {
   notes.splice(0, notes.length, ...mappedNotes.filter((n) => n.status === "published"));
   drafts.splice(0, drafts.length, ...mappedNotes.filter((n) => n.status === "draft"));
   guestnotes.splice(0, guestnotes.length, ...mappedGuestnotes);
+  comments.splice(0, comments.length, ...(raw.comments ?? []).map((c) => ({ id: s(c.id), noteId: s(c.note_id), authorId: s(c.author_id), authorName: s(c.author_name) || "A reader", parentId: s(c.parent_id) || undefined, body: s(c.body), createdAt: s(c.created_at), deletedAt: s(c.deleted_at) || undefined, isAuthor: c.is_author === "1" })));
 }
 
 export const drafts: Note[] = [];

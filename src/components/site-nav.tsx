@@ -3,27 +3,20 @@ import { Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { HomepagePopularSwitcher } from "@/components/homepage-popular-switcher";
 import {
-  BarChart3,
   Bell,
-  CircleHelp,
-  Compass,
   Newspaper,
   Tags,
   PenLine,
   Shuffle,
-  Settings2,
   UserRound,
-  SlidersHorizontal,
   X,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useRandomizer } from "@/lib/randomizer";
 
 const items = [
-  { to: "/notella", label: "Notes", icon: Newspaper },
-  { to: "/explore", label: "Explore", icon: Compass },
+  { to: "/", label: "Notes", icon: Newspaper },
   { to: "/write", label: "Write", icon: PenLine },
-  { to: "/question", label: "Question", icon: CircleHelp },
 ];
 
 const iconLinkClass =
@@ -46,7 +39,7 @@ export function SiteNav() {
         <div className="mx-auto max-w-5xl">
           <div className="flex items-center justify-between px-5 py-3">
             <Link
-              to={isAuthenticated ? "/notella" : "/"}
+              to="/"
               className="font-heading text-2xl font-semibold tracking-tight text-primary"
             >
               Inktella
@@ -96,7 +89,7 @@ export function SiteNav() {
             <HomepagePopularSwitcher />
           ) : (
             <nav
-              className="grid grid-cols-5 border-t border-border/60 px-2"
+              className="grid grid-cols-3 border-t border-border/60 px-2"
               aria-label="Primary navigation"
             >
               {[...items, { to: "/topics", label: "Topics", icon: Tags }].map((item, index) => {
@@ -165,32 +158,11 @@ export function SiteNav() {
             </div>
             <nav className="mt-8 flex flex-col gap-2" aria-label="Profile settings">
               <Link
-                to="/stats"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
-              >
-                <BarChart3 aria-hidden className="size-4" /> Stats
-              </Link>
-              <Link
-                to="/topics"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
-              >
-                <SlidersHorizontal aria-hidden className="size-4" /> Manage topics
-              </Link>
-              <Link
                 to="/notepages"
                 onClick={() => setIsMenuOpen(false)}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
               >
                 <Settings2 aria-hidden className="size-4" /> Manage Notepages
-              </Link>
-              <Link
-                to="/question"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-muted"
-              >
-                <CircleHelp aria-hidden className="size-4" /> One question a day
               </Link>
             </nav>
             <button
