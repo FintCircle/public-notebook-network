@@ -13,12 +13,12 @@ export const getClerkPublishableKey = createServerFn({ method: "GET" }).handler(
 });
 
 export type RawData = {
-  notepages: Array<Record<string, string | null>>;
+  notepages?: Array<Record<string, string | null>>;
   notes: Array<Record<string, string | null>>;
   profiles: Array<Record<string, string | null>>;
   tags: Array<{ note_id: string; name: string }>;
   likes: Array<{ note_id: string; user_id: string }>;
-  guestnotes: Array<Record<string, string | null>>;
+  guestnotes?: Array<Record<string, string | null>>;
   comments: Array<Record<string, string | null>>;
   me: string | null;
 };
@@ -192,8 +192,7 @@ export const loadInktella = createServerFn({ method: "POST" })
       const { d1, currentUserId, ensureProfile } = await import("./d1.server");
       const me = await currentUserId(getRequest()).catch(() => null);
       if (me) await ensureProfile(me, data).catch((e) => console.error("ensureProfile failed", e));
-      const [notepages, notes, profiles, tags, likes, guestnotes] = await Promise.all([
-        d1<Record<string, string | null>>("SELECT * FROM notepages ORDER BY created_at"),
+      const [notes, profiles, tags, likes, comments] = await Promise.all([
         d1<Record<string, string | null>>(
           "SELECT * FROM notes WHERE status = 'published' OR author_id = ? ORDER BY COALESCE(published_at, created_at) DESC",
           [me ?? ""],
@@ -203,12 +202,14 @@ export const loadInktella = createServerFn({ method: "POST" })
           "SELECT nn.note_id, t.name FROM note_notetags nn JOIN notetags t ON t.id = nn.notetag_id",
         ),
         d1<{ note_id: string; user_id: string }>("SELECT note_id, user_id FROM likes"),
-        d1<Record<string, string | null>>("SELECT * FROM guestnotes ORDER BY created_at"),
+        d1<Record<string, string | null>>(
+          "SELECT c.*, p.display_name AS author_name FROM comments c LEFT JOIN profiles p ON p.id = c.author_id ORDER BY c.created_at ASC",
+        ),
       ]);
-  return { notepages, notes, profiles, tags, likes, guestnotes, comments: [], me };
+      return { notes, profiles, tags, likes, comments, me };
     } catch (e) {
-      console.warn("D1 query failed, using seed data fallback:", e);
-      return getRawSeedData(null);
+      console.error("D1 query failed:", e);
+      return { notes: [], profiles: [], tags: [], likes: [], comments: [], me };
     }
   });
 
